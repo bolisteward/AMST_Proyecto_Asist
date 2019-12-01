@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Tutor">
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="290dp"
+        android:layout_alignParentTop="true"
+        app:srcCompat="@drawable/circuit" />
+
+    <ImageView
+        android:id="@+id/imv_foto"
+        android:layout_width="match_parent"
+        android:layout_height="167dp"
+        android:layout_marginTop="50dp"/>
+
+
+    <TextView
+        android:id="@+id/text_viewId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_nombre"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="40dp"
+        android:text="User ID: " />
+
+    <TextView
+        android:id="@+id/txt_userId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_nombre"
+        android:layout_marginTop="40dp"
+        android:layout_toEndOf="@id/text_viewId"
+        android:gravity="center"
+        android:text="ID" />
+
+    <TextView
+        android:id="@+id/txt_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imv_foto"
+        android:gravity="center"
+        android:textColor="@color/colorWhite"
+        android:text="@string/app_nameUser"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/txt_mail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_userId"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
+        android:text="Correo: "
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/txt_correo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/txt_mail"
+        android:layout_below="@id/txt_userId"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="correo"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/txt_cellphone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_mail"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
+        android:text="Phone number: "
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/txt_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_mail"
+        android:layout_toEndOf="@id/txt_cellphone"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="Phone number"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/txt_provId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_phone"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
+        android:gravity="center"
+        android:text="Provider ID:"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/txt_providerId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_cellphone"
+        android:layout_toEndOf="@id/txt_provId"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="Provider ID"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_providerId"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorBlue"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp"
+        android:onClick="cerrarSesion"
+        android:text="Cerrar Sesion" />
+
+    <Button
+        android:id="@+id/btn_verRegistros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_logout"
+        android:background="@color/colorBlue"
+        android:textColor="@color/colorWhite"
+        android:layout_marginTop="10dp"
+        android:textSize="18sp"
+        android:onClick="irRegistros"
+        android:text="Ver Registro" />
+
+
+</RelativeLayout>

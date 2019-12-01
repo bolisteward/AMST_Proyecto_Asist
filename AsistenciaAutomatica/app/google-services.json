@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "839879193466",
+    "firebase_url": "https://asistenciaautomatica.firebaseio.com",
+    "project_id": "asistenciaautomatica",
+    "storage_bucket": "asistenciaautomatica.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:839879193466:android:ed58adbf4236da613d1cc3",
+        "android_client_info": {
+          "package_name": "com.example.asistenciaautomatica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "839879193466-l8so4ligmsokt3crd55v85bsj6rbuthv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.asistenciaautomatica",
+            "certificate_hash": "abe5522380abf55789e50b2d8461c0568c6c1ee8"
+          }
+        },
+        {
+          "client_id": "839879193466-rkht8699h3jrau8jqv0mhe2u8ij68uh1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCk_Qo0KH0SnwTel4vjJOU803Ci0EY2-ik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "839879193466-rkht8699h3jrau8jqv0mhe2u8ij68uh1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
