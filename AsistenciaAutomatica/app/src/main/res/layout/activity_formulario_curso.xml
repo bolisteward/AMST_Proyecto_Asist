@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".FormularioCurso">
+
+    <EditText
+        android:id="@+id/etNombreCurso"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Nombre de Curso *"
+        android:textSize="20dp"
+
+        />
+
+    <EditText
+        android:id="@+id/etDescripcion"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Descripcion"
+        android:textSize="20dp"
+
+        />
+
+    <EditText
+        android:id="@+id/etFecha"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Fecha*"
+        android:textSize="20dp"
+
+        />
+
+    <EditText
+        android:id="@+id/etHoraInici0"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Hora de Inicio"
+        android:textSize="20dp"
+
+        />
+
+    <EditText
+        android:id="@+id/etHoraFin"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Hoa de Fin"
+        android:textSize="20dp"
+        />
+
+    <EditText
+        android:id="@+id/etPermitirRetrasos"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Permitir Retrasos"
+        android:textSize="20dp"
+
+        />
+
+    <EditText
+    android:id="@+id/etRangoRetraso"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:text="Rango retraso en minutos "
+    android:textSize="20dp"
+
+    />
+
+    <EditText
+        android:id="@+id/etMarcarSalida"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Marcar Salida"
+        android:textSize="20dp"
+
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        tools:visibility="invisible">
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button3"
+        style="@android:style/Widget.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Guardar "
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:visibility="visible"
+        tools:visibility="visible"
+
+        />
+
+
+</LinearLayout>

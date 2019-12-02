@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "839879193466",
-    "firebase_url": "https://asistenciaautomatica.firebaseio.com",
-    "project_id": "asistenciaautomatica",
-    "storage_bucket": "asistenciaautomatica.appspot.com"
+    "project_number": "191416579233",
+    "firebase_url": "https://asistenciaautomatica-2b9c0.firebaseio.com",
+    "project_id": "asistenciaautomatica-2b9c0",
+    "storage_bucket": "asistenciaautomatica-2b9c0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:839879193466:android:ed58adbf4236da613d1cc3",
+        "mobilesdk_app_id": "1:191416579233:android:4dc376a1aa007c3064ece0",
         "android_client_info": {
           "package_name": "com.example.asistenciaautomatica"
         }
       },
       "oauth_client": [
         {
-          "client_id": "839879193466-l8so4ligmsokt3crd55v85bsj6rbuthv.apps.googleusercontent.com",
+          "client_id": "191416579233-h2svcmrrvd3vadnaemc8no6q18c2kd59.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.asistenciaautomatica",
-            "certificate_hash": "abe5522380abf55789e50b2d8461c0568c6c1ee8"
+            "certificate_hash": "02d7933b5c033e288a86e6501a5f39786b82ef89"
           }
         },
         {
-          "client_id": "839879193466-rkht8699h3jrau8jqv0mhe2u8ij68uh1.apps.googleusercontent.com",
+          "client_id": "191416579233-dtivu7eueh07otrlic8u7oasa9i8lc2s.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCk_Qo0KH0SnwTel4vjJOU803Ci0EY2-ik"
+          "current_key": "AIzaSyAPIjj5NCjj2y80I3oKimXKqIGkRUucvpU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "839879193466-rkht8699h3jrau8jqv0mhe2u8ij68uh1.apps.googleusercontent.com",
+              "client_id": "191416579233-dtivu7eueh07otrlic8u7oasa9i8lc2s.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
