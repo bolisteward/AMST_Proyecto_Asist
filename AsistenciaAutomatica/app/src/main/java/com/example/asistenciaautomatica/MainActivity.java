@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     private void cerrarSesion() {
         mGoogleSignInClient.signOut().addOnCompleteListener(this,task -> updateUI(null));
     }

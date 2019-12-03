@@ -21,6 +21,7 @@ public class Perfil extends AppCompatActivity {
     }
 
     public void iniciarAsistente(View view){
-
+        Intent intent = new Intent(this, Asistente.class);
+        startActivity(intent);
     }
 }

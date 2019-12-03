@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "191416579233",
-    "firebase_url": "https://asistenciaautomatica-2b9c0.firebaseio.com",
-    "project_id": "asistenciaautomatica-2b9c0",
-    "storage_bucket": "asistenciaautomatica-2b9c0.appspot.com"
+    "project_number": "482613566543",
+    "firebase_url": "https://automatic-asistance-260720.firebaseio.com",
+    "project_id": "automatic-asistance-260720",
+    "storage_bucket": "automatic-asistance-260720.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:191416579233:android:4dc376a1aa007c3064ece0",
+        "mobilesdk_app_id": "1:482613566543:android:273aa845587186ec455e3a",
         "android_client_info": {
           "package_name": "com.example.asistenciaautomatica"
         }
       },
       "oauth_client": [
         {
-          "client_id": "191416579233-h2svcmrrvd3vadnaemc8no6q18c2kd59.apps.googleusercontent.com",
+          "client_id": "482613566543-ul775fmu9oifmul0q4r87fboqq24at7q.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.asistenciaautomatica",
-            "certificate_hash": "02d7933b5c033e288a86e6501a5f39786b82ef89"
+            "certificate_hash": "abe5522380abf55789e50b2d8461c0568c6c1ee8"
           }
         },
         {
-          "client_id": "191416579233-dtivu7eueh07otrlic8u7oasa9i8lc2s.apps.googleusercontent.com",
+          "client_id": "482613566543-qeb9k1cet4rm2rkr2qqr78dvp4jf77gr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAPIjj5NCjj2y80I3oKimXKqIGkRUucvpU"
+          "current_key": "AIzaSyDONKjmfsrTcJpY9G8Ei5H61Qsb0gS_Qko"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "191416579233-dtivu7eueh07otrlic8u7oasa9i8lc2s.apps.googleusercontent.com",
+              "client_id": "482613566543-qeb9k1cet4rm2rkr2qqr78dvp4jf77gr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

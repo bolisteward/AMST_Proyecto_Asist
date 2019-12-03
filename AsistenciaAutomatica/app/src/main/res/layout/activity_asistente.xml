@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Asistente">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="290dp"
+        android:layout_alignParentTop="true"
+        app:srcCompat="@drawable/circuit" />
+
+    <ImageView
+        android:id="@+id/imv_foto"
+        android:layout_width="match_parent"
+        android:layout_height="167dp"
+        android:layout_marginTop="50dp"/>
+
+
+    <TextView
+        android:id="@+id/txt_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imv_foto"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center"
+        android:textColor="@color/colorWhite"
+        android:text="@string/app_nameUser"
+        android:textSize="30sp" />
+
+
+
+    <LinearLayout
+        android:id="@+id/layoutCoord"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_nombre"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_mail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Correo: "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_cellphone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="Phone number: "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_ViewLat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="Latitud: "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_ViewLon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="Longitud: "
+                android:textSize="18sp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_correo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:text="correo"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:text="Phone number"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_Latitud"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:text="Latitud "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_Longitud"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:text="Longitud "
+                android:textSize="18sp" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layoutCoord"
+        android:layout_marginTop="30dp"
+        android:background="@color/colorBlue"
+        android:onClick="cerrarSesion"
+        android:text="Cerrar Sesion"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp" />
+
+
+
+
+</RelativeLayout>
