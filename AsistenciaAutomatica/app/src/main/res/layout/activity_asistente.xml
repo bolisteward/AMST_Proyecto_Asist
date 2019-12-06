@@ -14,7 +14,7 @@
         app:srcCompat="@drawable/circuit" />
 
     <ImageView
-        android:id="@+id/imv_foto"
+        android:id="@+id/img_foto"
         android:layout_width="match_parent"
         android:layout_height="167dp"
         android:layout_marginTop="50dp"/>
@@ -24,7 +24,7 @@
         android:id="@+id/txt_nombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imv_foto"
+        android:layout_below="@id/img_foto"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:gravity="center"
@@ -134,12 +134,23 @@
 
 
     </LinearLayout>
+    <Button
+        android:id="@+id/btn_Asistir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layoutCoord"
+        android:layout_marginTop="30dp"
+        android:background="@color/colorBlue"
+        android:onClick="Asistir"
+        android:text="Asistir"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/btn_logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutCoord"
+        android:layout_below="@+id/btn_Asistir"
         android:layout_marginTop="30dp"
         android:background="@color/colorBlue"
         android:onClick="cerrarSesion"

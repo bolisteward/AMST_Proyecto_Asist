@@ -13,7 +13,7 @@
         app:srcCompat="@drawable/circuit" />
 
     <ImageView
-        android:id="@+id/imv_foto"
+        android:id="@+id/img_foto"
         android:layout_width="match_parent"
         android:layout_height="167dp"
         android:layout_marginTop="50dp"/>
@@ -42,7 +42,7 @@
         android:id="@+id/txt_nombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imv_foto"
+        android:layout_below="@id/img_foto"
         android:gravity="center"
         android:textColor="@color/colorWhite"
         android:text="@string/app_nameUser"

@@ -2,5 +2,6 @@
     <string name="app_name">AsistenciaAutomatica</string>
     <string name="app_nameUser">Nombre de usuario:</string>
     <string name="title">Automatic asistance</string>
+    <string name="Perfil_user">Seleccione Tutor si organiza un evento, o Asistente si va a participar en uno.</string>
 
 </resources>
