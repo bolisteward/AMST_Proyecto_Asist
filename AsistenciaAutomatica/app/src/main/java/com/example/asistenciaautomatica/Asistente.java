@@ -11,9 +11,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +40,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +48,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Asistente extends AppCompatActivity {
-
     private static final String TAG = "Asistente";
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
@@ -55,12 +57,15 @@ public class Asistente extends AppCompatActivity {
 
     //vars
     private boolean mLocationPermissionGaranted = false;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
+    public FusedLocationProviderClient mFusedLocationProviderClient;
 
+    //views
     HashMap<String, String> info_user;
-    private TextView txt_nombre, txt_correo, txt_phone,  txt_Latitud, txt_Longitud;
-    private ImageView img_foto;
-    private String userId, disp_Lat, disp_Long;
+    public TextView txt_nombre, txt_correo, txt_phone,  txt_Latitud, txt_Longitud;
+    public ImageView img_foto;
+    public String userId;
+    public Spinner spinner;
+    public String[] eventos;
     DatabaseReference db_reference;
 
     @Override
@@ -73,27 +78,25 @@ public class Asistente extends AppCompatActivity {
         txt_nombre = findViewById(R.id.txt_nombre);
         txt_correo = findViewById(R.id.txt_correo);
         txt_phone = findViewById(R.id.txt_phone);
+        img_foto = findViewById(R.id.img_foto);
+        spinner = findViewById(R.id.spinner);
 
 
         Intent intent = getIntent();
-        info_user = (HashMap<String, String>)intent.getSerializableExtra("info_user");
+        info_user = (HashMap<String, String>) intent.getSerializableExtra("info_user");
 
-        txt_nombre.setText(info_user.get("user-name"));
+        txt_nombre.setText(info_user.get("user_name"));
         txt_phone.setText(info_user.get("user_phone"));
         txt_correo.setText(info_user.get("user_email"));
         userId = info_user.get("user_id");
         String photo = info_user.get("user_photo");
-        Picasso.with(getApplicationContext()).load(photo).resize(300,300).into(img_foto);
+        Picasso.get().load(photo).resize(300,300).error(R.drawable.usuario).into(img_foto);
 
 
 
-        if(isServiceOk()){
-            getLocationPermission();
-        }
         iniciarBaseDeDatos();
         leerBaseDatos();
-        leerDispositivo();
-        subirAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
+        //leerDispositivo();
 
     }
 
@@ -114,7 +117,13 @@ public class Asistente extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    System.out.println(snapshot);
+                    HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
+                    if (data.get("ID")== userId ){
+                        updateAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
+                    }
+                    else{
+                        subirAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
+                    }
                 }
             }
             @Override
@@ -124,17 +133,30 @@ public class Asistente extends AppCompatActivity {
         });
     }
 
+    public void updateAsistente(String nombre, String phone, String remoteID, String correo, String lat, String lon) {
+
+        DatabaseReference subir_data = db_reference.child("Asistente").child(remoteID);
+        subir_data.child(remoteID).child("Nombre").setValue(nombre);
+        subir_data.child(remoteID).child("Correo").setValue(correo);
+        subir_data.child(remoteID).child("Telefono").setValue(phone);
+        subir_data.child(remoteID).child("Latitud").setValue(lat);
+        subir_data.child(remoteID).child("Longitud").setValue(lon);
+
+    }
+
     public void subirAsistente(String nombre, String phone, String userID, String correo, String lat, String lon) {
 
+        DatabaseReference subir_data = db_reference.child("Asistente");
 
-        String asistente= userID;
-        DatabaseReference subir_data = db_reference.child("Asistente").child(userID);
-        subir_data.setValue(asistente);
-        subir_data.child(asistente).child("Nombre").setValue(nombre);
-        subir_data.child(asistente).child("Correo").setValue(correo);
-        subir_data.child(asistente).child("Telefono").setValue(phone);
-        subir_data.child(asistente).child("Latitud").setValue(lat);
-        subir_data.child(asistente).child("Longitud").setValue(lon);
+        Map<String, String> dataUser = new HashMap<String, String>();
+        dataUser.put("Nombre", nombre);
+        dataUser.put("Correo", correo);
+        dataUser.put("Telefono", phone);
+        dataUser.put("Latitud", lat);
+        dataUser.put("Longitud", lon);
+        dataUser.put("ID",userID);
+
+        subir_data.push().setValue(dataUser);
     }
 
     public void Asistir (View view){
@@ -142,14 +164,15 @@ public class Asistente extends AppCompatActivity {
     }
 
     public void subirAsistencia(String userID) {
-        String asistencia = userID;
+        String ID = userID;
         boolean[] verifica = verifica_Asistencia();
         boolean presente = verifica[0];
         boolean retraso = verifica[1];
         DatabaseReference subir_data = db_reference.child("Asistencias").child(userID);
-        subir_data.setValue(asistencia);
-        subir_data.child(asistencia).child("Asistencia").setValue(presente);
-        subir_data.child(asistencia).child("Retraso").setValue(retraso);
+        subir_data.setValue(ID);
+        subir_data.child(ID).child("Asistencia").setValue(presente);
+        subir_data.child(ID).child("Retraso").setValue(retraso);
+        System.out.println("Data Asistente subido");
     }
 
     public boolean[] verifica_Asistencia (){
@@ -161,7 +184,7 @@ public class Asistente extends AppCompatActivity {
             presente = true;
         }
         if (!presente){
-            Toast.makeText(getApplicationContext(),"Se encuentra fuera del rango",Toast.LENGTH_SHORT);
+            Toast.makeText(getApplicationContext(),"Se encuentra fuera del rango",Toast.LENGTH_SHORT).show();
         }
         boolean verifica[] = {presente, retraso};
         return verifica;
@@ -171,10 +194,13 @@ public class Asistente extends AppCompatActivity {
         db_reference.child("Dispositivo").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
-                System.out.println(data);
-                disp_Lat = data.get("Latitud");
-                disp_Long = data.get("Longitud");
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
+                    if (data.get("Evento")== evento )
+                    disp_Lat = data.get("Latitud");
+                    disp_Long = data.get("Longitud");
+                }
             }
             @Override
             public void onCancelled(DatabaseError error) {
@@ -183,7 +209,42 @@ public class Asistente extends AppCompatActivity {
         });
     }
 
-
+    public void leerEventos(){
+        db_reference.child("Evento").child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
+                    if (data.get("ID")== userId ){
+                        updateAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
+                    }
+                    else{
+                        subirAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println(error.toException());
+            }
+        });
+    }
+    /*
+    public void leerDispositivo(){
+        db_reference.child("Dispositivo").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
+                    System.out.println(data);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println(error.toException());
+            }
+        });
+    }*/
 
     public boolean isServiceOk(){
         Log.d(TAG, "isServiceOk: checking google service version");
@@ -224,11 +285,8 @@ public class Asistente extends AppCompatActivity {
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
 
-                            String lat = Double.toString(currentLocation.getLatitude());
-                            String lon = Double.toString(currentLocation.getLongitude());
-
-                            txt_Latitud.setText(lat);
-                            txt_Longitud.setText(lon);
+                            txt_Latitud.setText(Double.toString(currentLocation.getLatitude()));
+                            txt_Longitud.setText(Double.toString(currentLocation.getLongitude()));
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
@@ -292,5 +350,9 @@ public class Asistente extends AppCompatActivity {
             }
         }
     }
+
+
+
+
 
 }

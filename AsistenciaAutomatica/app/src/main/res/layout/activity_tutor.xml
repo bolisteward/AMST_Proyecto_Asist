@@ -4,117 +4,171 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Tutor">
-    <ImageView
-        android:id="@+id/imageView2"
+    tools:context=".Tutor"
+    android:background="#BCEEF7">
+
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="290dp"
-        android:layout_alignParentTop="true"
-        app:srcCompat="@drawable/circuit" />
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/img_foto"
-        android:layout_width="match_parent"
-        android:layout_height="167dp"
-        android:layout_marginTop="50dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
 
-    <TextView
-        android:id="@+id/text_viewId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_nombre"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="40dp"
-        android:text="User ID: " />
-
-    <TextView
-        android:id="@+id/txt_userId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_nombre"
-        android:layout_marginTop="40dp"
-        android:layout_toEndOf="@id/text_viewId"
-        android:gravity="center"
-        android:text="ID" />
-
-    <TextView
-        android:id="@+id/txt_nombre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/img_foto"
-        android:gravity="center"
-        android:textColor="@color/colorWhite"
-        android:text="@string/app_nameUser"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/txt_mail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_userId"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="10dp"
-        android:text="Correo: "
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/txt_correo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/txt_mail"
-        android:layout_below="@id/txt_userId"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
-        android:text="correo"
-        android:textSize="18sp" />
+            <ImageView
+                android:id="@+id/img_foto"
+                android:layout_width="match_parent"
+                android:layout_height="167dp"
+                android:layout_marginTop="50dp"/>
 
 
-    <TextView
-        android:id="@+id/txt_cellphone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_mail"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="10dp"
-        android:text="Phone number: "
-        android:textSize="18sp" />
+            <TextView
+                android:id="@+id/text_viewId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_nombre"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="40dp"
+                android:text="User ID: "
+                android:textColor="@color/colorDark"/>
 
-    <TextView
-        android:id="@+id/txt_phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_mail"
-        android:layout_toEndOf="@id/txt_cellphone"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
-        android:text="Phone number"
-        android:textSize="18sp" />
+            <TextView
+                android:id="@+id/txt_userId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_nombre"
+                android:layout_marginTop="40dp"
+                android:layout_toEndOf="@id/text_viewId"
+                android:gravity="center"
+                android:text="ID"
+                android:textColor="@color/colorDark"
+
+                />
+
+            <TextView
+                android:id="@+id/txt_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/img_foto"
+                android:gravity="center"
+                android:text="@string/app_nameUser"
+                android:textSize="30sp"
+                android:textColor="@color/colorDark"
+
+                />
+
+            <TextView
+                android:id="@+id/txt_mail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_userId"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="Correo: "
+                android:textSize="18sp"
+                android:textColor="@color/colorDark"
+
+                />
+
+            <TextView
+                android:id="@+id/txt_correo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/txt_mail"
+                android:layout_below="@id/txt_userId"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:text="correo"
+                android:textSize="18sp"
+                android:textColor="@color/colorDark"
+
+                />
 
 
-    <Button
-        android:id="@+id/btn_logout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_phone"
-        android:layout_marginTop="75dp"
-        android:background="@color/colorBlue"
-        android:onClick="cerrarSesion"
-        android:text="Cerrar Sesion"
-        android:textColor="@color/colorWhite"
-        android:textSize="18sp" />
+            <TextView
+                android:id="@+id/txt_cellphone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_mail"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="Phone number: "
+                android:textSize="18sp"
+                android:textColor="@color/colorDark"
 
-    <Button
-        android:id="@+id/btn_verRegistros"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_logout"
-        android:layout_marginTop="20dp"
-        android:background="@color/colorBlue"
-        android:onClick="irRegistros"
-        android:text="Ver Registros"
-        android:textColor="@color/colorWhite"
-        android:textSize="18sp" />
+                />
+
+            <TextView
+                android:id="@+id/txt_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_mail"
+                android:layout_toEndOf="@id/txt_cellphone"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:text="Phone number"
+                android:textSize="18sp"
+                android:textColor="@color/colorDark"
+
+                />
+
+
+
+
+            <Button
+                android:id="@+id/btn_CrearEvento"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_phone"
+                android:layout_marginTop="150dp"
+                android:layout_centerInParent="true"
+                android:background="@color/colorBlue"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:onClick="crearEvento"
+                android:text="Crear Evento"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_verRegistros"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_CrearEvento"
+                android:layout_marginTop="50dp"
+                android:layout_centerInParent="true"
+                android:background="@color/colorBlue"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:onClick="irRegistros"
+                android:text="Ver Registros"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_verRegistros"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="80dp"
+                android:background="@color/colorBlue"
+                android:drawableRight="@android:drawable/btn_dialog"
+                android:onClick="cerrarSesion"
+                android:text="Cerrar Sesion"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
+
+
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
+
 
 
 </RelativeLayout>

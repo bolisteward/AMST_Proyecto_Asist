@@ -4,160 +4,207 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Asistente">
+    android:background="#F1DB8E"
+    tools:context=".Asistente" >
 
-    <ImageView
-        android:id="@+id/imageView2"
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="290dp"
-        android:layout_alignParentTop="true"
-        app:srcCompat="@drawable/circuit" />
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/img_foto"
-        android:layout_width="match_parent"
-        android:layout_height="167dp"
-        android:layout_marginTop="50dp"/>
-
-
-    <TextView
-        android:id="@+id/txt_nombre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/img_foto"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:gravity="center"
-        android:textColor="@color/colorWhite"
-        android:text="@string/app_nameUser"
-        android:textSize="30sp" />
-
-
-
-    <LinearLayout
-        android:id="@+id/layoutCoord"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_nombre"
-        android:layout_marginTop="50dp"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txt_mail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="Correo: "
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txt_cellphone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="10dp"
-                android:text="Phone number: "
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txt_ViewLat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="10dp"
-                android:text="Latitud: "
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txt_ViewLon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="10dp"
-                android:text="Longitud: "
-                android:textSize="18sp" />
-
-
-        </LinearLayout>
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/img_foto"
+                android:layout_width="match_parent"
+                android:layout_height="167dp"
+                android:layout_marginTop="50dp"
+                />
 
             <TextView
-                android:id="@+id/txt_correo"
+                android:id="@+id/txt_nombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/img_foto"
+                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:gravity="center"
-                android:text="correo"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txt_phone"
+                android:text="@string/app_nameUser"
+                android:textColor="@color/colorDark"
+                android:textSize="24sp" />
+            <LinearLayout
+                android:id="@+id/layoutCoord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
+                android:layout_below="@id/txt_nombre"
+                android:layout_marginTop="50dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txt_mail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:background="#00A88585"
+                        android:text="Correo: "
+                        android:textColor="@color/colorDark"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/txt_cellphone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginStart="10dp"
+                        android:text="Phone number: "
+                        android:textSize="18sp"
+                        android:textColor="@color/colorDark"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/txt_ViewLat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginStart="10dp"
+                        android:text="Latitud: "
+                        android:textSize="18sp"
+                        android:textColor="@color/colorDark"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/txt_ViewLon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginStart="10dp"
+                        android:text="Longitud: "
+                        android:textSize="18sp"
+                        android:textColor="@color/colorDark"
+
+                        />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txt_correo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:text="correo"
+                        android:textSize="18sp"
+                        android:textColor="@color/colorDark"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/txt_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="30dp"
+                        android:gravity="center"
+                        android:text="Phone number"
+                        android:textSize="18sp"
+                        android:textColor="@color/colorDark"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/txt_Latitud"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:text="Latitud "
+                        android:textSize="18sp"
+                        android:textColor="@color/colorDark"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/txt_Longitud"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:text="Longitud "
+                        android:textSize="18sp"
+                        android:textColor="@color/colorDark"
+
+                        />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_below="@+id/layoutCoord"
+                android:layout_marginTop="50dp"/>
+
+
+            <Button
+                android:id="@+id/btn_Asistir"
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/spinner"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
-                android:gravity="center"
-                android:text="Phone number"
+                android:background="@color/colorBlue"
+                android:drawableRight="@android:drawable/checkbox_on_background"
+                android:onClick="Asistir"
+                android:text="Asistir"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/txt_Latitud"
-                android:layout_width="match_parent"
+
+
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="210dp"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_Asistir"
+                android:textAlignment="center"
+                android:layout_centerInParent="true"
                 android:layout_marginTop="30dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center"
-                android:text="Latitud "
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txt_Longitud"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center"
-                android:text="Longitud "
+                android:layout_marginBottom="80dp"
+                android:background="@color/colorBlue"
+                android:drawableRight="@android:drawable/btn_dialog"
+                android:onClick="cerrarSesion"
+                android:text="Cerrar Sesion"
+                android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
 
-        </LinearLayout>
+        </RelativeLayout>
 
-
-    </LinearLayout>
-    <Button
-        android:id="@+id/btn_Asistir"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutCoord"
-        android:layout_marginTop="30dp"
-        android:background="@color/colorBlue"
-        android:onClick="Asistir"
-        android:text="Asistir"
-        android:textColor="@color/colorWhite"
-        android:textSize="18sp" />
-
-    <Button
-        android:id="@+id/btn_logout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_Asistir"
-        android:layout_marginTop="30dp"
-        android:background="@color/colorBlue"
-        android:onClick="cerrarSesion"
-        android:text="Cerrar Sesion"
-        android:textColor="@color/colorWhite"
-        android:textSize="18sp" />
-
+    </ScrollView>
 
 
 

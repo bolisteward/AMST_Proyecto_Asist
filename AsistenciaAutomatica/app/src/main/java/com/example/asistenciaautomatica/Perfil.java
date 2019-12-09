@@ -21,18 +21,18 @@ public class Perfil extends AppCompatActivity {
 
         Intent intent = getIntent();
         info_user = (HashMap<String, String>)intent.getSerializableExtra("info_user");
-
-
     }
 
-    public void iniciarTutor(View view){
+    public void startTutor(View view){
+        System.out.println(info_user);
         Intent intent = new Intent(this, Tutor.class);
         intent.putExtra("info_user", info_user );
         startActivity(intent);
 
     }
 
-    public void iniciarAsistente(View view){
+    public void startAsistente(View view){
+        System.out.println(info_user);
         Intent intent = new Intent(this, Asistente.class);
         intent.putExtra("info_user", info_user );
         startActivity(intent);
