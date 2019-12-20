@@ -35,7 +35,7 @@ public class Lista_Asistencia extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    //mostrarRegistrosPorPantalla(snapshot);
+                    mostrarRegistrosPorPantalla(snapshot);
 
                 }
             }
@@ -46,7 +46,7 @@ public class Lista_Asistencia extends AppCompatActivity {
             }
         });
     }
-    /*
+
 
     public void mostrarRegistrosPorPantalla(DataSnapshot snapshot){
         LinearLayout contNombre = (LinearLayout) findViewById(R.id.ContenedorNombre);
@@ -55,12 +55,12 @@ public class Lista_Asistencia extends AppCompatActivity {
         String userVal = String.valueOf(snapshot.child("").getValue());
         String asisteVal = String.valueOf(snapshot.child("axis").getValue());
         TextView temp = new TextView(getApplicationContext());
-        temp.setText(tempVal+" C");
-        contTemp.addView(temp);
+        temp.setText(userVal+" C");
+        contNombre.addView(temp);
         TextView axis = new TextView(getApplicationContext());
-        axis.setText(axisVal);
-        contAxis.addView(axis);
-    }*/
+        axis.setText(asisteVal);
+        contAsiste.addView(axis);
+    }
 
     public void obtenerNombreAsistente (String userId){
         db_reference2.child("Asistente").addValueEventListener(new ValueEventListener() {

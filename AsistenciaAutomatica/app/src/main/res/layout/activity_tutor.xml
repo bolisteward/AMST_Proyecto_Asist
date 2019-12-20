@@ -15,6 +15,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:orientation="vertical" >
 
 
@@ -32,18 +34,19 @@
                 android:layout_below="@id/txt_nombre"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="40dp"
-                android:text="User ID: "
+                android:text="Cedula: "
                 android:textColor="@color/colorDark"/>
 
-            <TextView
-                android:id="@+id/txt_userId"
+            <EditText
+                android:id="@+id/txt_cedula"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/txt_nombre"
                 android:layout_marginTop="40dp"
                 android:layout_toEndOf="@id/text_viewId"
                 android:gravity="center"
-                android:text="ID"
+                android:inputType="number"
+                android:minEms="10"
                 android:textColor="@color/colorDark"
 
                 />
@@ -64,7 +67,7 @@
                 android:id="@+id/txt_mail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/txt_userId"
+                android:layout_below="@id/txt_cedula"
                 android:layout_marginTop="30dp"
                 android:layout_marginStart="10dp"
                 android:text="Correo: "
@@ -78,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/txt_mail"
-                android:layout_below="@id/txt_userId"
+                android:layout_below="@id/txt_cedula"
                 android:layout_marginTop="30dp"
                 android:gravity="center"
                 android:text="correo"
@@ -115,9 +118,6 @@
 
                 />
 
-
-
-
             <Button
                 android:id="@+id/btn_CrearEvento"
                 android:layout_width="200dp"
@@ -132,25 +132,37 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
-            <Button
-                android:id="@+id/btn_verRegistros"
-                android:layout_width="200dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/btn_CrearEvento"
+                android:id="@+id/layoutRegistro"
                 android:layout_marginTop="50dp"
-                android:layout_centerInParent="true"
-                android:background="@color/colorBlue"
-                android:drawableRight="@android:drawable/arrow_down_float"
-                android:onClick="irRegistros"
-                android:text="Ver Registros"
-                android:textColor="@color/colorWhite"
-                android:textSize="18sp" />
+                android:layout_below="@id/btn_CrearEvento">
+
+                <Button
+                    android:id="@+id/btn_verRegistros"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="90dp"
+                    android:background="@color/colorBlue"
+                    android:drawableEnd="@android:drawable/arrow_down_float"
+                    android:onClick="irRegistros"
+                    android:text="Ver Registros"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18sp" />
+
+
+            </LinearLayout>
+
+
 
             <Button
                 android:id="@+id/btn_logout"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btn_verRegistros"
+                android:layout_below="@+id/layoutRegistro"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="50dp"
                 android:layout_marginBottom="80dp"
@@ -160,7 +172,6 @@
                 android:text="Cerrar Sesion"
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
-
 
 
         </RelativeLayout>

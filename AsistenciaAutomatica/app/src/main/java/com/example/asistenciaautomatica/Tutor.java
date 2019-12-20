@@ -6,13 +6,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +39,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Delayed;
 
 public class Tutor extends AppCompatActivity {
 
@@ -48,13 +55,14 @@ public class Tutor extends AppCompatActivity {
     public FusedLocationProviderClient mFusedLocationProviderClient;
 
     //Views
-    TextView txt_correo , txt_cellphone, txt_nombre ;
+    public TextView txt_correo , txt_cellphone, txt_nombre ;
+    public EditText txt_cedula;
     DatabaseReference db_reference;
 
     HashMap<String, String> info_user;
 
     private ImageView img_foto;
-    private String userId, disp_Lat1, disp_Long1, disp_Lat2, disp_Long2, get_long, get_lat;
+    private String userId;
 
 
     @Override
@@ -70,8 +78,7 @@ public class Tutor extends AppCompatActivity {
         txt_cellphone=findViewById(R.id.txt_phone);
         img_foto = findViewById(R.id.img_foto);
         txt_nombre = findViewById(R.id.txt_nombre);
-
-
+        txt_cedula = findViewById(R.id.txt_cedula);
 
         txt_correo.setText(info_user.get("user_email"));
         txt_nombre.setText(info_user.get("user_name"));
@@ -80,16 +87,9 @@ public class Tutor extends AppCompatActivity {
         String photo = info_user.get("user_photo");
         Picasso.get().load(photo).resize(300,300).error(R.drawable.usuario).into(img_foto);
 
-
-        if(isServiceOk()){
-            getLocationPermission();
-        }
-
+        isServiceOk();
         iniciarBaseDeDatos();
         leerBaseDatos();
-
-        subirTutor(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"));
-
 
     }
     public void iniciarBaseDeDatos(){
@@ -98,16 +98,43 @@ public class Tutor extends AppCompatActivity {
     }
 
     public void leerBaseDatos(){
-        db_reference.child("Tutor").child(userId).addValueEventListener(new ValueEventListener() {
+        db_reference.child("Tutor").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getChildren();
-                    if (data.get("ID")== userId ){
-                        updateTutor(info_user.get("user_name"), info_user.get("user_phone"), userId, info_user.get("user_email"));
+                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+                    System.out.println("prueba");
+                    System.out.println(data.get("ID"));
+                    System.out.println(userId);
+
+                    if (data.get("ID")!=null && data.get("ID").equals( userId )){
+                        System.out.println("existe");
+                        System.out.println(data.get("ID"));
+                        System.out.println(userId);
+                        txt_cedula.setText(data.get("Cedula"));
+                        updateTutor(info_user.get("user_name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_cedula.getText().toString());
                     }
-                    else{
-                        subirTutor(info_user.get("user_name"), info_user.get("user_phone"), userId, info_user.get("user_email"));
+                    else {
+                        System.out.println("No existe");
+                        System.out.println(userId);
+                        Context context = getApplicationContext();
+
+                        new dialogo_cedula(Tutor.this);
+
+                        System.out.println(txt_cedula.getText().toString());
+
+
+                        /*
+                            System.out.println(txt_cedula);
+
+                            Toast.makeText(getApplicationContext(), "Ingrese cedula", Toast.LENGTH_SHORT).show();
+                            /*new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                }
+                            },5000);*/
+
+                        //subirTutor(info_user.get("user_name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_cedula.getText().toString());
                     }
                 }
             }
@@ -118,16 +145,49 @@ public class Tutor extends AppCompatActivity {
         });
     }
 
-    public void updateTutor(String nombre, String phone, String remoteID, String correo) {
+    /**
+     * Crea un diálogo con personalizado para comportarse
+     * como formulario de login
+     *
+     * @return Diálogo
+     */
+    public AlertDialog createAlertDialogo() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Tutor.this);
+
+        LayoutInflater inflater = Tutor.this.getLayoutInflater();
+
+        View v = inflater.inflate(R.layout.cedula, null);
+
+        builder.setView(v);
+
+        Button aceptar = v.findViewById(R.id.btn_cedula);
+        EditText cedula = v.findViewById(R.id.edit_cedula);
+
+        aceptar.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Crear Cuenta...
+                        txt_cedula.setText(cedula.getText().toString());
+                    }
+                }
+        );
+
+        return builder.create();
+    }
+
+    public void updateTutor(String nombre, String phone, String remoteID, String correo, String cedula) {
 
         DatabaseReference subir_data = db_reference.child("Asistente").child(remoteID);
         subir_data.child(remoteID).child("Nombre").setValue(nombre);
         subir_data.child(remoteID).child("Correo").setValue(correo);
         subir_data.child(remoteID).child("Telefono").setValue(phone);
+        subir_data.child(remoteID).child("Cedula").setValue(cedula);
 
     }
 
-    public void subirTutor(String nombre, String phone, String userID, String correo) {
+    public void subirTutor(String nombre, String phone, String userID, String correo, String cedula) {
 
         DatabaseReference subir_data = db_reference.child("Asistente");
 
@@ -136,8 +196,9 @@ public class Tutor extends AppCompatActivity {
         dataUser.put("Correo", correo);
         dataUser.put("Telefono", phone);
         dataUser.put("ID",userID);
-
+        dataUser.put("Cedula", cedula);
         subir_data.push().setValue(dataUser);
+
     }
 
     public void irRegistros(View view){
@@ -178,95 +239,5 @@ public class Tutor extends AppCompatActivity {
         }
         return false;
     }
-
-
-
-    /*
-    Asistir() permite obtener las coordenadas de latitud y longitud del dispositivo en ese
-    instante y los sobre-escribe en el txt_Latitud y txt_longitud de la interfaz, si se produce un error
-    mandara una ioException o un mensaje de que la localizacion no se encuentra o es nula.
-     */
-
-    public void getDeviceLocation(){
-        Log.d(TAG, "getDeviceLocation: getting device current location");
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        try{
-            if(mLocationPermissionGaranted){
-
-                final Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()){
-                            Log.d(TAG, "onComplete: found location!");
-                            Location currentLocation = (Location) task.getResult();
-
-                            get_lat = Double.toString(currentLocation.getLatitude());
-                            get_long = Double.toString(currentLocation.getLongitude());
-
-                        }else{
-                            Log.d(TAG, "onComplete: current location is null");
-                            Toast.makeText(Tutor.this, "unable to get current location", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        }catch (SecurityException e){
-            Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage() );
-        }
-    }
-
-    /*
-    EL metodo getLocationPermission() verifica que los permisos y privilegios hayan sido aceptado,
-    de no ser asi llama al metodo onResquestPermissionsResults para solicitarlos.
-     */
-
-    private void getLocationPermission(){
-        Log.d(TAG, "getLocationPermission: getting location permission.");
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
-            if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                    COURSE_LOCATION)== PackageManager.PERMISSION_GRANTED){
-                mLocationPermissionGaranted = true;
-                getDeviceLocation();
-            }else{
-                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
-            }
-        }else{
-            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /*
-    onRequestPermissionResult() permite solicitar al usuario los permisos de poder
-    utilizar su ubicacion otorgandole a la app los privilegios para obtener las datos de
-    latitud y longitud. De no ser asi, mostrara un mensaje de falla o no concedido.
-     */
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        mLocationPermissionGaranted = false;
-        Log.d(TAG, "onRequestPermissionsResult: called.");
-        switch ( requestCode){
-            case LOCATION_PERMISSION_REQUEST_CODE:{
-                if (grantResults.length >0){
-                    for (int i =0; i < grantResults.length; i++) {
-                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                            mLocationPermissionGaranted = false;
-                            Log.d(TAG, "onRequestPermissionsResult: failed.");
-                            return;
-                        }
-                    }
-                    mLocationPermissionGaranted =true;
-                    Log.d(TAG, "onRequestPermissionsResult: permission granted.");
-                    //obtener la localizacion
-                    getDeviceLocation();
-                }
-            }
-        }
-    }
-
-
 
 }

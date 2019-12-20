@@ -14,7 +14,10 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +45,7 @@ import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -63,9 +67,10 @@ public class Asistente extends AppCompatActivity {
     HashMap<String, String> info_user;
     public TextView txt_nombre, txt_correo, txt_phone,  txt_Latitud, txt_Longitud;
     public ImageView img_foto;
-    public String userId;
+    public String userId, disp_Lat1, disp_Long1, disp_Lat2, disp_Long2, name_evento;
     public Spinner spinner;
-    public String[] eventos;
+    public ArrayList<String> eventos;
+
     DatabaseReference db_reference;
 
     @Override
@@ -81,6 +86,8 @@ public class Asistente extends AppCompatActivity {
         img_foto = findViewById(R.id.img_foto);
         spinner = findViewById(R.id.spinner);
 
+        eventos = new ArrayList<>();
+
 
         Intent intent = getIntent();
         info_user = (HashMap<String, String>) intent.getSerializableExtra("info_user");
@@ -92,13 +99,61 @@ public class Asistente extends AppCompatActivity {
         String photo = info_user.get("user_photo");
         Picasso.get().load(photo).resize(300,300).error(R.drawable.usuario).into(img_foto);
 
-
+        if (isServiceOk()){
+            getLocationPermission();
+        }
 
         iniciarBaseDeDatos();
+        leerEventos();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_spinner_item, eventos);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        spinner.setAdapter(adapter);
+        //spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, eventos));
+
+        System.out.println(name_evento);
+
+        AdapterView.OnItemSelectedListener countrySelectedListener = new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> spinner, View container,
+                                       int position, long id) {
+                System.out.println("habil");
+                System.out.println(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+            }
+        };
+        spinner.setOnItemSelectedListener(countrySelectedListener);
+
         leerBaseDatos();
-        //leerDispositivo();
+
+
+        System.out.println(name_evento);
+
+        if (name_evento!=null){
+            System.out.println(name_evento);
+            leerDispositivo(name_evento);
+        }
 
     }
+
+/*
+    @Override
+    public void onNothingSelected(AdapterView<?> parent){    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id)
+    {
+        spinner.setSelection(pos);
+        name_evento = adapterView.getItemAtPosition(pos).toString();
+        System.out.println(name_evento);
+        Toast.makeText(getApplicationContext(), name_evento, Toast.LENGTH_SHORT).show();
+    }*/
 
     public void cerrarSesion(View view) {
         FirebaseAuth.getInstance().signOut();
@@ -117,8 +172,8 @@ public class Asistente extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
-                    if (data.get("ID")== userId ){
+                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+                    if (data.get("ID").equals(userId)){
                         updateAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
                     }
                     else{
@@ -160,46 +215,64 @@ public class Asistente extends AppCompatActivity {
     }
 
     public void Asistir (View view){
-        subirAsistencia(userId);
+        if (name_evento!=null) {
+            subirAsistencia(userId);
+        }else{
+            Toast.makeText(this, "Escoja el evento/curso primero",Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void subirAsistencia(String userID) {
-        String ID = userID;
+        String identifacion = userID;
         boolean[] verifica = verifica_Asistencia();
-        boolean presente = verifica[0];
-        boolean retraso = verifica[1];
+        boolean present = verifica[0];
+        boolean atraso = verifica[1];
         DatabaseReference subir_data = db_reference.child("Asistencias").child(userID);
-        subir_data.setValue(ID);
-        subir_data.child(ID).child("Asistencia").setValue(presente);
-        subir_data.child(ID).child("Retraso").setValue(retraso);
+        subir_data.setValue(identifacion);
+        subir_data.child(identifacion).child("Asistencia").setValue(present);
+        subir_data.child(identifacion).child("Retraso").setValue(atraso);
         System.out.println("Data Asistente subido");
     }
 
     public boolean[] verifica_Asistencia (){
         boolean presente =false;
         boolean retraso = false;
-        int user_lat = Integer.parseInt (txt_Latitud.getText().toString());
-        int user_long = Integer.parseInt (txt_Longitud.getText().toString());
-        if ((user_lat <= (Integer.parseInt(disp_Lat)+0.00010)) && (user_long <= (Integer.parseInt(disp_Long)+0.00010))){
-            presente = true;
+        Double user_lat = Double.valueOf(txt_Latitud.getText().toString());
+        Double user_long = Double.valueOf(txt_Longitud.getText().toString());
+
+        if (Double.valueOf(disp_Lat1) >= Double.valueOf(disp_Lat2)) {
+            if (((user_lat <= Double.valueOf(disp_Lat1) ) && (user_lat >= Double.valueOf(disp_Lat2)))&&((user_long >= Double.valueOf(disp_Long1) ) && (user_long <= Double.valueOf(disp_Long2)))) {
+                presente = true;
+            }
+            if (!presente) {
+                Toast.makeText(getApplicationContext(), "Se encuentra fuera del rango", Toast.LENGTH_SHORT).show();
+            }
         }
-        if (!presente){
-            Toast.makeText(getApplicationContext(),"Se encuentra fuera del rango",Toast.LENGTH_SHORT).show();
+        if (Double.valueOf(disp_Lat1) <= Double.valueOf(disp_Lat2)) {
+            if (((user_lat >= Double.valueOf(disp_Lat2) ) && (user_lat <= Double.valueOf(disp_Lat1)))&&((user_long <= Double.valueOf(disp_Long2) ) && (user_long >= Double.valueOf(disp_Long1)))) {
+                presente = true;
+            }
+            if (!presente) {
+                Toast.makeText(getApplicationContext(), "Se encuentra fuera del rango", Toast.LENGTH_SHORT).show();
+            }
         }
         boolean verifica[] = {presente, retraso};
         return verifica;
     }
 
-    public void leerDispositivo(){
+    public void leerDispositivo(String curso){
         db_reference.child("Dispositivo").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
-                    if (data.get("Evento")== evento )
-                    disp_Lat = data.get("Latitud");
-                    disp_Long = data.get("Longitud");
+                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+                    if (data.get("Evento").equals( curso )) {
+                        disp_Lat1 = data.get("Latitud1");
+                        disp_Long1 = data.get("Longitud1");
+                        disp_Lat2 = data.get("Latitud2");
+                        disp_Long2 = data.get("Longitud2");
+                    }
                 }
             }
             @Override
@@ -210,17 +283,14 @@ public class Asistente extends AppCompatActivity {
     }
 
     public void leerEventos(){
-        db_reference.child("Evento").child(userId).addValueEventListener(new ValueEventListener() {
+        db_reference.child("Evento").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                eventos.add("Selecciones un Evento");
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
-                    if (data.get("ID")== userId ){
-                        updateAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
-                    }
-                    else{
-                        subirAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
-                    }
+                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+                    eventos.add(data.get("Nom_evento"));
                 }
             }
             @Override
@@ -229,6 +299,8 @@ public class Asistente extends AppCompatActivity {
             }
         });
     }
+
+
     /*
     public void leerDispositivo(){
         db_reference.child("Dispositivo").addValueEventListener(new ValueEventListener() {
@@ -236,7 +308,12 @@ public class Asistente extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
-                    System.out.println(data);
+                    Lattitud_1 = data.get("Latitud1");
+                    Longitud_1 = data.get("Longitud1");
+
+                    Lattitud_2 = data.get("Latitud2");
+                    Longitud_2 = data.get("Longitud2");
+
                 }
             }
             @Override
@@ -350,8 +427,6 @@ public class Asistente extends AppCompatActivity {
             }
         }
     }
-
-
 
 
 

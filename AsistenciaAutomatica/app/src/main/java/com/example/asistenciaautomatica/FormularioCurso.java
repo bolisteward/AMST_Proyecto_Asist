@@ -9,8 +9,12 @@ import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -62,8 +66,7 @@ public class FormularioCurso extends AppCompatActivity {
     public EditText etNombreCurso, etDescripcion, etTimeRetraso;
     public TextView  etFecha, etHoraInicio, etHoraFin;
     public Button btn_Fecha, btn_HoraInicio, btn_HoraFin;
-    public CheckBox box_Retraso;
-    public boolean marcarSalida;
+    public CheckBox box_Retraso, box_CheckOut;
 
     //variables grobales
     private  int year,mes,dia,horas,minutos ;
@@ -82,7 +85,7 @@ public class FormularioCurso extends AppCompatActivity {
         etHoraFin = findViewById(R.id.etHoraFin);
         etTimeRetraso = findViewById(R.id.etTimeRetraso);
         box_Retraso = findViewById(R.id.box_Retraso);
-        marcarSalida = false;
+        box_CheckOut = findViewById(R.id.box_CheckOut);
         btn_Fecha = findViewById(R.id.btn_Fecha);
         btn_HoraFin = findViewById(R.id.btn_HoraFin);
         btn_HoraInicio = findViewById(R.id.btn_HoraInicio);
@@ -139,7 +142,7 @@ public class FormularioCurso extends AppCompatActivity {
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         etHoraInicio.setText(hourOfDay+":"+minute);
                     }
-                },horas,minutos,false);
+                },horas,minutos,true);
 
                 //mostramos el elemento Timer como una ventana de dialogo
                 ponerhora.show();
@@ -149,7 +152,7 @@ public class FormularioCurso extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // lo mismo que el anterior solo que en este se establece la hora actual
+                // lo mismo que el anterior se establece la hora actual
                 final Calendar c = Calendar.getInstance();
 
                 horas=c.get(Calendar.HOUR_OF_DAY);
@@ -159,9 +162,14 @@ public class FormularioCurso extends AppCompatActivity {
                 TimePickerDialog ponerhora= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        etHoraFin.setText(hourOfDay+":"+minute);
+
+                        String horaFinal = hourOfDay+":"+minute;
+
+                        CompararTiempo(etHoraInicio.getText().toString(), horaFinal);
+
+                        etHoraFin.setText(horaFinal);
                     }
-                },horas,minutos,false);
+                },horas,minutos,true);
 
                 //mostramos el elemento Timer como una ventana de dialogo
                 ponerhora.show();
@@ -172,6 +180,29 @@ public class FormularioCurso extends AppCompatActivity {
 
     }
 
+    public void CompararTiempo(String HoraInicio, String HoraFin){
+        String[] TiempoInicial = HoraInicio.split(":");
+        int horaI = Integer.valueOf(TiempoInicial[0]);
+        int minuteI = Integer.valueOf(TiempoInicial[1]);
+
+        String[] TiempoFinal = HoraInicio.split(":");
+        int horaF = Integer.valueOf(TiempoFinal[0]);
+        int minuteF = Integer.valueOf(TiempoFinal[1]);
+
+
+        while (horaI >= horaF){
+            Toast.makeText(getApplicationContext(), "La Hora de finalizacion no puede ser menor a la Hora de Inicio.", Toast.LENGTH_SHORT).show();
+
+        }
+        if (horaI == horaF){
+            while (minuteI >= minuteF){
+                Toast.makeText(getApplicationContext(), "La Hora de finalizacion no puede ser menor a la Hora de Inicio.", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+    }
+
 
     public void iniciarBaseDeDatos(){
         db_reference = FirebaseDatabase.getInstance().getReference();
@@ -179,13 +210,44 @@ public class FormularioCurso extends AppCompatActivity {
     }
 
     public void Guardar(View view){
-        //si no hay zona marcada no se guarda los datos.
-        subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
-                etHoraInicio.getText().toString(), etHoraFin.getText().toString(), etTimeRetraso.getText().toString(), box_Retraso.isChecked());
+
+        if ( Conectividad()) {
+
+            if (disp_Lat1 != null && disp_Long1 != null && disp_Lat2 != null && disp_Long2 != null) {
+                if (etNombreCurso.getText() != null && etFecha.getText() != null && etHoraInicio.getText() != null) {
+                    if (box_Retraso.isChecked() && etTimeRetraso.getText() != null) {
+                        subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
+                                etHoraInicio.getText().toString(), etHoraFin.getText().toString(), etTimeRetraso.getText().toString(), box_Retraso.isChecked(), box_CheckOut.isChecked());
+
+
+                        subirDispositivo();
+                        Intent intent = new Intent(this, Tutor.class);
+                        startActivity(intent);
+                    } else if (box_Retraso.isChecked() && etTimeRetraso == null) {
+                        Toast.makeText(getApplicationContext(), " Ingrese tiempo de atraso, para continuar.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
+                                etHoraInicio.getText().toString(), etHoraFin.getText().toString(), "1000", box_Retraso.isChecked(), box_CheckOut.isChecked());
+
+                        subirDispositivo();
+                        Intent intent = new Intent(this, Tutor.class);
+                        startActivity(intent);
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), " Porfavor ingrese todos los campos obligatorios (*).", Toast.LENGTH_SHORT).show();
+                }
+
+
+            } else {
+                Toast.makeText(this, "No se pudo marcar la zona de asistencia. Revise su conexion a internet y marcar de nuevo la zona.", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Toast.makeText(this, "No dispone de conexion a internet.", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
-    public void subirFormularioCurso(String nom_evento, String tutor,String descripcion, String Fecha, String horaInicio, String horaFin, String minRetraso, Boolean Retraso){
+    public void subirFormularioCurso(String nom_evento, String tutor,String descripcion, String Fecha, String horaInicio, String horaFin, String minRetraso, Boolean Retraso, Boolean CheckOut){
         DatabaseReference subir_data = db_reference.child("Evento");
 
         Map<String, String> dataCurso = new HashMap<String, String>();
@@ -195,13 +257,9 @@ public class FormularioCurso extends AppCompatActivity {
         dataCurso.put("horaInicio",horaInicio);
         dataCurso.put("horaFin",horaFin);
         dataCurso.put("Retraso",Retraso.toString());
+        dataCurso.put("Marcar_Salida", CheckOut.toString());
+        dataCurso.put("minRetraso",minRetraso);
         dataCurso.put("tutorID",tutor);
-        if (Retraso){
-            dataCurso.put("minRetraso",minRetraso);
-        }
-        else{
-            dataCurso.put("minRetraso","0");
-        }
 
         subir_data.push().setValue(dataCurso);
     }
@@ -209,9 +267,12 @@ public class FormularioCurso extends AppCompatActivity {
     public void subirDispositivo(){
         DatabaseReference subir_data = db_reference.child("Dispositivo");
         Map<String, String> dataDispositivo = new HashMap<String, String>();
+        dataDispositivo.put("Latitud1", disp_Lat1);
+        dataDispositivo.put("Longitud1", disp_Long1);
+        dataDispositivo.put("Latitud2", disp_Lat2);
+        dataDispositivo.put("Longitud2", disp_Long2);
 
-
-
+        subir_data.push().setValue(dataDispositivo);
     }
 
     public void ubicarZona(View view){
@@ -228,6 +289,19 @@ public class FormularioCurso extends AppCompatActivity {
                 disp_Lat2 = ref_latitud;
                 disp_Long2 = ref_longitud;
             }
+        }
+    }
+
+    public boolean Conectividad (){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+            // Si hay conexión a Internet en este momento
+        } else {
+            return  false;
+            // No hay conexión a Internet en este momento
         }
     }
 

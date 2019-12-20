@@ -24,7 +24,6 @@ public class Perfil extends AppCompatActivity {
     }
 
     public void startTutor(View view){
-        System.out.println(info_user);
         Intent intent = new Intent(this, Tutor.class);
         intent.putExtra("info_user", info_user );
         startActivity(intent);
@@ -32,7 +31,6 @@ public class Perfil extends AppCompatActivity {
     }
 
     public void startAsistente(View view){
-        System.out.println(info_user);
         Intent intent = new Intent(this, Asistente.class);
         intent.putExtra("info_user", info_user );
         startActivity(intent);

@@ -158,13 +158,24 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/txt_mensaje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutCoord"
+                android:textColor="@color/colorDark"
+                android:layout_centerHorizontal="true"
+                android:textSize="18sp"
+                android:layout_marginTop="50dp"
+                android:text="@string/Select_event"/>
+
             <Spinner
                 android:id="@+id/spinner"
-                android:layout_width="210dp"
+                android:layout_width="224dp"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_below="@+id/layoutCoord"
-                android:layout_marginTop="50dp"/>
+                android:layout_below="@+id/txt_mensaje"
+                android:scrollbarSize="18sp"
+                android:layout_centerInParent="true" />
 
 
             <Button
@@ -192,7 +203,7 @@
                 android:layout_below="@+id/btn_Asistir"
                 android:textAlignment="center"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="60dp"
                 android:layout_marginBottom="80dp"
                 android:background="@color/colorBlue"
                 android:drawableRight="@android:drawable/btn_dialog"

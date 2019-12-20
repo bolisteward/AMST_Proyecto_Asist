@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     FirebaseUser user = mAuth.getCurrentUser();
                     MainActivity.this.updateUI(user);
                 } else {
+                    Toast.makeText(getApplicationContext(), "Error de inicio de sesion con firebase", Toast.LENGTH_SHORT).show();
                     System.out.println("error");
                     MainActivity.this.updateUI(null);
                 }
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
             },1000);
 
         }else {
+            Toast.makeText(getApplicationContext(),"Aun no se ha registrado en google.", Toast.LENGTH_SHORT).show();
             System.out.println("Sin registrarse");
         }
     }

@@ -5,5 +5,6 @@
     <string name="Perfil_user">Seleccione Tutor si organiza un evento, o Asistente si va a participar en uno.</string>
     <string name="Marcar_Zona">Pulse el boton \"Punto 1\" cuando se encuentre en la esquina inferior derecha del lugar del evento,
     luego pulse el boton \"Punto 2\" cuando se encuentre en la esquina superior izquierda para establecer la zona de validacion de asistencia. </string>
+    <string name="Select_event">Seleccione evento ha asistir.</string>
 
 </resources>

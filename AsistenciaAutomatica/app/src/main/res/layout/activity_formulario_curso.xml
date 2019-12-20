@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="50dp"
-                android:text="Nombre de Curso *"
+                android:hint="Nombre de Curso *"
                 android:textSize="20sp"
 
                 />
@@ -43,7 +43,7 @@
                 android:id="@+id/etDescripcion"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Descripcion"
+                android:hint="Descripcion"
                 android:textSize="20dp"
 
                 />
@@ -103,7 +103,7 @@
                         android:id="@+id/etHoraFin"
                         android:layout_width="233dp"
                         android:layout_height="50dp"
-                        android:text="Hora de Fin*"
+                        android:text="Hora de Fin"
                         android:textSize="20sp"/>
 
                     <Button
@@ -124,7 +124,7 @@
                 android:id="@+id/etTimeRetraso"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Min. tiempo de retraso (min)"
+                android:hint="Min. tiempo de retraso (min)"
                 android:textSize="20sp"
 
                 />
@@ -133,7 +133,18 @@
                 android:id="@+id/box_Retraso"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Permitir Retraso"
+                android:text="Permitir Retraso*"
+                android:layout_weight="2"
+                android:textColor="@color/colorDark"
+                android:layout_marginTop="15dp"
+                android:textSize="20sp"
+                />
+
+            <CheckBox
+                android:id="@+id/box_CheckOut"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Marcar salida"
                 android:layout_weight="2"
                 android:textColor="@color/colorDark"
                 android:layout_marginTop="15dp"
