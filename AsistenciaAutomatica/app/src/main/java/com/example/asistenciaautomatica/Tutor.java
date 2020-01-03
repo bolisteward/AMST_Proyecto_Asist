@@ -55,14 +55,15 @@ public class Tutor extends AppCompatActivity {
     public FusedLocationProviderClient mFusedLocationProviderClient;
 
     //Views
-    public TextView txt_correo , txt_cellphone, txt_nombre ;
-    public EditText txt_cedula;
+    public TextView txt_correo , txt_cellphone, txt_nombre, txt_cedula;
     DatabaseReference db_reference;
 
-    HashMap<String, String> info_user;
-
-    private ImageView img_foto;
-    private String userId;
+    Bundle info_user;
+    public Button btn_CrearEvento;
+    public ImageView img_foto;
+    public String userId;
+    public Boolean nuevoTutor;
+    public Users tutor;
 
 
     @Override
@@ -70,24 +71,14 @@ public class Tutor extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutor);
 
-        Intent intent = getIntent();
-        HashMap<String , String> info_user = (HashMap<String,String>)intent.getSerializableExtra("info_user");
-
-
         txt_correo = findViewById(R.id.txt_correo);
         txt_cellphone=findViewById(R.id.txt_phone);
         img_foto = findViewById(R.id.img_foto);
         txt_nombre = findViewById(R.id.txt_nombre);
         txt_cedula = findViewById(R.id.txt_cedula);
+        btn_CrearEvento = findViewById(R.id.btn_CrearEvento);
 
-        txt_correo.setText(info_user.get("user_email"));
-        txt_nombre.setText(info_user.get("user_name"));
-        txt_cellphone.setText(info_user.get("user_phone"));
-        userId = info_user.get("user_id");
-        String photo = info_user.get("user_photo");
-        Picasso.get().load(photo).resize(300,300).error(R.drawable.usuario).into(img_foto);
-
-        isServiceOk();
+        //isServiceOk();
         iniciarBaseDeDatos();
         leerBaseDatos();
 
@@ -98,51 +89,103 @@ public class Tutor extends AppCompatActivity {
     }
 
     public void leerBaseDatos(){
-        db_reference.child("Tutor").addValueEventListener(new ValueEventListener() {
+        DatabaseReference db_tutor = db_reference.child("Tutor");
+
+        db_tutor.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
-                    System.out.println("prueba");
-                    System.out.println(data.get("ID"));
-                    System.out.println(userId);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                nuevoTutor = true;
+                info_user = getIntent().getBundleExtra("info_user");
 
-                    if (data.get("ID")!=null && data.get("ID").equals( userId )){
-                        System.out.println("existe");
-                        System.out.println(data.get("ID"));
-                        System.out.println(userId);
-                        txt_cedula.setText(data.get("Cedula"));
-                        updateTutor(info_user.get("user_name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_cedula.getText().toString());
-                    }
-                    else {
-                        System.out.println("No existe");
-                        System.out.println(userId);
-                        Context context = getApplicationContext();
-
-                        new dialogo_cedula(Tutor.this);
-
-                        System.out.println(txt_cedula.getText().toString());
+                if (info_user!=null) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+                        System.out.println(data);
+                        if (data != null) {
+                            String userId = data.get("idUser");
+                            System.out.println(userId);
+                            System.out.println(info_user.getString("user_id"));
 
 
-                        /*
-                            System.out.println(txt_cedula);
-
-                            Toast.makeText(getApplicationContext(), "Ingrese cedula", Toast.LENGTH_SHORT).show();
-                            /*new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                }
-                            },5000);*/
-
-                        //subirTutor(info_user.get("user_name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_cedula.getText().toString());
+                            if (userId.equals(info_user.getString("user_id"))) {
+                                nuevoTutor = false;
+                                System.out.println(nuevoTutor);
+                                presentarDatos();
+                                break;
+                            }
+                            System.out.println("ok");
+                        }
                     }
                 }
+                System.out.println(nuevoTutor);
+                if (nuevoTutor){
+                    newTutor();
+                }
+                btn_CrearEvento.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Tutor.this, FormularioCurso.class);
+                        intent.putExtra("tutorID", userId);
+                        startActivity(intent);
+                    }
+                });
+
             }
             @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println(error.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error!", error.toException());
+                System.out.println(error.getMessage());
             }
         });
+    }
+
+    public void newTutor() {
+        info_user = getIntent().getBundleExtra("info_user");
+        if (info_user != null) {
+            txt_nombre.setText(info_user.getString("user_name"));
+            txt_cellphone.setText(info_user.getString("user_phone"));
+            txt_correo.setText(info_user.getString("user_email"));
+            userId = info_user.getString("user_id");
+            String photo = info_user.getString("user_photo");
+            Picasso.get().load(photo).resize(300, 300).error(R.drawable.usuario).into(img_foto);
+
+
+            tutor = new Users(info_user.getString("user_name"), info_user.getString("user_email"), info_user.getString("user_phone"), info_user.getString("user_id"));
+
+            DatabaseReference db_upload = db_reference.child("Tutor");
+
+            db_upload.child(userId).setValue(tutor);
+
+            createCustomDialog().show();
+        }
+    }
+    public void presentarDatos(){
+        info_user = getIntent().getBundleExtra("info_user");
+
+        if (info_user != null) {
+            userId = info_user.getString("user_id");
+            String photo = info_user.getString("user_photo");
+            Picasso.get().load(photo).resize(300, 300).error(R.drawable.usuario).into(img_foto);
+        }
+        DatabaseReference db_asist = db_reference.child("Asistente").child(userId);
+        db_asist.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Users usr = dataSnapshot.getValue(Users.class);
+                if (usr!=null) {
+                    txt_nombre.setText(usr.getNombre());
+                    txt_correo.setText(usr.getCorreo());
+                    txt_cellphone.setText(usr.getTelefono());
+                    txt_cedula.setText(usr.getMatricula());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error!", databaseError.toException());
+            }
+        });
+
     }
 
     /**
@@ -151,61 +194,45 @@ public class Tutor extends AppCompatActivity {
      *
      * @return Diálogo
      */
-    public AlertDialog createAlertDialogo() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(Tutor.this);
-
-        LayoutInflater inflater = Tutor.this.getLayoutInflater();
-
-        View v = inflater.inflate(R.layout.cedula, null);
-
+    public AlertDialog createCustomDialog() {
+        final AlertDialog alertDialog;
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Get the layout inflater
+        LayoutInflater inflater = getLayoutInflater();
+        // Inflar y establecer el layout para el dialogo
+        // Pasar nulo como vista principal porque va en el diseño del diálogo
+        View v = inflater.inflate(R.layout.matricula, null);
+        //builder.setView(inflater.inflate(R.layout.dialog_signin, null))
+        EditText edtMatricula = v.findViewById(R.id.edtMatricula);
+        Button btn_aceptar = v.findViewById(R.id.btn_aceptar);
         builder.setView(v);
-
-        Button aceptar = v.findViewById(R.id.btn_cedula);
-        EditText cedula = v.findViewById(R.id.edit_cedula);
-
-        aceptar.setOnClickListener(
+        alertDialog = builder.create();
+        // Add action buttons
+        btn_aceptar.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Crear Cuenta...
-                        txt_cedula.setText(cedula.getText().toString());
+
+                        txt_cedula.setText(edtMatricula.getText().toString());
+                        //System.out.println("el numero de matricula es "+edtMatricula.getText().toString());
+                        //System.out.println(userId);
+
+                        DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Tutor").child(userId);
+                        db_upload.child("cedula").setValue(edtMatricula.getText().toString());
+
+                        alertDialog.dismiss();
                     }
                 }
+
         );
-
-        return builder.create();
+        return alertDialog;
     }
 
-    public void updateTutor(String nombre, String phone, String remoteID, String correo, String cedula) {
-
-        DatabaseReference subir_data = db_reference.child("Asistente").child(remoteID);
-        subir_data.child(remoteID).child("Nombre").setValue(nombre);
-        subir_data.child(remoteID).child("Correo").setValue(correo);
-        subir_data.child(remoteID).child("Telefono").setValue(phone);
-        subir_data.child(remoteID).child("Cedula").setValue(cedula);
-
-    }
-
-    public void subirTutor(String nombre, String phone, String userID, String correo, String cedula) {
-
-        DatabaseReference subir_data = db_reference.child("Asistente");
-
-        Map<String, String> dataUser = new HashMap<String, String>();
-        dataUser.put("Nombre", nombre);
-        dataUser.put("Correo", correo);
-        dataUser.put("Telefono", phone);
-        dataUser.put("ID",userID);
-        dataUser.put("Cedula", cedula);
-        subir_data.push().setValue(dataUser);
-
-    }
 
     public void irRegistros(View view){
         Intent intent = new Intent(this, Lista_Asistencia.class);
         startActivity(intent);
     }
-
 
     public void cerrarSesion(View view){
         FirebaseAuth.getInstance().signOut();
@@ -215,11 +242,7 @@ public class Tutor extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void crearEvento (View view){
-        Intent intent = new Intent(this, FormularioCurso.class);
-        intent.putExtra("tutorID", userId);
-        startActivity(intent);
-    }
+
 
     public boolean isServiceOk(){
         Log.d(TAG, "isServiceOk: checking google service version");

@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.io.ObjectStreamException;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -107,28 +108,28 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         if (user != null){
 
-            HashMap<String, String> info_user = new HashMap<String, String>();
-            info_user.put("user_name", user.getDisplayName());
-            info_user.put("user_email", user.getEmail());
-            info_user.put("user_photo", String.valueOf(user.getPhotoUrl()));
-            info_user.put("user_id", user.getUid());
+            Bundle info_user = new Bundle();
+
+            info_user.putString("user_name", user.getDisplayName());
+            info_user.putString("user_email", user.getEmail());
+            info_user.putString("user_photo", String.valueOf(user.getPhotoUrl()));
+            info_user.putString("user_id", user.getUid());
+
             if (user.getPhoneNumber() !=null){
-                info_user.put("user_phone", user.getPhoneNumber());
+                info_user.putString("user_phone", user.getPhoneNumber());
+                //usuario = new Users(user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), String.valueOf(user.getPhotoUrl()), user.getUid());
                 System.out.println("Si tiene numero celular");
             }else {
-                info_user.put("user_phone", "Sin numero");
+                info_user.putString("user_phone", "Sin numero");
+
                 System.out.println("Sin numero");
             }
 
             finish();
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run() {
-                    Intent intent = new Intent(MainActivity.this, Perfil.class);
-                    intent.putExtra("info_user", info_user);
-                    startActivity(intent);
-                }
-            },1000);
+
+            Intent intent = new Intent(MainActivity.this, Perfil.class);
+            intent.putExtra("info_user", info_user);
+            startActivity(intent);
 
         }else {
             Toast.makeText(getApplicationContext(),"Aun no se ha registrado en google.", Toast.LENGTH_SHORT).show();

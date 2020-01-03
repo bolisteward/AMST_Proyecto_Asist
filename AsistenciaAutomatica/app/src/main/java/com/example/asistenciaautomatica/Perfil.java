@@ -1,9 +1,11 @@
 package com.example.asistenciaautomatica;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.squareup.picasso.Picasso;
@@ -11,16 +13,15 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 
 public class Perfil extends AppCompatActivity {
-
-    HashMap<String, String> info_user;
+    private static final String TAG = "Perfil";
+    Bundle info_user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
 
-        Intent intent = getIntent();
-        info_user = (HashMap<String, String>)intent.getSerializableExtra("info_user");
+        info_user = getIntent().getBundleExtra("info_user");
     }
 
     public void startTutor(View view){

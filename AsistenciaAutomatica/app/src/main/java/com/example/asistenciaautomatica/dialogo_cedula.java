@@ -13,26 +13,45 @@ import android.widget.EditText;
 
 public class dialogo_cedula {
 
-    public dialogo_cedula(Context contexto){
+
+    public interface finalizaCuadroDialogo{
+        void ResultadoCuadroDialogo(String peso);
+    }
+
+
+    private finalizaCuadroDialogo interfaz;
+
+
+
+    public dialogo_cedula(Context contexto, finalizaCuadroDialogo actividad){
+
+        interfaz = actividad;
+
 
         final Dialog dialogo = new Dialog(contexto);
-        dialogo.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogo.setCancelable(false);
-        dialogo.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialogo.setContentView(R.layout.cedula);
 
-        final EditText edit_cedula = (EditText) dialogo.findViewById(R.id.edit_cedula);
-        Button aceptar = dialogo.findViewById(R.id.btn_cedula);
-        edit_cedula.setInputType(InputType.TYPE_CLASS_NUMBER);
+        try {
+            dialogo.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialogo.setCancelable(false);
+            dialogo.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialogo.setContentView(R.layout.matricula);
 
-        aceptar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogo.dismiss();
-            }
-        });
+            final EditText edtMatricula = (EditText) dialogo.findViewById(R.id.edtMatricula);
+            Button btn_aceptar = dialogo.findViewById(R.id.btn_aceptar);
+            edtMatricula.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-        dialogo.show();
+            btn_aceptar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    interfaz.ResultadoCuadroDialogo(edtMatricula.getText().toString());
+                    dialogo.dismiss();
+                }
+            });
+
+            dialogo.show();
+        }catch (NullPointerException npe){
+            System.out.println(npe.getMessage());
+        }
 
     }
 }

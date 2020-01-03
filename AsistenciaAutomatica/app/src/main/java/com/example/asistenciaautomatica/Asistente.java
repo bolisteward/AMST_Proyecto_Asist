@@ -6,16 +6,23 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -44,14 +51,19 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Array;
+import java.sql.Time;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class Asistente extends AppCompatActivity {
+import static java.security.AccessController.getContext;
+
+public class Asistente extends AppCompatActivity{
     private static final String TAG = "Asistente";
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
@@ -64,12 +76,16 @@ public class Asistente extends AppCompatActivity {
     public FusedLocationProviderClient mFusedLocationProviderClient;
 
     //views
-    HashMap<String, String> info_user;
-    public TextView txt_nombre, txt_correo, txt_phone,  txt_Latitud, txt_Longitud;
+    Bundle info_user;
+    Button btn_Asistir;
+    public TextView txt_nombre, txt_correo, txt_phone,  txt_Latitud, txt_Longitud, txt_matricula;
     public ImageView img_foto;
-    public String userId, disp_Lat1, disp_Long1, disp_Lat2, disp_Long2, name_evento;
+    public String userId, disp_Lat1, disp_Long1, disp_Lat2, disp_Long2, name_evento, numMatricula;
+    public String asistenteLat, asistenteLong, idEvento, horaActual;
     public Spinner spinner;
-    public ArrayList<String> eventos;
+    public Boolean nuevoAsist;
+    public List<String> eventos;
+    public Users asistente;
 
     DatabaseReference db_reference;
 
@@ -83,77 +99,113 @@ public class Asistente extends AppCompatActivity {
         txt_nombre = findViewById(R.id.txt_nombre);
         txt_correo = findViewById(R.id.txt_correo);
         txt_phone = findViewById(R.id.txt_phone);
+        txt_matricula = findViewById(R.id.txt_matricula);
         img_foto = findViewById(R.id.img_foto);
         spinner = findViewById(R.id.spinner);
+        btn_Asistir = findViewById(R.id.btn_Asistir);
 
-        eventos = new ArrayList<>();
-
-
-        Intent intent = getIntent();
-        info_user = (HashMap<String, String>) intent.getSerializableExtra("info_user");
-
-        txt_nombre.setText(info_user.get("user_name"));
-        txt_phone.setText(info_user.get("user_phone"));
-        txt_correo.setText(info_user.get("user_email"));
-        userId = info_user.get("user_id");
-        String photo = info_user.get("user_photo");
-        Picasso.get().load(photo).resize(300,300).error(R.drawable.usuario).into(img_foto);
-
-        if (isServiceOk()){
-            getLocationPermission();
-        }
 
         iniciarBaseDeDatos();
-        leerEventos();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_spinner_item, eventos);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
-        spinner.setAdapter(adapter);
-        //spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, eventos));
-
-        System.out.println(name_evento);
-
-        AdapterView.OnItemSelectedListener countrySelectedListener = new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> spinner, View container,
-                                       int position, long id) {
-                System.out.println("habil");
-                System.out.println(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
-            }
-        };
-        spinner.setOnItemSelectedListener(countrySelectedListener);
-
         leerBaseDatos();
 
-
-        System.out.println(name_evento);
-
-        if (name_evento!=null){
-            System.out.println(name_evento);
-            leerDispositivo(name_evento);
-        }
+        leerEventos();
+        Asistir();
 
     }
 
-/*
-    @Override
-    public void onNothingSelected(AdapterView<?> parent){    }
+    public void newAsist() {
+        info_user = getIntent().getBundleExtra("info_user");
+        if (info_user != null) {
+            txt_nombre.setText(info_user.getString("user_name"));
+            txt_phone.setText(info_user.getString("user_phone"));
+            txt_correo.setText(info_user.getString("user_email"));
+            userId = info_user.getString("user_id");
+            String photo = info_user.getString("user_photo");
+            Picasso.get().load(photo).resize(300, 300).error(R.drawable.usuario).into(img_foto);
 
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id)
-    {
-        spinner.setSelection(pos);
-        name_evento = adapterView.getItemAtPosition(pos).toString();
-        System.out.println(name_evento);
-        Toast.makeText(getApplicationContext(), name_evento, Toast.LENGTH_SHORT).show();
-    }*/
+
+            asistente = new Users(info_user.getString("user_name"), info_user.getString("user_email"), info_user.getString("user_phone"), info_user.getString("user_id"));
+
+            DatabaseReference db_upload = db_reference.child("Asistente");
+
+            db_upload.child(userId).setValue(asistente);
+
+            if (isServiceOk()) {
+                getLocationPermission();
+
+            }
+            createCustomDialog().show();
+        }
+    }
+
+    public AlertDialog createCustomDialog() {
+        final AlertDialog alertDialog;
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Get the layout inflater
+        LayoutInflater inflater = getLayoutInflater();
+        // Inflar y establecer el layout para el dialogo
+        // Pasar nulo como vista principal porque va en el diseño del diálogo
+        View v = inflater.inflate(R.layout.matricula, null);
+        //builder.setView(inflater.inflate(R.layout.dialog_signin, null))
+        EditText edtMatricula = v.findViewById(R.id.edtMatricula);
+        Button btn_aceptar = v.findViewById(R.id.btn_aceptar);
+        builder.setView(v);
+        alertDialog = builder.create();
+        // Add action buttons
+        btn_aceptar.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        txt_matricula.setText(edtMatricula.getText().toString());
+                        //System.out.println("el numero de matricula es "+edtMatricula.getText().toString());
+                        //System.out.println(userId);
+
+                        DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Asistente").child(userId);
+                        db_upload.child("matricula").setValue(edtMatricula.getText().toString());
+
+                        alertDialog.dismiss();
+                    }
+                }
+
+        );
+        return alertDialog;
+    }
+
+    public void presentarDatos(){
+        info_user = getIntent().getBundleExtra("info_user");
+
+        if (info_user != null) {
+            userId = info_user.getString("user_id");
+            String photo = info_user.getString("user_photo");
+            Picasso.get().load(photo).resize(300, 300).error(R.drawable.usuario).into(img_foto);
+
+            if (isServiceOk()) {
+                getLocationPermission();
+            }
+        }
+        DatabaseReference db_asist = db_reference.child("Asistente").child(userId);
+        db_asist.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Users usr = dataSnapshot.getValue(Users.class);
+                if (usr!=null) {
+                    txt_nombre.setText(usr.getNombre());
+                    txt_correo.setText(usr.getCorreo());
+                    txt_phone.setText(usr.getTelefono());
+                    txt_matricula.setText(usr.getMatricula());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error!", databaseError.toException());
+            }
+        });
+
+    }
+
+
 
     public void cerrarSesion(View view) {
         FirebaseAuth.getInstance().signOut();
@@ -168,27 +220,43 @@ public class Asistente extends AppCompatActivity {
     }
 
     public void leerBaseDatos(){
-        db_reference.child("Asistente").child(userId).addValueEventListener(new ValueEventListener() {
+        DatabaseReference asistente = db_reference.child("Asistente");
+
+        asistente.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
-                    if (data.get("ID").equals(userId)){
-                        updateAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                nuevoAsist = true;
+                info_user = getIntent().getBundleExtra("info_user");
+
+                if (info_user!=null) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+
+                        if (data != null) {
+                            String userId = data.get("idUser");
+
+                            if (userId.equals(info_user.getString("user_id"))) {
+                                nuevoAsist = false;
+                                presentarDatos();
+
+                                break;
+                            }
+                        }
                     }
-                    else{
-                        subirAsistente(info_user.get("user-name"), info_user.get("user_phone"), userId, info_user.get("user_email"), txt_Latitud.getText().toString(), txt_Longitud.getText().toString());
-                    }
+                }
+                if (nuevoAsist){
+                    newAsist();
                 }
             }
             @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println(error.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error!", error.toException());
+                System.out.println(error.getMessage());
             }
         });
     }
 
-    public void updateAsistente(String nombre, String phone, String remoteID, String correo, String lat, String lon) {
+    public void updateAsistente(String nombre, String phone, String remoteID, String correo, String lat, String lon, String asistId) {
 
         DatabaseReference subir_data = db_reference.child("Asistente").child(remoteID);
         subir_data.child(remoteID).child("Nombre").setValue(nombre);
@@ -214,114 +282,224 @@ public class Asistente extends AppCompatActivity {
         subir_data.push().setValue(dataUser);
     }
 
-    public void Asistir (View view){
-        if (name_evento!=null) {
-            subirAsistencia(userId);
-        }else{
-            Toast.makeText(this, "Escoja el evento/curso primero",Toast.LENGTH_SHORT).show();
-        }
-    }
+    public void Asistir(){
+        btn_Asistir.setOnClickListener(new View.OnClickListener() {
 
-    public void subirAsistencia(String userID) {
-        String identifacion = userID;
-        boolean[] verifica = verifica_Asistencia();
-        boolean present = verifica[0];
-        boolean atraso = verifica[1];
-        DatabaseReference subir_data = db_reference.child("Asistencias").child(userID);
-        subir_data.setValue(identifacion);
-        subir_data.child(identifacion).child("Asistencia").setValue(present);
-        subir_data.child(identifacion).child("Retraso").setValue(atraso);
-        System.out.println("Data Asistente subido");
-    }
-
-    public boolean[] verifica_Asistencia (){
-        boolean presente =false;
-        boolean retraso = false;
-        Double user_lat = Double.valueOf(txt_Latitud.getText().toString());
-        Double user_long = Double.valueOf(txt_Longitud.getText().toString());
-
-        if (Double.valueOf(disp_Lat1) >= Double.valueOf(disp_Lat2)) {
-            if (((user_lat <= Double.valueOf(disp_Lat1) ) && (user_lat >= Double.valueOf(disp_Lat2)))&&((user_long >= Double.valueOf(disp_Long1) ) && (user_long <= Double.valueOf(disp_Long2)))) {
-                presente = true;
-            }
-            if (!presente) {
-                Toast.makeText(getApplicationContext(), "Se encuentra fuera del rango", Toast.LENGTH_SHORT).show();
-            }
-        }
-        if (Double.valueOf(disp_Lat1) <= Double.valueOf(disp_Lat2)) {
-            if (((user_lat >= Double.valueOf(disp_Lat2) ) && (user_lat <= Double.valueOf(disp_Lat1)))&&((user_long <= Double.valueOf(disp_Long2) ) && (user_long >= Double.valueOf(disp_Long1)))) {
-                presente = true;
-            }
-            if (!presente) {
-                Toast.makeText(getApplicationContext(), "Se encuentra fuera del rango", Toast.LENGTH_SHORT).show();
-            }
-        }
-        boolean verifica[] = {presente, retraso};
-        return verifica;
-    }
-
-    public void leerDispositivo(String curso){
-        db_reference.child("Dispositivo").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onClick(View v) {
+                Date date = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+                DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                String time = hourFormat.format(date);
+                horaActual = time;
+                String[] fecha_actual = dateFormat.format(date).split("/");
+                String[] hora_actual = time.split(":");
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
-                    if (data.get("Evento").equals( curso )) {
-                        disp_Lat1 = data.get("Latitud1");
-                        disp_Long1 = data.get("Longitud1");
-                        disp_Lat2 = data.get("Latitud2");
-                        disp_Long2 = data.get("Longitud2");
-                    }
+                System.out.println("Asistir");
+
+                DatabaseReference db_eventoAsistir = db_reference.child("Evento");
+
+                if (name_evento!=null && !name_evento.equals("Seleccione un Evento")) {
+                    db_eventoAsistir.addValueEventListener(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            HashMap<String, String> info_evento = null;
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                                HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+                                if (data!= null && data.get("Nom_evento").equals(name_evento)) {
+                                    info_evento = data;
+                                    idEvento = snapshot.getKey();
+                                    break;
+                                }
+                            }
+
+                            if (info_evento!= null){
+                                String[] fecha_evento = info_evento.get("Fecha").split("/");
+                                String[] hora_evento = info_evento.get("horaInicio").split(":");
+                                String[] hora_finEvento = info_evento.get("horaFin").split(":");
+                                int minRetrado = Integer.parseInt(info_evento.get("minRetraso"));
+                                Boolean retraso = Boolean.parseBoolean(info_evento.get("Retraso"));
+                                System.out.println(info_evento);
+
+                                if (fecha_evento[0].equals(fecha_actual[0]) && fecha_evento[1].equals(fecha_actual[1]) && fecha_evento[2].equals(fecha_actual[2])){
+                                    System.out.println("ok");
+                                    if (retraso) {
+                                        if (Integer.parseInt(hora_actual[0]) == Integer.parseInt(hora_evento[0]) && Integer.parseInt(hora_actual[1]) <= (Integer.parseInt(hora_evento[1]) + minRetrado)
+                                                && Integer.parseInt(hora_actual[1]) >= Integer.parseInt(hora_evento[1])) {
+                                            System.out.println("ok");
+                                            subirAsistencia(false);
+                                        } else if (Integer.parseInt(hora_actual[0]) == Integer.parseInt(hora_evento[0]) && Integer.parseInt(hora_actual[1]) >= (Integer.parseInt(hora_evento[1]) + minRetrado)) {
+                                            System.out.println("ok");
+                                            subirAsistencia(true);
+                                        } else {
+                                            Toast.makeText(Asistente.this, "Aun no empieza el evento o excedio el tiempo permitido para asistir al evento. \n Contactese al tutor o administrador del " +
+                                                    "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }else{
+                                        if (Integer.parseInt(hora_actual[0]) >= Integer.parseInt(hora_evento[0]) && Integer.parseInt(hora_actual[1]) >= Integer.parseInt(hora_evento[1])) {
+                                            if (Integer.parseInt(hora_actual[0]) <= Integer.parseInt(hora_finEvento[0]) && Integer.parseInt(hora_actual[1]) <= Integer.parseInt(hora_finEvento[1])) {
+                                                System.out.println("ok");
+                                                subirAsistencia(false);
+                                            }
+                                        } else {
+                                            Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. \n Contactese con al tutor o administrador del " +
+                                                    "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                }else{
+                                    Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. Contactese con al tutor o administrador del " +
+                                            "evento para mayor informacion.", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e(TAG, "Error!", databaseError.toException());
+                        }
+                    });
+                }else{
+                    Toast.makeText(Asistente.this, "Escoja el evento/curso primero",Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println(error.toException());
-            }
         });
+    }
+
+    public void subirAsistencia(Boolean atrasado) {
+        boolean present = verifica_Asistencia();
+        boolean atraso = atrasado;
+        DatabaseReference db_listaAsistencia = db_reference.child("Asistencias");
+        DatabaseReference db_dataAsistente = db_reference.child("Asistente").child(userId).child("listEventos");
+        db_dataAsistente.child(idEvento).setValue(name_evento);
+        System.out.println(present+"-"+atrasado);
+
+        if (atraso) {
+            Lista lista = new Lista(userId, horaActual, "Atrasado", idEvento);
+            db_listaAsistencia.push().setValue(lista);
+            Toast.makeText(Asistente.this, "Asistencia marcada como: Atrasado", Toast.LENGTH_SHORT).show();
+        }else{
+            Lista lista = new Lista(userId, horaActual, "Presente", idEvento);
+            db_listaAsistencia.push().setValue(lista);
+            Toast.makeText(Asistente.this, "Asistencia marcada como: Presente", Toast.LENGTH_SHORT).show();
+        }
+        System.out.println("Data Asistente subido");
+
+    }
+
+    public boolean verifica_Asistencia (){
+        boolean presente =false;
+        Double user_lat = Double.valueOf(txt_Latitud.getText().toString());
+        Double user_long = Double.valueOf(txt_Longitud.getText().toString());
+        Double Dps_Lat1 = Double.valueOf(disp_Lat1);
+        Double Dps_Lat2 = Double.valueOf(disp_Lat2);
+        Double Dps_Long1 = Double.valueOf(disp_Long1);
+        Double Dps_Long2 = Double.valueOf(disp_Long2);
+
+        if (Dps_Lat1 >=Dps_Lat2) {
+            if ((Dps_Long1>=Dps_Long2) && (user_lat<=Dps_Lat1) && (user_lat>=Dps_Lat2) && (user_long<=Dps_Long1) && (user_long >=Dps_Long2)){
+                presente = true;
+            }
+            if ((Dps_Long1<=Dps_Long2) && (user_lat<=Dps_Lat1) && (user_lat>=Dps_Lat2) && (user_long>=Dps_Long1) && (user_long <=Dps_Long2)) {
+                presente = true;
+            }
+            if (!presente) {
+                Toast.makeText(getApplicationContext(), "Se encuentra fuera del rango", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (Dps_Lat1 <=Dps_Lat2) {
+            if ((Dps_Long1>=Dps_Long2) && (user_lat>=Dps_Lat1) && (user_lat<=Dps_Lat2) && (user_long<=Dps_Long1) && (user_long >=Dps_Long2)){
+                presente = true;
+            }
+            if ((Dps_Long1<=Dps_Long2) && (user_lat>=Dps_Lat1) && (user_lat<=Dps_Lat2) && (user_long>=Dps_Long1) && (user_long <=Dps_Long2)) {
+                presente = true;
+            }
+            if (!presente) {
+                Toast.makeText(getApplicationContext(), "Se encuentra fuera del rango", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        return presente;
     }
 
     public void leerEventos(){
-        db_reference.child("Evento").addValueEventListener(new ValueEventListener() {
+        DatabaseReference db_evento = db_reference.child("Evento");
+
+        db_evento.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                eventos.add("Selecciones un Evento");
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                eventos = new ArrayList<String>();
+                eventos.add("Seleccione un Evento");
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
                     HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
-                    eventos.add(data.get("Nom_evento"));
+
+                    if (data!= null) {
+                        eventos.add(data.get("Nom_evento"));
+                    }
                 }
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_spinner_item, eventos);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item );
+                spinner.setAdapter(adapter);
+
+                AdapterView.OnItemSelectedListener eventSelected = new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> spinner, View container, int position, long id) {
+                        name_evento = spinner.getItemAtPosition(position).toString();
+                        if (position!=0) {
+                            Toast.makeText(Asistente.this,"Ha seleccionado el evento: " + name_evento, Toast.LENGTH_SHORT).show();
+                            leerDispositivo(name_evento);
+                        }
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+                    }
+                };
+                spinner.setOnItemSelectedListener(eventSelected);
+
             }
             @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println(error.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error!", error.toException());
             }
         });
     }
 
-
-    /*
-    public void leerDispositivo(){
-        db_reference.child("Dispositivo").addValueEventListener(new ValueEventListener() {
+    public void leerDispositivo(String curso){
+        DatabaseReference db_dispositivo = db_reference.child("Dispositivo");
+        db_dispositivo.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    HashMap<String, String> data = (HashMap<String, String>) dataSnapshot.getChildren();
-                    Lattitud_1 = data.get("Latitud1");
-                    Longitud_1 = data.get("Longitud1");
-
-                    Lattitud_2 = data.get("Latitud2");
-                    Longitud_2 = data.get("Longitud2");
-
+                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+                    if (data!=null) {
+                        if (data.get("Evento").equals(curso)) {
+                            disp_Lat1 = data.get("Latitud1");
+                            disp_Long1 = data.get("Longitud1");
+                            disp_Lat2 = data.get("Latitud2");
+                            disp_Long2 = data.get("Longitud2");
+                            break;
+                        }
+                    }
                 }
+                Asistir();
             }
             @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println(error.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error!", error.toException());
+                System.out.println(error.getMessage());
             }
         });
-    }*/
+    }
 
     public boolean isServiceOk(){
         Log.d(TAG, "isServiceOk: checking google service version");
@@ -330,6 +508,7 @@ public class Asistente extends AppCompatActivity {
 
         if (available == ConnectionResult.SUCCESS){
             //Everything is fine and the user can make map request
+            Log.d(TAG, "isServiceOk: verything is fine and the user can make map request");
             return true;
         } else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
             //an error ocured but we can resolt it
@@ -355,15 +534,20 @@ public class Asistente extends AppCompatActivity {
             if(mLocationPermissionGaranted){
 
                 final Task location = mFusedLocationProviderClient.getLastLocation();
+
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()){
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
-
-                            txt_Latitud.setText(Double.toString(currentLocation.getLatitude()));
-                            txt_Longitud.setText(Double.toString(currentLocation.getLongitude()));
+                            if (currentLocation !=null) {
+                                txt_Latitud.setText(String.valueOf(currentLocation.getLatitude()));
+                                txt_Longitud.setText(String.valueOf(currentLocation.getLongitude()));
+                                DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Asistente").child(userId);
+                                db_upload.child("asistLat").setValue(String.valueOf(currentLocation.getLatitude()));
+                                db_upload.child("asistLong").setValue(String.valueOf(currentLocation.getLongitude()));
+                            }
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
@@ -375,6 +559,7 @@ public class Asistente extends AppCompatActivity {
         }catch (SecurityException e){
             Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage() );
         }
+
     }
 
     /*

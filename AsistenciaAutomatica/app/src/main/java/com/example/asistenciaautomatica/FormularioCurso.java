@@ -69,7 +69,7 @@ public class FormularioCurso extends AppCompatActivity {
     public CheckBox box_Retraso, box_CheckOut;
 
     //variables grobales
-    private  int year,mes,dia,horas,minutos ;
+    private  int year,mes,dia,horas,minutos, horaFin, minFin ;
 
 
 
@@ -95,9 +95,10 @@ public class FormularioCurso extends AppCompatActivity {
         btn_Guardar = findViewById(R.id.btn_Guardar);
         tutorID = getIntent().getStringExtra("tutorID");
 
+        /*
         if(isServiceOk()){
             getLocationPermission();
-        }
+        }*/
 
         btn_Fecha.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,11 +156,11 @@ public class FormularioCurso extends AppCompatActivity {
                 // lo mismo que el anterior se establece la hora actual
                 final Calendar c = Calendar.getInstance();
 
-                horas=c.get(Calendar.HOUR_OF_DAY);
-                minutos=c.get(Calendar.MINUTE);
+                horaFin=c.get(Calendar.HOUR_OF_DAY);
+                minFin=c.get(Calendar.MINUTE);
 
                 // creamos el DialogTimePicker
-                TimePickerDialog ponerhora= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
+                TimePickerDialog ponerhoraFin= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
@@ -169,10 +170,10 @@ public class FormularioCurso extends AppCompatActivity {
 
                         etHoraFin.setText(horaFinal);
                     }
-                },horas,minutos,true);
+                },horaFin,minFin,true);
 
                 //mostramos el elemento Timer como una ventana de dialogo
-                ponerhora.show();
+                ponerhoraFin.show();
             }
         });
 
@@ -189,7 +190,8 @@ public class FormularioCurso extends AppCompatActivity {
         int horaF = Integer.valueOf(TiempoFinal[0]);
         int minuteF = Integer.valueOf(TiempoFinal[1]);
 
-
+        System.out.println(TiempoInicial);
+        System.out.println(TiempoFinal);
         while (horaI >= horaF){
             Toast.makeText(getApplicationContext(), "La Hora de finalizacion no puede ser menor a la Hora de Inicio.", Toast.LENGTH_SHORT).show();
 
