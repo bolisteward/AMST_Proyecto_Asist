@@ -78,9 +78,10 @@ public class Tutor extends AppCompatActivity {
         txt_cedula = findViewById(R.id.txt_cedula);
         btn_CrearEvento = findViewById(R.id.btn_CrearEvento);
 
-        //isServiceOk();
-        iniciarBaseDeDatos();
-        leerBaseDatos();
+        if (isServiceOk()) {
+            iniciarBaseDeDatos();
+            leerBaseDatos();
+        }
 
     }
     public void iniciarBaseDeDatos(){
@@ -102,7 +103,7 @@ public class Tutor extends AppCompatActivity {
                         HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
                         System.out.println(data);
                         if (data != null) {
-                            String userId = data.get("idUser");
+                            userId = data.get("idUser");
                             System.out.println(userId);
                             System.out.println(info_user.getString("user_id"));
 
@@ -118,6 +119,7 @@ public class Tutor extends AppCompatActivity {
                     }
                 }
                 System.out.println(nuevoTutor);
+                System.out.println(userId);
                 if (nuevoTutor){
                     newTutor();
                 }
@@ -167,7 +169,7 @@ public class Tutor extends AppCompatActivity {
             String photo = info_user.getString("user_photo");
             Picasso.get().load(photo).resize(300, 300).error(R.drawable.usuario).into(img_foto);
         }
-        DatabaseReference db_asist = db_reference.child("Asistente").child(userId);
+        DatabaseReference db_asist = db_reference.child("Tutor").child(userId);
         db_asist.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -218,7 +220,7 @@ public class Tutor extends AppCompatActivity {
                         //System.out.println(userId);
 
                         DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Tutor").child(userId);
-                        db_upload.child("cedula").setValue(edtMatricula.getText().toString());
+                        db_upload.child("matricula").setValue(edtMatricula.getText().toString());
 
                         alertDialog.dismiss();
                     }

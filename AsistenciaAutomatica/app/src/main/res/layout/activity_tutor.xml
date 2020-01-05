@@ -34,6 +34,7 @@
                 android:layout_below="@id/txt_nombre"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="40dp"
+                android:textSize="18sp"
                 android:text="Cedula: "
                 android:textColor="@color/colorDark"/>
 

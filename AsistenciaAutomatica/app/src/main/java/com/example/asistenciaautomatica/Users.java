@@ -18,8 +18,6 @@ public class Users {
         this.nombre = nombre;
         this.correo = correo;
         this.telefono = telefono;
-        this.latitud = latitud;
-        this.longitud = longitud;
         this.idUser = idUser;
     }
     public Users(String nombre, String correo, String telefono, String latitud, String longitud, String idUser) {

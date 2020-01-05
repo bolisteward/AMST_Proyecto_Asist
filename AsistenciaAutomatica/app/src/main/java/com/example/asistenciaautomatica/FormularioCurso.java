@@ -18,6 +18,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -39,9 +41,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.security.PublicKey;
+import java.text.DateFormat;
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class FormularioCurso extends AppCompatActivity {
@@ -57,7 +64,6 @@ public class FormularioCurso extends AppCompatActivity {
     private boolean mLocationPermissionGaranted = false;
     public FusedLocationProviderClient mFusedLocationProviderClient;
     public String disp_Lat1, disp_Long1, disp_Lat2, disp_Long2;
-    public String ref_latitud, ref_longitud; //variables de referencia para guiar los datos a sus respectivas variables.
     public String tutorID;
     DatabaseReference db_reference;
 
@@ -67,9 +73,10 @@ public class FormularioCurso extends AppCompatActivity {
     public TextView  etFecha, etHoraInicio, etHoraFin;
     public Button btn_Fecha, btn_HoraInicio, btn_HoraFin;
     public CheckBox box_Retraso, box_CheckOut;
+    public HashMap<String,String> eventos = new HashMap<>();
 
     //variables grobales
-    private  int year,mes,dia,horas,minutos, horaFin, minFin ;
+    private  int anio,mes,dia,horas,minutos, horaFin, minFin, numDispositivo;
 
 
 
@@ -95,90 +102,132 @@ public class FormularioCurso extends AppCompatActivity {
         btn_Guardar = findViewById(R.id.btn_Guardar);
         tutorID = getIntent().getStringExtra("tutorID");
 
-        /*
-        if(isServiceOk()){
-            getLocationPermission();
-        }*/
-
-        btn_Fecha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // se obtiene la fecha actual del sistema
-                final Calendar c = Calendar.getInstance();
-                // se captura el año el mes y el dia de la fecha actual en tres variables tipo int
-                year=c.get(Calendar.YEAR);
-                mes=c.get(Calendar.MONTH);
-                dia=c.get(Calendar.DAY_OF_MONTH);
-
-                //creamos el dialogDatePicker
-                DatePickerDialog datePicker = new DatePickerDialog(FormularioCurso.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        etFecha.setText(year+"/"+month+"/"+dayOfMonth);
-                    }
-                },year,mes,dia);
-
-                // se muestra el cuadro de dialogo
-                datePicker.show();
-
-            }
-        });
-
-
-        // colocamos el boton poner hora a la escucha
-
-        btn_HoraInicio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // lo mismo que el anterior solo que en este se establece la hora actual
-                final Calendar c = Calendar.getInstance();
-
-                horas=c.get(Calendar.HOUR_OF_DAY);
-                minutos=c.get(Calendar.MINUTE);
-
-                // creamos el DialogTimePicker
-                TimePickerDialog ponerhora= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        etHoraInicio.setText(hourOfDay+":"+minute);
-                    }
-                },horas,minutos,true);
-
-                //mostramos el elemento Timer como una ventana de dialogo
-                ponerhora.show();
-            }
-        });
-        btn_HoraFin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // lo mismo que el anterior se establece la hora actual
-                final Calendar c = Calendar.getInstance();
-
-                horaFin=c.get(Calendar.HOUR_OF_DAY);
-                minFin=c.get(Calendar.MINUTE);
-
-                // creamos el DialogTimePicker
-                TimePickerDialog ponerhoraFin= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
-                        String horaFinal = hourOfDay+":"+minute;
-
-                        CompararTiempo(etHoraInicio.getText().toString(), horaFinal);
-
-                        etHoraFin.setText(horaFinal);
-                    }
-                },horaFin,minFin,true);
-
-                //mostramos el elemento Timer como una ventana de dialogo
-                ponerhoraFin.show();
-            }
-        });
-
         iniciarBaseDeDatos();
+        leerEventos();
 
+    }
+
+    public void leerEventos(){
+        DatabaseReference db_evento = db_reference.child("Evento");
+
+        db_evento.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+
+                    if (data!= null) {
+                        eventos.put(snapshot.getKey(), data.get("Nom_evento"));
+                    }
+                }
+
+                btn_Fecha.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // se obtiene la fecha actual del sistema
+                        final Calendar c = Calendar.getInstance();
+                        // se captura el año el mes y el dia de la fecha actual en tres variables tipo int
+                        anio=c.get(Calendar.YEAR);
+                        mes=c.get(Calendar.MONTH);
+                        dia=c.get(Calendar.DAY_OF_MONTH);
+
+                        //creamos el dialogDatePicker
+                        DatePickerDialog datePicker = new DatePickerDialog(FormularioCurso.this, new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                etFecha.setText(year+"/"+(month+1)+"/"+dayOfMonth);
+                                System.out.println(year+"/"+(month+1)+"/"+dayOfMonth);
+                                System.out.println(anio+"/"+(mes)+"/"+dia);
+                            }
+                        },anio,mes,dia);
+
+                        // se muestra el cuadro de dialogo
+                        datePicker.show();
+
+                    }
+                });
+
+
+                // colocamos el boton poner hora a la escucha
+
+                btn_HoraInicio.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Date date = new Date();
+                        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                        String[] hora_actual = hourFormat.format(date).split(":");
+                        horas = Integer.valueOf(hora_actual[0]);
+                        minutos = Integer.valueOf(hora_actual[1]);
+
+                        TimePickerDialog ponerhora= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                etHoraInicio.setText(hourOfDay+":"+minute);
+                                System.out.println( hourOfDay+":"+minute);
+                                System.out.println( horas +"-"+minutos);
+                            }
+                        },horas,minutos,true);
+
+                        //mostramos el elemento Timer como una ventana de dialogo
+                        ponerhora.show();
+                    }
+                });
+                btn_HoraFin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Date date = new Date();
+                        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                        String[] hora_actual = hourFormat.format(date).split(":");
+                        horaFin = Integer.valueOf(hora_actual[0]);
+                        minFin = Integer.valueOf(hora_actual[1]);
+
+                        // creamos el DialogTimePicker
+                        TimePickerDialog ponerhoraFin= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+                                String horaFinal = hourOfDay+":"+minute;
+                                System.out.println(etHoraInicio.getText().toString());
+                                CompararTiempo(etHoraInicio.getText().toString(), horaFinal);
+
+                            }
+                        },horaFin,minFin,true);
+
+                        //mostramos el elemento Timer como una ventana de dialogo
+                        ponerhoraFin.show();
+                    }
+                });
+
+                btn_Ubicacion1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isServiceOk()) {
+                            numDispositivo =1;
+                            getLocationPermission();
+                        }
+                    }
+                });
+                btn_Ubicacion2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isServiceOk()) {
+                            numDispositivo =2;
+                            getLocationPermission();
+                        }
+                    }
+                });
+
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error!", error.toException());
+            }
+        });
     }
 
     public void CompararTiempo(String HoraInicio, String HoraFin){
@@ -186,21 +235,22 @@ public class FormularioCurso extends AppCompatActivity {
         int horaI = Integer.valueOf(TiempoInicial[0]);
         int minuteI = Integer.valueOf(TiempoInicial[1]);
 
-        String[] TiempoFinal = HoraInicio.split(":");
+        String[] TiempoFinal = HoraFin.split(":");
         int horaF = Integer.valueOf(TiempoFinal[0]);
         int minuteF = Integer.valueOf(TiempoFinal[1]);
 
-        System.out.println(TiempoInicial);
-        System.out.println(TiempoFinal);
-        while (horaI >= horaF){
-            Toast.makeText(getApplicationContext(), "La Hora de finalizacion no puede ser menor a la Hora de Inicio.", Toast.LENGTH_SHORT).show();
-
-        }
-        if (horaI == horaF){
-            while (minuteI >= minuteF){
+        System.out.println(horaI+"-"+minuteI);
+        System.out.println(horaF+"-"+minuteF);
+        if (horaF >= horaI){
+            if (horaF == horaI && minuteF<=minuteI) {
                 Toast.makeText(getApplicationContext(), "La Hora de finalizacion no puede ser menor a la Hora de Inicio.", Toast.LENGTH_SHORT).show();
             }
+            else{
+                etHoraFin.setText(HoraFin);
+            }
 
+        }else{
+            Toast.makeText(getApplicationContext(), "La Hora de finalizacion no puede ser menor a la Hora de Inicio.", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -211,41 +261,48 @@ public class FormularioCurso extends AppCompatActivity {
 
     }
 
-    public void Guardar(View view){
+    public void Guardar(){
+        btn_Guardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ( Conectividad()) {
 
-        if ( Conectividad()) {
+                    if (disp_Lat1 != null && disp_Long1 != null && disp_Lat2 != null && disp_Long2 != null) {
+                        if (etNombreCurso.getText() != null && etFecha.getText() != null && etHoraInicio.getText() != null) {
+                            if (!eventos.containsValue(etNombreCurso.getText().toString())) {
+                                if (box_Retraso.isChecked() && etTimeRetraso.getText() != null) {
+                                    subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
+                                            etHoraInicio.getText().toString(), etHoraFin.getText().toString(), etTimeRetraso.getText().toString(), box_Retraso.isChecked(), box_CheckOut.isChecked());
 
-            if (disp_Lat1 != null && disp_Long1 != null && disp_Lat2 != null && disp_Long2 != null) {
-                if (etNombreCurso.getText() != null && etFecha.getText() != null && etHoraInicio.getText() != null) {
-                    if (box_Retraso.isChecked() && etTimeRetraso.getText() != null) {
-                        subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
-                                etHoraInicio.getText().toString(), etHoraFin.getText().toString(), etTimeRetraso.getText().toString(), box_Retraso.isChecked(), box_CheckOut.isChecked());
+                                    subirDispositivo();
+                                    subirLista();
+                                    finish();
+                                } else if (box_Retraso.isChecked() && etTimeRetraso == null) {
+                                    Toast.makeText(getApplicationContext(), " Ingrese tiempo de atraso, para continuar.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
+                                            etHoraInicio.getText().toString(), etHoraFin.getText().toString(), "0", box_Retraso.isChecked(), box_CheckOut.isChecked());
+
+                                    subirDispositivo();
+                                    subirLista();
+                                    finish();
+                                }
+                            }else{
+                                Toast.makeText(getApplicationContext(), "Nombre de evento ya existe, ingrese otro nombre de evento.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), " Porfavor ingrese todos los campos obligatorios (*).", Toast.LENGTH_SHORT).show();
+                        }
 
 
-                        subirDispositivo();
-                        Intent intent = new Intent(this, Tutor.class);
-                        startActivity(intent);
-                    } else if (box_Retraso.isChecked() && etTimeRetraso == null) {
-                        Toast.makeText(getApplicationContext(), " Ingrese tiempo de atraso, para continuar.", Toast.LENGTH_SHORT).show();
                     } else {
-                        subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
-                                etHoraInicio.getText().toString(), etHoraFin.getText().toString(), "1000", box_Retraso.isChecked(), box_CheckOut.isChecked());
-
-                        subirDispositivo();
-                        Intent intent = new Intent(this, Tutor.class);
-                        startActivity(intent);
+                        Toast.makeText(FormularioCurso.this, "No se pudo marcar la zona de asistencia. Revise su conexion a internet y marcar de nuevo la zona.", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), " Porfavor ingrese todos los campos obligatorios (*).", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(FormularioCurso.this, "No dispone de conexion a internet.", Toast.LENGTH_SHORT).show();
                 }
-
-
-            } else {
-                Toast.makeText(this, "No se pudo marcar la zona de asistencia. Revise su conexion a internet y marcar de nuevo la zona.", Toast.LENGTH_SHORT).show();
             }
-        }else{
-            Toast.makeText(this, "No dispone de conexion a internet.", Toast.LENGTH_SHORT).show();
-        }
+        });
 
     }
 
@@ -266,33 +323,42 @@ public class FormularioCurso extends AppCompatActivity {
         subir_data.push().setValue(dataCurso);
     }
 
+    public void subirLista(){
+        DatabaseReference db_lista = db_reference.child("Asistencias");
+        HashMap<String, String> dataLista = new HashMap<String, String>();
+        dataLista.put("evento",etNombreCurso.getText().toString());
+        dataLista.put("fecha", etFecha.getText().toString());
+        dataLista.put("lista", "-");
+        System.out.println(etNombreCurso.getText().toString());
+        db_lista.push().setValue(dataLista);
+    }
+
     public void subirDispositivo(){
         DatabaseReference subir_data = db_reference.child("Dispositivo");
         Map<String, String> dataDispositivo = new HashMap<String, String>();
+        dataDispositivo.put("Evento", etNombreCurso.getText().toString());
         dataDispositivo.put("Latitud1", disp_Lat1);
         dataDispositivo.put("Longitud1", disp_Long1);
         dataDispositivo.put("Latitud2", disp_Lat2);
         dataDispositivo.put("Longitud2", disp_Long2);
-
         subir_data.push().setValue(dataDispositivo);
     }
-
+/*
     public void ubicarZona(View view){
         if(view.getId() == R.id.btn_Ubicacion1){
-            getDeviceLocation();
-            if (ref_latitud!=null) {
-                disp_Lat1 = ref_latitud;
-                disp_Long1 = ref_longitud;
+            if (isServiceOk()) {
+                numDispositivo =1;
+                getLocationPermission();
             }
-        }
-        if(view.getId() == R.id.btn_Ubicacion2){
-            getDeviceLocation();
-            if (ref_latitud!=null) {
-                disp_Lat2 = ref_latitud;
-                disp_Long2 = ref_longitud;
+        }else if(view.getId() == R.id.btn_Ubicacion2){
+            if (isServiceOk()) {
+                numDispositivo=2;
+                getLocationPermission();
             }
+        }else{
+            numDispositivo = 0;
         }
-    }
+    }*/
 
     public boolean Conectividad (){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -334,6 +400,7 @@ public class FormularioCurso extends AppCompatActivity {
      */
 
     public void getDeviceLocation(){
+
         Log.d(TAG, "getDeviceLocation: getting device current location");
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try{
@@ -346,9 +413,19 @@ public class FormularioCurso extends AppCompatActivity {
                         if(task.isSuccessful()){
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
-
-                            ref_latitud = Double.toString(currentLocation.getLatitude());
-                            ref_longitud = Double.toString(currentLocation.getLongitude());
+                            if (currentLocation !=null) {
+                                if (numDispositivo==1) {
+                                    disp_Lat1 = Double.toString(currentLocation.getLatitude());
+                                    disp_Long1 = Double.toString(currentLocation.getLongitude());
+                                }
+                                if (numDispositivo==2) {
+                                    disp_Lat2 = Double.toString(currentLocation.getLatitude());
+                                    disp_Long2 = Double.toString(currentLocation.getLongitude());
+                                }
+                            }
+                            System.out.println(disp_Lat1+"-"+disp_Long1);
+                            System.out.println(disp_Lat2+"-"+disp_Long2);
+                            Guardar();
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");

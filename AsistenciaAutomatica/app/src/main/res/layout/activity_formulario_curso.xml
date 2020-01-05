@@ -173,7 +173,6 @@
                 android:layout_marginStart="100dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:layout_marginTop="30dp"
-                android:onClick="ubicarZona"
                 android:text="Punto 1" />
 
             <Button
@@ -184,7 +183,6 @@
                 android:layout_marginStart="100dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:layout_marginTop="30dp"
-                android:onClick="ubicarZona"
                 android:text="Punto 2" />
 
             <Button
@@ -194,7 +192,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="100dp"
                 android:layout_marginBottom="80dp"
-                android:onClick="Guardar"
                 android:text="Guardar "
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:layout_marginTop="30dp"/>
