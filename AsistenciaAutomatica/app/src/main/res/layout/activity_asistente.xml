@@ -4,35 +4,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1DB8E"
     tools:context=".Asistente" >
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/fondo1"/>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <ImageView
-                android:id="@+id/img_foto"
+            <RelativeLayout
+                android:id="@+id/RL_foto"
                 android:layout_width="match_parent"
-                android:layout_height="167dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="110dp"
                 android:layout_marginTop="50dp"
-                />
+                android:layout_marginEnd="110dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/foto_perfil" />
+
+                <ImageView
+                    android:id="@+id/img_foto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"/>
+
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/txt_nombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/img_foto"
+                android:layout_below="@id/RL_foto"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:gravity="center"
                 android:text="@string/app_nameUser"
-                android:textColor="@color/colorDark"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
                 android:textSize="24sp" />
             <LinearLayout
                 android:id="@+id/layoutCoord"

@@ -16,12 +16,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity"/>
         <activity android:name=".Lista_Asistencia" />
         <activity android:name=".Asistente" />
         <activity android:name=".FormularioCurso" />
         <activity android:name=".Tutor" />
         <activity android:name=".Perfil" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
