@@ -233,13 +233,40 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
-
+            <Button
+                android:id="@+id/btn_salida"
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_Asistir"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:background="@color/colorBlue"
+                android:drawableRight="@android:drawable/checkbox_on_background"
+                android:text="Marcar Salida"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
+            <Button
+                android:id="@+id/btn_historial"
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_salida"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:background="@color/colorBlue"
+                android:drawableRight="@android:drawable/checkbox_on_background"
+                android:text="Historial de asistencias"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn_logout"
                 android:layout_width="210dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btn_Asistir"
+                android:layout_below="@+id/btn_historial"
                 android:textAlignment="center"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="60dp"

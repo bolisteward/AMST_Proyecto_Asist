@@ -14,12 +14,16 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +41,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Delayed;
 
@@ -45,23 +52,16 @@ public class Tutor extends AppCompatActivity {
 
     private static final String TAG = "Tutor";
     private static final int ERROR_DIALOG_REQUEST = 9001;
-
-    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-
-    //vars
-    private boolean mLocationPermissionGaranted = false;
-    public FusedLocationProviderClient mFusedLocationProviderClient;
-
     //Views
     public TextView txt_correo , txt_cellphone, txt_nombre, txt_cedula;
     DatabaseReference db_reference;
 
     Bundle info_user;
-    public Button btn_CrearEvento;
+    public Spinner spinner;
+    public List<String> eventos;
+    public Button btn_CrearEvento, btn_verRegistros, btn_marcaSalida, btn_estadisticas;
     public ImageView img_foto;
-    public String userId;
+    public String userId, name_evento;
     public Boolean nuevoTutor;
     public Users tutor;
 
@@ -77,18 +77,38 @@ public class Tutor extends AppCompatActivity {
         txt_nombre = findViewById(R.id.txt_nombre);
         txt_cedula = findViewById(R.id.txt_cedula);
         btn_CrearEvento = findViewById(R.id.btn_CrearEvento);
+        btn_verRegistros =  findViewById(R.id.btn_verRegistros);
+        btn_marcaSalida = findViewById(R.id.btn_marcaSalida);
+        btn_estadisticas = findViewById(R.id.btn_estadisticas);
+        spinner = findViewById(R.id.spinner);
 
         if (isServiceOk()) {
             iniciarBaseDeDatos();
             leerBaseDatos();
+            leerEventos();
+            marcarSalida(name_evento);
+            verAsistencias(name_evento);
+            verEstadisticas(name_evento);
+
         }
 
     }
+
+    /*
+    El metodo iniciarBase de datos permite establecer desde el inicio la referencia base
+    que se utilizara para navegar por la base de datos de firebase.
+     */
     public void iniciarBaseDeDatos(){
         db_reference = FirebaseDatabase.getInstance().getReference();
 
     }
 
+    /*
+    El metodo leerBaseDatos recorre los asistentes en la base de datos para identificar si el usuario
+    ya ha iniciado sesion previamente para directamente cargar la informacion en la interfaz frafica,
+    o si es un usuario nuevo. Este metodo implementa el boton de Crear Eventos enviando como info extra
+    en el llamado de la activity el userId.
+     */
     public void leerBaseDatos(){
         DatabaseReference db_tutor = db_reference.child("Tutor");
 
@@ -139,6 +159,213 @@ public class Tutor extends AppCompatActivity {
                 System.out.println(error.getMessage());
             }
         });
+    }
+
+    public void leerEventos(){
+        DatabaseReference db_evento = db_reference.child("Evento");
+
+
+        db_evento.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                eventos = new ArrayList<String>();
+                eventos.add("Seleccione un Evento");
+                info_user = getIntent().getBundleExtra("info_user");
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+
+                    if (data!= null) {
+                        if (data.get("tutorID").equals(info_user.getString("user_id"))){
+                            eventos.add(data.get("Nom_evento"));
+
+                        }
+                    }
+                }
+
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_spinner_item, eventos);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item );
+                spinner.setAdapter(adapter);
+
+                AdapterView.OnItemSelectedListener eventSelected = new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(AdapterView<?> spinner, View container, int position, long id) {
+                        name_evento = spinner.getItemAtPosition(position).toString();
+                        if (position!=0) {
+                            Toast.makeText(Tutor.this,"Ha seleccionado el evento: " + name_evento, Toast.LENGTH_SHORT).show();
+                            verAsistencias(name_evento);
+                            marcarSalida(name_evento);
+                            verEstadisticas(name_evento);
+                        }
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> arg0) {
+                        // TODO Auto-generated method stub
+                    }
+                };
+                spinner.setOnItemSelectedListener(eventSelected);
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error!", error.toException());
+            }
+        });
+    }
+
+    /*
+    El metodo verAsistencias requiere del parametro @evento e implementa la accion del boton verRegistros en el cual se crea un objeto Intent
+    para llamar la Activity Lista_Asistencia y envia con el esta el nombre del evento seleccionado.
+     */
+    public  void verAsistencias(String evento){
+        btn_verRegistros.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (evento!=null) {
+                    Intent intent = new Intent(Tutor.this, Lista_Asistencia.class);
+                    intent.putExtra("evento", evento);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(Tutor.this,"Seleccione un evento o curso primero." + name_evento, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    public  void verEstadisticas (String evento){
+
+        System.out.println(evento);
+        btn_estadisticas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println(evento);
+                if (evento!=null) {
+                    Intent intent = new Intent(Tutor.this, Grafica_pastel.class);
+                    intent.putExtra("evento", evento);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(Tutor.this,"Seleccione un evento o curso primero." + name_evento, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    public void marcarSalida(String evento){
+        btn_marcaSalida.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (evento!=null) {
+                    DatabaseReference db_mSalida = db_reference.child("Evento");
+
+                    db_mSalida.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                                HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+
+                                if (data != null) {
+                                    if (data.get("Nom_evento").equals(evento)) {
+                                        if (data.get("marcaSalida").equals("true")) {
+                                            horaFinAsistentes(evento);
+                                            break;
+                                        } else {
+                                            Toast.makeText(Tutor.this, "El evento seleccionado se cierra automaticamente a la hora estipulada en la creacion del evento." + name_evento, Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e(TAG, "Error!", databaseError.toException());
+                        }
+                    });
+                }else{
+                    Toast.makeText(Tutor.this,"Seleccione un evento o curso primero.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    public void horaFinAsistentes(String evento){
+        Calendar calendar = Calendar.getInstance();
+        int horas=calendar.get(Calendar.HOUR_OF_DAY);
+        int minutos=calendar.get(Calendar.MINUTE);
+        String horaFin= horas+":"+minutos;
+
+        DatabaseReference db_horaFin = db_reference.child("Asistencias");
+
+        db_horaFin.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    HashMap<String, String> dataLista = (HashMap<String, String>) snapshot.getValue();
+
+                    if (dataLista!= null) {
+                        if (dataLista.get("evento").equals(evento)){
+                            DatabaseReference ref = db_horaFin.child(snapshot.getKey()).child("lista");
+                            ref.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        HashMap<String, String> dataUser = (HashMap<String, String>) snapshot.getValue();
+
+                                        if (snapshot.getKey()!=null && dataUser!=null) {
+                                            ref.child(snapshot.getKey()).child("horaFin").setValue(horaFin);
+                                            String[] horaInicio = dataUser.get("horaInicio").split(":");
+                                            if (Integer.parseInt(horaInicio[0]) == horas) {
+                                                Double numHoras = cantHoras(0, Integer.parseInt(horaInicio[1]));
+                                                ref.child(snapshot.getKey()).child("numHoras").setValue(numHoras);
+                                            }else{
+                                                int horasPresente = horas - Integer.parseInt(horaInicio[0]);
+                                                if (minutos > Integer.parseInt(horaInicio[1])) {
+                                                    int min = minutos - Integer.parseInt(horaInicio[1]);
+                                                    Double numHoras = cantHoras(horasPresente, min);
+                                                    ref.child(snapshot.getKey()).child("numHoras").setValue(numHoras);
+                                                }else {
+                                                    int min = 60 + minutos - Integer.parseInt(horaInicio[1]);
+                                                    Double numHoras = cantHoras(horasPresente-1, min);
+                                                    ref.child(snapshot.getKey()).child("numHoras").setValue(numHoras);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e(TAG, "Error!", databaseError.toException());
+                                }
+                            });
+
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error!", databaseError.toException());
+            }
+        });
+    }
+
+    public double cantHoras(int horas, int minutos){
+        double numHoras;
+        numHoras = horas+(minutos*100/60);
+        return numHoras;
     }
 
     public void newTutor() {
@@ -228,12 +455,6 @@ public class Tutor extends AppCompatActivity {
 
         );
         return alertDialog;
-    }
-
-
-    public void irRegistros(View view){
-        Intent intent = new Intent(this, Lista_Asistencia.class);
-        startActivity(intent);
     }
 
     public void cerrarSesion(View view){

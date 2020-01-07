@@ -343,22 +343,6 @@ public class FormularioCurso extends AppCompatActivity {
         dataDispositivo.put("Longitud2", disp_Long2);
         subir_data.push().setValue(dataDispositivo);
     }
-/*
-    public void ubicarZona(View view){
-        if(view.getId() == R.id.btn_Ubicacion1){
-            if (isServiceOk()) {
-                numDispositivo =1;
-                getLocationPermission();
-            }
-        }else if(view.getId() == R.id.btn_Ubicacion2){
-            if (isServiceOk()) {
-                numDispositivo=2;
-                getLocationPermission();
-            }
-        }else{
-            numDispositivo = 0;
-        }
-    }*/
 
     public boolean Conectividad (){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

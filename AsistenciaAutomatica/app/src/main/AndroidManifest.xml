@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".Grafica_pastel"></activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".Lista_Asistencia" />
         <activity android:name=".Asistente" />
         <activity android:name=".FormularioCurso" />

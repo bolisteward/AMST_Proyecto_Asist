@@ -1,8 +1,10 @@
 package com.example.asistenciaautomatica;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,27 +18,44 @@ import java.util.HashMap;
 
 public class Lista_Asistencia extends AppCompatActivity {
 
-    public String nombreAsistente;
+    private static final String TAG = "Lista_Asistencia";
     DatabaseReference db_reference;
-    DatabaseReference db_reference2;
+    String name_evento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista__asistencia);
 
-        db_reference = FirebaseDatabase.getInstance().getReference();
-        db_reference2 = FirebaseDatabase.getInstance().getReference();
+        name_evento = getIntent().getStringExtra("evento");
+        db_reference = FirebaseDatabase.getInstance().getReference().child("Asistencias");
         leerAsistencia();
     }
 
     public void leerAsistencia() {
-        db_reference.child("Asistencias").addValueEventListener(new ValueEventListener() {
+        db_reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    mostrarRegistrosPorPantalla(snapshot);
 
+                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+                    if (data!= null && data.get("evento").equals(name_evento)) {
+                        DatabaseReference db_lista = db_reference.child(snapshot.getKey()).child("lista");
+                        db_lista.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    mostrarRegistrosPorPantalla(snapshot);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.e(TAG, "Error!", databaseError.toException());
+                            }
+                        });
+                        break;
+                    }
                 }
             }
 
@@ -50,35 +69,35 @@ public class Lista_Asistencia extends AppCompatActivity {
 
     public void mostrarRegistrosPorPantalla(DataSnapshot snapshot){
         LinearLayout contNombre = (LinearLayout) findViewById(R.id.ContenedorNombre);
-        LinearLayout contAsiste= (LinearLayout) findViewById(R.id.ContenedorAsiste);
+        LinearLayout contEstado= (LinearLayout) findViewById(R.id.ContenedorEstado);
+        LinearLayout contHoraInicio= (LinearLayout) findViewById(R.id.ContenedorHora);
+        LinearLayout contNumHoras= (LinearLayout) findViewById(R.id.ContenedorCantHoras);
 
-        String userVal = String.valueOf(snapshot.child("").getValue());
-        String asisteVal = String.valueOf(snapshot.child("axis").getValue());
-        TextView temp = new TextView(getApplicationContext());
-        temp.setText(userVal+" C");
-        contNombre.addView(temp);
-        TextView axis = new TextView(getApplicationContext());
-        axis.setText(asisteVal);
-        contAsiste.addView(axis);
-    }
+        String Name = String.valueOf(snapshot.child("nombre").getValue());
+        String estado = String.valueOf(snapshot.child("estado").getValue());
+        String horas = String.valueOf(snapshot.child("horaInicio").getValue());
+        String cantHoras = String.valueOf(snapshot.child("numHoras").getValue());
+        System.out.println(Name);
+        System.out.println(estado);
+        System.out.println(horas);
+        System.out.println(cantHoras);
 
-    public void obtenerNombreAsistente (String userId){
-        db_reference2.child("Asistente").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if (snapshot.getKey().equals(userId )){
-                        HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
-                        nombreAsistente = data.get("Nombre");
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println(error.toException());
-            }
-        });
+        TextView userName = new TextView(getApplicationContext());
+        userName.setText(Name);
+        userName.setTextSize(20);
+        contNombre.addView(userName);
+        TextView Estado = new TextView(getApplicationContext());
+        Estado.setText(estado);
+        userName.setTextSize(20);
+        contEstado.addView(Estado);
+        TextView horaI = new TextView(getApplicationContext());
+        horaI.setText(horas);
+        userName.setTextSize(20);
+        contHoraInicio.addView(horaI);
+        TextView numHoras = new TextView(getApplicationContext());
+        numHoras.setText(cantHoras);
+        userName.setTextSize(20);
+        contNumHoras.addView(numHoras);
     }
 
 

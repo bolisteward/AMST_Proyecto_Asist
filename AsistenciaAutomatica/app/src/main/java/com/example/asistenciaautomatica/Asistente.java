@@ -13,6 +13,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.provider.CalendarContract;
@@ -25,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -51,6 +54,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.sql.Time;
 import java.text.DateFormat;
@@ -59,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -79,7 +84,7 @@ public class Asistente extends AppCompatActivity{
 
     //views
     Bundle info_user;
-    Button btn_Asistir;
+    Button btn_Asistir, btn_salida, btn_historial;
     public TextView txt_nombre, txt_correo, txt_phone,  txt_Latitud, txt_Longitud, txt_matricula;
     public ImageView img_foto;
     public String userId, disp_Lat1, disp_Long1, disp_Lat2, disp_Long2, name_evento;
@@ -106,6 +111,8 @@ public class Asistente extends AppCompatActivity{
         img_foto = findViewById(R.id.img_foto);
         spinner = findViewById(R.id.spinner);
         btn_Asistir = findViewById(R.id.btn_Asistir);
+        btn_salida = findViewById(R.id.btn_salida);
+        btn_historial = findViewById(R.id.btn_historial);
 
 
         iniciarBaseDeDatos();
@@ -113,9 +120,20 @@ public class Asistente extends AppCompatActivity{
 
         leerEventos();
         Asistir();
+        btn_historial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                historialDialog().show();
+            }
+        });
 
     }
 
+    /*
+    El metodo newAsist permite subir los datos obtenidos de la cuenta de google con el que el usuario
+    inicia sesion, implemente el metodo getLocationPermission() para obtener la ubicacion y pide al usuario que
+    ingrese el numero de matricula mediante un cuadro de dialogo.
+     */
     public void newAsist() {
         info_user = getIntent().getBundleExtra("info_user");
         if (info_user != null) {
@@ -141,6 +159,10 @@ public class Asistente extends AppCompatActivity{
         }
     }
 
+    /*
+    Se crea un cuadro de dialogo de tipo AlertDialog el cual utuliza el archivo matricula.xml como interfaz grafica.
+    Se obtiene el dato ingresado y es subido directamente a la base de datos del usuario registrado.
+     */
     public AlertDialog createCustomDialog() {
         final AlertDialog alertDialog;
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -161,8 +183,6 @@ public class Asistente extends AppCompatActivity{
                     public void onClick(View v) {
 
                         txt_matricula.setText(edtMatricula.getText().toString());
-                        //System.out.println("el numero de matricula es "+edtMatricula.getText().toString());
-                        //System.out.println(userId);
 
                         DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Asistente").child(userId);
                         db_upload.child("matricula").setValue(edtMatricula.getText().toString());
@@ -175,6 +195,11 @@ public class Asistente extends AppCompatActivity{
         return alertDialog;
     }
 
+    /*
+    Cuando el ususario ya existe se implementa el metodo presentarDatos, el cual permite tomar los datos del usuario
+    de la base de datos y cargarlos en los respectivos TextView's del archivo asistente.xml. Unicamente la ubicacion
+    se actualiza.
+     */
     public void presentarDatos(){
         info_user = getIntent().getBundleExtra("info_user");
 
@@ -208,8 +233,9 @@ public class Asistente extends AppCompatActivity{
 
     }
 
-
-
+    /*
+    Se cierra la sesion de la cuenta google con la cual ingreso el usuario y es enviado directamente a la MainActivity
+     */
     public void cerrarSesion(View view) {
         FirebaseAuth.getInstance().signOut();
         finish();
@@ -218,10 +244,18 @@ public class Asistente extends AppCompatActivity{
         startActivity(intent);
     }
 
+    /*
+    El metodo iniciarBase de datos permite establecer desde el inicio la referencia base
+    que se utilizara para navegar por la base de datos de firebase.
+     */
     public void iniciarBaseDeDatos() {
         db_reference = FirebaseDatabase.getInstance().getReference();
     }
 
+    /*
+    Se recorre la base de datos en firebase en la sesion Asistente para determinar si el usuario que ingresa
+    es nuevo o ya ha ingresado anteriormente. Segun el caso, se llamara al respectivo metodo.
+     */
     public void leerBaseDatos(){
         DatabaseReference asistente = db_reference.child("Asistente");
 
@@ -259,6 +293,157 @@ public class Asistente extends AppCompatActivity{
         });
     }
 
+    /*
+    El metodo marcarSalida() implemente la accion del boton de marcar salida del estudiante, en el se verifica
+    el evento que ha seleccionado de la lista en el spinner y luego se compara y verifican la hora del asistente
+    con respecto a la hora de inicio y finalizacion del evento para obtener la cant de horas asistidas.
+     */
+    public void marcarSalida(){
+        btn_salida.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (name_evento!=null) {
+                    Boolean presente  = verifica_Asistencia();
+                    if (presente) {
+                        DatabaseReference db_mSalida = db_reference.child("Evento");
+
+                        db_mSalida.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                                    HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+
+                                    if (data != null) {
+                                        if (data.get("Nom_evento").equals(name_evento)) {
+                                            DatabaseReference db_lista = db_reference.child(snapshot.getKey()).child("lista").child(userId);
+
+                                            Calendar calendar = Calendar.getInstance();
+                                            int horas=calendar.get(Calendar.HOUR_OF_DAY);
+                                            int minutos=calendar.get(Calendar.MINUTE);
+                                            String horaFin= horas+":"+minutos;
+
+                                            db_lista.child("horaFin").setValue(horaFin);
+
+                                            String[] horaInicio = data.get("horaInicio").split(":");
+
+                                            if (Integer.parseInt(horaInicio[0]) == horas) {
+                                                Double numHoras = cantHoras(0, Integer.parseInt(horaInicio[1]));
+                                                db_lista.child("numHoras").setValue(numHoras);
+                                            }else{
+                                                int horasPresente = horas - Integer.parseInt(horaInicio[0]);
+                                                if (minutos > Integer.parseInt(horaInicio[1])) {
+                                                    int min = minutos - Integer.parseInt(horaInicio[1]);
+                                                    Double numHoras = cantHoras(horasPresente, min);
+                                                    db_lista.child("numHoras").setValue(numHoras);
+                                                }else {
+                                                    int min = 60 + minutos - Integer.parseInt(horaInicio[1]);
+                                                    Double numHoras = cantHoras(horasPresente-1, min);
+                                                    db_lista.child("numHoras").setValue(numHoras);
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.e(TAG, "Error!", databaseError.toException());
+                            }
+                        });
+                    }else{
+                        Toast.makeText(Asistente.this,"Se encuentra fuera de la zona del evento: " + name_evento, Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(Asistente.this,"Seleccione un evento o curso primero." + name_evento, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    /*
+    Devuelve un Double con la cantidad de horas ingresando los parametros horas y minutos.
+     */
+    public double cantHoras(int horas, int minutos){
+        double numHoras;
+        numHoras = horas+(minutos*100/60);
+        return numHoras;
+    }
+
+    /*
+    Crea un Alert Dialog utilizando con Interfaz grafica historial_asistencias.xml, en el se presenta
+    todos los eventos que el usuario ha podido asistir, el boton aceptar es utilizado para salir del
+    cuadro de dialogo.
+     */
+    public AlertDialog historialDialog() {
+        final AlertDialog alertDialog;
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Get the layout inflater
+        LayoutInflater inflater = getLayoutInflater();
+        // Inflar y establecer el layout para el dialogo
+        // Pasar nulo como vista principal porque va en el diseño del diálogo
+        View v = inflater.inflate(R.layout.historial_asistencias, null);
+
+        LinearLayout contEvents = v.findViewById(R.id.contEventos);
+
+        info_user = getIntent().getBundleExtra("info_user");
+        if (info_user!= null) {
+
+            userId = info_user.getString("user_id");
+
+            try {
+                DatabaseReference db_historial = db_reference.child("Asistente").child(userId).child("listEventos");
+
+                db_historial.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+
+                            TextView asitEvento = new TextView(getApplicationContext());
+                            String mensaje = "*" + snapshot.getValue(Boolean.parseBoolean(snapshot.getKey())).toString();
+                            asitEvento.setText(mensaje);
+                            asitEvento.setTextSize(20);
+                            asitEvento.setHintTextColor(getResources().getColor(android.R.color.black));
+                            contEvents.addView(asitEvento);
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.e(TAG, "Error!", databaseError.toException());
+                    }
+                });
+            }catch (NullPointerException e){
+                Toast.makeText(Asistente.this, "No ha asistido a ningún evento todavía.", Toast.LENGTH_SHORT).show();
+            }
+        }
+        Button btn_aceptar = v.findViewById(R.id.btn_aceptar);
+        builder.setView(v);
+        alertDialog = builder.create();
+        // Add action buttons
+        btn_aceptar.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                }
+
+        );
+        return alertDialog;
+    }
+
+    /*
+    El metodo Asistir() verifica el evento existente y extrae las coordenadas de la zona del evento y
+    las compara con las del estudiante para validar la asistencia. Ademas, se realiza la respectiva
+    validacion de la fecha y hora del evento.
+     */
     public void Asistir(){
         btn_Asistir.setOnClickListener(new View.OnClickListener() {
 
@@ -271,8 +456,6 @@ public class Asistente extends AppCompatActivity{
                 horas=calendar.get(Calendar.HOUR_OF_DAY);
                 minutos=calendar.get(Calendar.MINUTE);
                 horaActual= horas+":"+minutos;
-
-                System.out.println("Asistir");
 
                 DatabaseReference db_eventoAsistir = db_reference.child("Evento");
 
@@ -292,72 +475,68 @@ public class Asistente extends AppCompatActivity{
                                 }
                             }
 
-                            if (info_evento!= null){
+                            if (info_evento!= null) {
+
                                 String[] fecha_evento = info_evento.get("Fecha").split("/");
                                 String[] hora_evento = info_evento.get("horaInicio").split(":");
                                 String[] hora_finEvento = info_evento.get("horaFin").split(":");
                                 int minRetrado = Integer.parseInt(info_evento.get("minRetraso"));
                                 Boolean retraso = Boolean.parseBoolean(info_evento.get("Retraso"));
-                                System.out.println(info_evento);
-                                //System.out.println(fecha_actual[0]+"-"+fecha_actual[1]+"-"+fecha_actual[2]);
-                                System.out.println(anio+"-"+mes+"-"+dia);
-                                System.out.println(horas+"-"+minutos);
 
-                                if (Integer.parseInt(fecha_evento[0]) == anio && Integer.parseInt(fecha_evento[1]) == mes && Integer.parseInt(fecha_evento[2]) == dia){
-                                    System.out.println("ok0");
-                                    System.out.println(retraso);
+                                if (Conectividad()) {
+                                    if (Integer.parseInt(fecha_evento[0]) == anio && Integer.parseInt(fecha_evento[1]) == mes && Integer.parseInt(fecha_evento[2]) == dia) {
 
-                                    if (retraso) {
-                                        if (horas == Integer.parseInt(hora_evento[0]) && minutos <= (Integer.parseInt(hora_evento[1]) + minRetrado)
-                                                && minutos >= Integer.parseInt(hora_evento[1])) {
-                                            System.out.println("ok1");
-                                            subirAsistencia(false);
-                                        } else if (horas >= Integer.parseInt(hora_evento[0]) && minutos > (Integer.parseInt(hora_evento[1]) + minRetrado)) {
-                                            if (horas == Integer.parseInt(hora_finEvento[0]) && minutos <= Integer.parseInt(hora_finEvento[1])) {
-                                                System.out.println("ok2");
-                                                subirAsistencia(true);
-                                            }else if (horas < Integer.parseInt(hora_finEvento[0])){
-                                                System.out.println("ok22");
-                                                subirAsistencia(true);
-                                            }else{
-                                                Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
+                                        if (retraso) {
+                                            if (horas == Integer.parseInt(hora_evento[0]) && minutos <= (Integer.parseInt(hora_evento[1]) + minRetrado)
+                                                    && minutos >= Integer.parseInt(hora_evento[1])) {
+                                                subirAsistencia(false);
+
+                                            } else if (horas >= Integer.parseInt(hora_evento[0]) && minutos > (Integer.parseInt(hora_evento[1]) + minRetrado)) {
+                                                if (horas == Integer.parseInt(hora_finEvento[0]) && minutos <= Integer.parseInt(hora_finEvento[1])) {
+                                                    subirAsistencia(true);
+
+                                                } else if (horas < Integer.parseInt(hora_finEvento[0])) {
+                                                    subirAsistencia(true);
+
+                                                } else {
+                                                    Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
+                                                            "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
+
+                                                }
+                                            } else {
+                                                Toast.makeText(Asistente.this, "Aun no empieza el evento. Contactese con al tutor o administrador del " +
                                                         "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
+
                                             }
                                         } else {
-                                            Toast.makeText(Asistente.this, "Aun no empieza el evento. Contactese con al tutor o administrador del " +
-                                                    "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }else{
+                                            if (horas >= Integer.parseInt(hora_evento[0]) && minutos >= Integer.parseInt(hora_evento[1])) {
+                                                if (horas > Integer.parseInt(hora_finEvento[0])) {
+                                                    Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
+                                                            "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
 
-                                        if (horas >= Integer.parseInt(hora_evento[0]) && minutos >= Integer.parseInt(hora_evento[1])) {
-                                            System.out.println(retraso);
-                                            System.out.println("algo pasa");
-                                            System.out.println(horas+"..."+Integer.parseInt(hora_finEvento[0]));
-                                            System.out.println(minutos+"..."+Integer.parseInt(hora_finEvento[1]));
-                                            if (horas > Integer.parseInt(hora_finEvento[0])){
-                                                Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
-                                                        "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
-                                            }else if (horas == Integer.parseInt(hora_finEvento[0]) && minutos <= Integer.parseInt(hora_finEvento[1])) {
-                                                System.out.println("ok3");
-                                                subirAsistencia(false);
-                                            }else if (horas < Integer.parseInt(hora_finEvento[0])) {
-                                                System.out.println("ok3");
-                                                subirAsistencia(false);
-                                            }else{
-                                                Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
+                                                } else if (horas == Integer.parseInt(hora_finEvento[0]) && minutos <= Integer.parseInt(hora_finEvento[1])) {
+                                                    subirAsistencia(false);
+
+                                                } else if (horas < Integer.parseInt(hora_finEvento[0])) {
+                                                    subirAsistencia(false);
+
+                                                } else {
+                                                    Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
+                                                            "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
+
+                                                }
+                                            } else {
+                                                Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. \n Contactese con al tutor o administrador del " +
                                                         "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
                                             }
-                                            System.out.println("todo aki");
-                                        } else {
-
-                                            Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. \n Contactese con al tutor o administrador del " +
-                                                    "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
                                         }
+
+                                    } else {
+                                        Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. Contactese con al tutor o administrador del " +
+                                                "evento para mayor informacion.", Toast.LENGTH_LONG).show();
                                     }
-
                                 }else{
-                                    Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. Contactese con al tutor o administrador del " +
-                                            "evento para mayor informacion.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(Asistente.this, "No dispone de conexion a Internet.", Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
@@ -374,6 +553,11 @@ public class Asistente extends AppCompatActivity{
         });
     }
 
+    /*
+    El metodo subirAsistencia(0 permite subir la asistencia del usuario a la base de datos en firebase,
+    en las respectivas ramas de Asistente y Asistencias, tomando como dato previo el parametro tipo Boolean
+    de atrasado.
+     */
     public void subirAsistencia(Boolean atrasado) {
         boolean present = verifica_Asistencia();
         boolean atraso = atrasado;
@@ -404,11 +588,11 @@ public class Asistente extends AppCompatActivity{
                 if (atraso) {
                     System.out.println(idLista);
                     System.out.println(userId);
-                    Lista lista = new Lista(userId, horaActual, "Atrasado", idEvento);
+                    Lista lista = new Lista(userId, txt_nombre.getText().toString(), horaActual, "Atrasado", idEvento,0);
                     db_listaAsistencia.child(idLista).child("lista").child(userId).setValue(lista);
                     Toast.makeText(Asistente.this, "Asistencia marcada como: Atrasado", Toast.LENGTH_SHORT).show();
                 }else{
-                    Lista lista = new Lista(userId, horaActual, "Presente", idEvento);
+                    Lista lista = new Lista(userId, txt_nombre.getText().toString(), horaActual, "Presente", idEvento,0);
                     db_listaAsistencia.child(idLista).child("lista").child(userId).setValue(lista);
                     Toast.makeText(Asistente.this, "Asistencia marcada como: Presente", Toast.LENGTH_SHORT).show();
                 }
@@ -426,6 +610,11 @@ public class Asistente extends AppCompatActivity{
 
     }
 
+    /*
+    El metodo verifica_Asistencia() permite verificar si el estudiante se encuentra dentro de la zona
+    de asistencia del evento, caso contrario enviara un mensaje de aviso. Regresa como valor un valor
+    tipo Boolean con la respuesta de la validacion.
+     */
     public boolean verifica_Asistencia (){
         boolean presente =false;
         Double user_lat = Double.valueOf(txt_Latitud.getText().toString());
@@ -529,6 +718,7 @@ public class Asistente extends AppCompatActivity{
                     }
                 }
                 Asistir();
+                marcarSalida();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -538,6 +728,23 @@ public class Asistente extends AppCompatActivity{
         });
     }
 
+    public boolean Conectividad (){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+            // Si hay conexión a Internet en este momento
+        } else {
+            return  false;
+            // No hay conexión a Internet en este momento
+        }
+    }
+
+    /*
+    Verifica si es servicio de google service esta activo para el correcto funcionamiento de las API's
+    de google utilizadas como geolocalizacion, googleAccount.
+     */
     public boolean isServiceOk(){
         Log.d(TAG, "isServiceOk: checking google service version");
 

@@ -128,42 +128,67 @@
                 android:layout_centerInParent="true"
                 android:background="@color/colorBlue"
                 android:drawableRight="@android:drawable/arrow_down_float"
-                android:onClick="crearEvento"
                 android:text="Crear Evento"
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="224dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/layoutRegistro"
+                android:layout_below="@+id/btn_CrearEvento"
                 android:layout_marginTop="50dp"
-                android:layout_below="@id/btn_CrearEvento">
+                android:scrollbarSize="18sp"
+                android:layout_centerInParent="true" />
 
-                <Button
-                    android:id="@+id/btn_verRegistros"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="90dp"
-                    android:background="@color/colorBlue"
-                    android:drawableEnd="@android:drawable/arrow_down_float"
-                    android:onClick="irRegistros"
-                    android:text="Ver Registros"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="18sp" />
+            <Button
+                android:id="@+id/btn_verRegistros"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/spinner"
+                android:layout_marginStart="90dp"
+                android:background="@color/colorBlue"
+                android:layout_marginTop="10dp"
+                android:drawableEnd="@android:drawable/arrow_down_float"
+                android:text="Ver Registros"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
 
+            <Button
+                android:id="@+id/btn_marcaSalida"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/btn_verRegistros"
+                android:layout_marginStart="90dp"
+                android:background="@color/colorBlue"
+                android:layout_marginTop="50dp"
+                android:drawableEnd="@android:drawable/arrow_down_float"
+                android:text="Marcar salida"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
 
-            </LinearLayout>
-
+            <Button
+                android:id="@+id/btn_estadisticas"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/btn_marcaSalida"
+                android:layout_marginStart="90dp"
+                android:background="@color/colorBlue"
+                android:layout_marginTop="50dp"
+                android:drawableEnd="@android:drawable/arrow_down_float"
+                android:text="Revisar estadisticas"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
 
 
             <Button
                 android:id="@+id/btn_logout"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/layoutRegistro"
+                android:layout_below="@+id/btn_estadisticas"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="50dp"
                 android:layout_marginBottom="80dp"
