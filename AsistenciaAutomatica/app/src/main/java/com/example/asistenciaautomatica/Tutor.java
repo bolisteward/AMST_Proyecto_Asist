@@ -94,7 +94,7 @@ public class Tutor extends AppCompatActivity {
 
     }
 
-    /*
+    /**
     El metodo iniciarBase de datos permite establecer desde el inicio la referencia base
     que se utilizara para navegar por la base de datos de firebase.
      */
@@ -103,7 +103,7 @@ public class Tutor extends AppCompatActivity {
 
     }
 
-    /*
+    /**
     El metodo leerBaseDatos recorre los asistentes en la base de datos para identificar si el usuario
     ya ha iniciado sesion previamente para directamente cargar la informacion en la interfaz frafica,
     o si es un usuario nuevo. Este metodo implementa el boton de Crear Eventos enviando como info extra
@@ -161,6 +161,11 @@ public class Tutor extends AppCompatActivity {
         });
     }
 
+    /**
+     Se recorre la sesccion Evento de la base de datos para agregar todos los nombres de los eventos existentes
+     en el spinner View, y se implementa su accion al ser accedido por el usuario para implementar los metodos de
+     visualizacion de asistencia, de grafico estadistico y poder marcar la salida del evento.
+     */
     public void leerEventos(){
         DatabaseReference db_evento = db_reference.child("Evento");
 
@@ -218,9 +223,10 @@ public class Tutor extends AppCompatActivity {
         });
     }
 
-    /*
+    /**
     El metodo verAsistencias requiere del parametro @evento e implementa la accion del boton verRegistros en el cual se crea un objeto Intent
-    para llamar la Activity Lista_Asistencia y envia con el esta el nombre del evento seleccionado.
+    para llamar la Activity Lista_Asistencia y envia el nombre del evento seleccionado, caso contrario si evento esta vacio mostrara un mensaje
+     pidiendo selleccionar un evento.
      */
     public  void verAsistencias(String evento){
         btn_verRegistros.setOnClickListener(new View.OnClickListener() {
@@ -237,13 +243,15 @@ public class Tutor extends AppCompatActivity {
         });
     }
 
+    /**
+     El metodo verEstadisticas requiere del parametro evento e implementa la accion del boton btn_estadisticas en el cual se crea un objeto Intent
+     para llamar la Activity Grafica_pastel y envia el nombre del evento seleccionado, caso contrario si evento esta vacio mostrara un mensaje
+     pidiendo selleccionar un evento.
+     */
     public  void verEstadisticas (String evento){
-
-        System.out.println(evento);
         btn_estadisticas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(evento);
                 if (evento!=null) {
                     Intent intent = new Intent(Tutor.this, Grafica_pastel.class);
                     intent.putExtra("evento", evento);
@@ -255,6 +263,11 @@ public class Tutor extends AppCompatActivity {
         });
     }
 
+    /**
+     El metodo marcarSalida requiere del parametro evento e implementa la accion del boton btn_marcaSalida en el cual
+     se valida el nombre del evento seleccionado del spinner con la base de datos y se verifica que la opcion de marcar salida
+     haya sido seleccionado, caso contrario mostrara un mensaje diciendo que la accion es innecesaria.
+     */
     public void marcarSalida(String evento){
         btn_marcaSalida.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -297,6 +310,10 @@ public class Tutor extends AppCompatActivity {
 
     }
 
+    /**
+    El metodo horaFinAsistentes toma como parametro el nombre del evento obtendio del spinner para colocar la hora de finalizacion
+    del evento en todos los asistentes de dicho evento con el numero de horas totales a partir de su respectiva hora de asistencia.
+     */
     public void horaFinAsistentes(String evento){
         Calendar calendar = Calendar.getInstance();
         int horas=calendar.get(Calendar.HOUR_OF_DAY);
@@ -362,12 +379,21 @@ public class Tutor extends AppCompatActivity {
         });
     }
 
+    /**
+    retorna un valor tipo Double con la cantidad de horas totales a partir del numero de horas y minutos que se
+    ongresan como parametro en el metodo.
+     */
     public double cantHoras(int horas, int minutos){
         double numHoras;
         numHoras = horas+(minutos*100/60);
         return numHoras;
     }
 
+    /**
+     El metodo newTutor permite subir los datos obtenidos de la cuenta de google con el que el usuario
+     inicia sesion, se pide al usuario que ingrese el numero de cedula mediante un cuadro de dialogo, se
+     sube toda la info obtenida a la base de datos en Firebase.
+     */
     public void newTutor() {
         info_user = getIntent().getBundleExtra("info_user");
         if (info_user != null) {
@@ -388,6 +414,11 @@ public class Tutor extends AppCompatActivity {
             createCustomDialog().show();
         }
     }
+
+    /**
+     Cuando el ususario ya existe se implementa el metodo presentarDatos, el cual permite tomar los datos del usuario
+     de la base de datos y cargarlos en los respectivos TextView's del archivo tutor.xml.
+     */
     public void presentarDatos(){
         info_user = getIntent().getBundleExtra("info_user");
 
@@ -418,10 +449,9 @@ public class Tutor extends AppCompatActivity {
     }
 
     /**
-     * Crea un diálogo con personalizado para comportarse
-     * como formulario de login
-     *
-     * @return Diálogo
+     Se crea un cuadro de dialogo de tipo AlertDialog el cual utuliza el archivo matricula.xml como interfaz grafica,
+     para pedir el numero de cedula o matricula. Se obtiene el dato ingresado y es subido directamente a la base
+     de datos del usuario registrado.
      */
     public AlertDialog createCustomDialog() {
         final AlertDialog alertDialog;
@@ -457,6 +487,9 @@ public class Tutor extends AppCompatActivity {
         return alertDialog;
     }
 
+    /**
+     Se cierra la sesion de la cuenta google con la cual ingreso el usuario y es enviado directamente a la MainActivity
+     */
     public void cerrarSesion(View view){
         FirebaseAuth.getInstance().signOut();
         finish();
@@ -465,8 +498,10 @@ public class Tutor extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-
+    /**
+     Verifica si el servicio de google service esta activo para el correcto funcionamiento de las API's
+     de google utilizadas como geolocalizacion, googleAccount.
+     */
     public boolean isServiceOk(){
         Log.d(TAG, "isServiceOk: checking google service version");
 

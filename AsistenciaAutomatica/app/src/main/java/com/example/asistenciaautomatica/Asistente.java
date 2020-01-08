@@ -129,7 +129,7 @@ public class Asistente extends AppCompatActivity{
 
     }
 
-    /*
+    /**
     El metodo newAsist permite subir los datos obtenidos de la cuenta de google con el que el usuario
     inicia sesion, implemente el metodo getLocationPermission() para obtener la ubicacion y pide al usuario que
     ingrese el numero de matricula mediante un cuadro de dialogo.
@@ -159,7 +159,7 @@ public class Asistente extends AppCompatActivity{
         }
     }
 
-    /*
+    /**
     Se crea un cuadro de dialogo de tipo AlertDialog el cual utuliza el archivo matricula.xml como interfaz grafica.
     Se obtiene el dato ingresado y es subido directamente a la base de datos del usuario registrado.
      */
@@ -195,7 +195,7 @@ public class Asistente extends AppCompatActivity{
         return alertDialog;
     }
 
-    /*
+    /**
     Cuando el ususario ya existe se implementa el metodo presentarDatos, el cual permite tomar los datos del usuario
     de la base de datos y cargarlos en los respectivos TextView's del archivo asistente.xml. Unicamente la ubicacion
     se actualiza.
@@ -233,7 +233,7 @@ public class Asistente extends AppCompatActivity{
 
     }
 
-    /*
+    /**
     Se cierra la sesion de la cuenta google con la cual ingreso el usuario y es enviado directamente a la MainActivity
      */
     public void cerrarSesion(View view) {
@@ -244,7 +244,7 @@ public class Asistente extends AppCompatActivity{
         startActivity(intent);
     }
 
-    /*
+    /**
     El metodo iniciarBase de datos permite establecer desde el inicio la referencia base
     que se utilizara para navegar por la base de datos de firebase.
      */
@@ -252,7 +252,7 @@ public class Asistente extends AppCompatActivity{
         db_reference = FirebaseDatabase.getInstance().getReference();
     }
 
-    /*
+    /**
     Se recorre la base de datos en firebase en la sesion Asistente para determinar si el usuario que ingresa
     es nuevo o ya ha ingresado anteriormente. Segun el caso, se llamara al respectivo metodo.
      */
@@ -293,7 +293,7 @@ public class Asistente extends AppCompatActivity{
         });
     }
 
-    /*
+    /**
     El metodo marcarSalida() implemente la accion del boton de marcar salida del estudiante, en el se verifica
     el evento que ha seleccionado de la lista en el spinner y luego se compara y verifican la hora del asistente
     con respecto a la hora de inicio y finalizacion del evento para obtener la cant de horas asistidas.
@@ -365,7 +365,7 @@ public class Asistente extends AppCompatActivity{
 
     }
 
-    /*
+    /**
     Devuelve un Double con la cantidad de horas ingresando los parametros horas y minutos.
      */
     public double cantHoras(int horas, int minutos){
@@ -374,7 +374,7 @@ public class Asistente extends AppCompatActivity{
         return numHoras;
     }
 
-    /*
+    /**
     Crea un Alert Dialog utilizando con Interfaz grafica historial_asistencias.xml, en el se presenta
     todos los eventos que el usuario ha podido asistir, el boton aceptar es utilizado para salir del
     cuadro de dialogo.
@@ -439,7 +439,7 @@ public class Asistente extends AppCompatActivity{
         return alertDialog;
     }
 
-    /*
+    /**
     El metodo Asistir() verifica el evento existente y extrae las coordenadas de la zona del evento y
     las compara con las del estudiante para validar la asistencia. Ademas, se realiza la respectiva
     validacion de la fecha y hora del evento.
@@ -553,7 +553,7 @@ public class Asistente extends AppCompatActivity{
         });
     }
 
-    /*
+    /**
     El metodo subirAsistencia(0 permite subir la asistencia del usuario a la base de datos en firebase,
     en las respectivas ramas de Asistente y Asistencias, tomando como dato previo el parametro tipo Boolean
     de atrasado.
@@ -610,7 +610,7 @@ public class Asistente extends AppCompatActivity{
 
     }
 
-    /*
+    /**
     El metodo verifica_Asistencia() permite verificar si el estudiante se encuentra dentro de la zona
     de asistencia del evento, caso contrario enviara un mensaje de aviso. Regresa como valor un valor
     tipo Boolean con la respuesta de la validacion.
@@ -650,6 +650,11 @@ public class Asistente extends AppCompatActivity{
         return presente;
     }
 
+    /**
+    Se recorre la sesccion Evento de la base de datos para agregar todos los nombres de los eventos existentes
+    en el spinner View, y se implementa su accion al ser accedido por el usuario para obtener las corrdenas del evento
+    seleccionado a traves del metodo leerDispositivo().
+     */
     public void leerEventos(){
         DatabaseReference db_evento = db_reference.child("Evento");
 
@@ -699,6 +704,10 @@ public class Asistente extends AppCompatActivity{
         });
     }
 
+    /**
+     Se recorre la sesion Eventos de la base de datos y se compara con el @parametro ingresado curso para extraer
+     las coordenadas de dicho evento.
+     */
     public void leerDispositivo(String curso){
         DatabaseReference db_dispositivo = db_reference.child("Dispositivo");
         db_dispositivo.addValueEventListener(new ValueEventListener() {
@@ -728,21 +737,22 @@ public class Asistente extends AppCompatActivity{
         });
     }
 
+    /**
+    Devuelve un valor tipo Bool indicando si hay o no conectividad del dispositivo con alguna red de internet.
+     */
     public boolean Conectividad (){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
             return true;
-            // Si hay conexión a Internet en este momento
         } else {
             return  false;
-            // No hay conexión a Internet en este momento
         }
     }
 
-    /*
-    Verifica si es servicio de google service esta activo para el correcto funcionamiento de las API's
+    /**
+    Verifica si el servicio de google service esta activo para el correcto funcionamiento de las API's
     de google utilizadas como geolocalizacion, googleAccount.
      */
     public boolean isServiceOk(){
@@ -765,12 +775,11 @@ public class Asistente extends AppCompatActivity{
         return false;
     }
 
-    /*
+    /**
     Asistir() permite obtener las coordenadas de latitud y longitud del dispositivo en ese
     instante y los sobre-escribe en el txt_Latitud y txt_longitud de la interfaz, si se produce un error
     mandara una ioException o un mensaje de que la localizacion no se encuentra o es nula.
      */
-
     public void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting device current location");
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -806,11 +815,10 @@ public class Asistente extends AppCompatActivity{
 
     }
 
-    /*
+    /**
     EL metodo getLocationPermission() verifica que los permisos y privilegios hayan sido aceptado,
     de no ser asi llama al metodo onResquestPermissionsResults para solicitarlos.
      */
-
     private void getLocationPermission(){
         Log.d(TAG, "getLocationPermission: getting location permission.");
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -828,12 +836,11 @@ public class Asistente extends AppCompatActivity{
         }
     }
 
-    /*
+    /**
     onRequestPermissionResult() permite solicitar al usuario los permisos de poder
     utilizar su ubicacion otorgandole a la app los privilegios para obtener las datos de
     latitud y longitud. De no ser asi, mostrara un mensaje de falla o no concedido.
      */
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mLocationPermissionGaranted = false;

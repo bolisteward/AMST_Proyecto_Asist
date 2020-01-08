@@ -24,13 +24,20 @@ public class Perfil extends AppCompatActivity {
         info_user = getIntent().getBundleExtra("info_user");
     }
 
+    /**
+    startTutor implementa la accion del boton de Tutor para iniciar la actividad de Tutor, se envia como
+    dato extra un Bundle con la informacion del usuario extraida de la anterior Activity.
+     */
     public void startTutor(View view){
         Intent intent = new Intent(this, Tutor.class);
         intent.putExtra("info_user", info_user );
         startActivity(intent);
 
     }
-
+    /**
+     startAsistente implementa la accion del boton de Asistente para iniciar la actividad de Asistente, se envia como
+     dato extra un Bundle con la informacion del usuario extraida de la anterior Activity.
+     */
     public void startAsistente(View view){
         Intent intent = new Intent(this, Asistente.class);
         intent.putExtra("info_user", info_user );

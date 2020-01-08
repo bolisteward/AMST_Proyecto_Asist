@@ -51,6 +51,11 @@ public class Grafica_pastel extends AppCompatActivity {
         leerAsistencia();
     }
 
+    /**
+    Serecorre la sesion Asistencias de la base de datos para determinar que lista de asistencia pertenece el nombre
+     del evento y la recorre para determinar cuantos estudiantes o participantes tienen atraso, presente, o no asistieron
+     y son agregados a la lista cantEstudiantes y se llama a createChart() para crear el grafico de pastel con los datos.
+     */
     public void leerAsistencia() {
         db_reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -107,11 +112,9 @@ public class Grafica_pastel extends AppCompatActivity {
         });
     }
 
-
-
-    /*
+    /**
     El metodo getSameChart() permite personalizar el contenido de la grafica, para ello toma parametros de ingreso
-    como @parameters chart, descripcion, textColor, background y animateY.
+    como @parameters chart, descripcion, textColor, background y animateY y se agrega legenda de los datos.
      */
     private Chart getSameChart (Chart chart, String descripcion, int textColor, int background, int animateY){
         chart.getDescription().setText(descripcion);
@@ -124,6 +127,10 @@ public class Grafica_pastel extends AppCompatActivity {
         return chart;
     }
 
+    /**
+    El metodo legend requiere del @PARAMETRO  de tipo Chart para configurar las entradas en la legenda del
+    grafico de pastel.
+     */
     private void legend (Chart chart){
         Legend legend =  chart.getLegend();
         legend.setForm(Legend.LegendForm.CIRCLE);
@@ -140,6 +147,10 @@ public class Grafica_pastel extends AppCompatActivity {
         legend.setCustom(entries);
     }
 
+    /**
+    Se retorna una ArrayList con las entradas que se ingresaran en el grafico de pastel o PieChart,
+    en donde se agregan objetos tipo PieEntry().
+     */
     private ArrayList<PieEntry> getPieEntries(){
         ArrayList<PieEntry> entries = new ArrayList<>();
         for (int i=0; i<estado.length; i++){
@@ -148,6 +159,10 @@ public class Grafica_pastel extends AppCompatActivity {
         return  entries;
     }
 
+    /**
+    createChart() permite crear una grafica de pastel y su respectiva configuracion de su forma, como el
+    radio del circuilo interior y se inserta los datos obtendios del metodo getPieData().
+     */
     public void createChart(){
         pieChart = (PieChart) getSameChart(pieChart, "Estado Asistencias", Color.GRAY, Color.MAGENTA, 3000);
         pieChart.setHoleRadius(50);
@@ -158,6 +173,9 @@ public class Grafica_pastel extends AppCompatActivity {
 
     }
 
+    /**
+    Permite configurar la interfaz del dataSet como color y el tamano del texto.
+     */
     private DataSet getData(DataSet dataSet) {
         dataSet.setColors(colors);
         dataSet.setValueTextColor(Color.WHITE);
@@ -165,9 +183,12 @@ public class Grafica_pastel extends AppCompatActivity {
         return dataSet;
     }
 
+    /**
+    getPieDara() retorna un objeto tipo PieData en la cual se ingresa un dataSet que ha sido cargado con las
+    entradas respectivas obtenidas del metodo getPieEntries().
+     */
     private PieData getPieData(){
         PieDataSet pieDataSet = (PieDataSet) getData(new PieDataSet(getPieEntries(),"" ));
-
         pieDataSet.setSliceSpace(5);
         pieDataSet.setValueFormatter(new PercentFormatter());
         return  new PieData(pieDataSet);

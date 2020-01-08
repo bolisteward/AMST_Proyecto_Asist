@@ -107,6 +107,12 @@ public class FormularioCurso extends AppCompatActivity {
 
     }
 
+    /**
+    Se recorre la sesion Eventos de la base de datos para extrar todos los nombre y id de eventos registrados
+    para validar que sean unicos. Se implementa la accion de los botones de fecha, horaInicio y horaFin que muestran
+    un Date y Time Picker Dialog para la sellecion de la fehca y hora del evento. De igual forma para la accion de los
+    botones de ubicacion1 y ubicacion 2 para seleccionar la zona del evento.
+     */
     public void leerEventos(){
         DatabaseReference db_evento = db_reference.child("Evento");
 
@@ -126,31 +132,22 @@ public class FormularioCurso extends AppCompatActivity {
                 btn_Fecha.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // se obtiene la fecha actual del sistema
+
                         final Calendar c = Calendar.getInstance();
-                        // se captura el año el mes y el dia de la fecha actual en tres variables tipo int
                         anio=c.get(Calendar.YEAR);
                         mes=c.get(Calendar.MONTH);
                         dia=c.get(Calendar.DAY_OF_MONTH);
-
-                        //creamos el dialogDatePicker
                         DatePickerDialog datePicker = new DatePickerDialog(FormularioCurso.this, new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                                 etFecha.setText(year+"/"+(month+1)+"/"+dayOfMonth);
-                                System.out.println(year+"/"+(month+1)+"/"+dayOfMonth);
-                                System.out.println(anio+"/"+(mes)+"/"+dia);
                             }
                         },anio,mes,dia);
 
-                        // se muestra el cuadro de dialogo
                         datePicker.show();
 
                     }
                 });
-
-
-                // colocamos el boton poner hora a la escucha
 
                 btn_HoraInicio.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -166,12 +163,10 @@ public class FormularioCurso extends AppCompatActivity {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 etHoraInicio.setText(hourOfDay+":"+minute);
-                                System.out.println( hourOfDay+":"+minute);
-                                System.out.println( horas +"-"+minutos);
                             }
                         },horas,minutos,true);
 
-                        //mostramos el elemento Timer como una ventana de dialogo
+
                         ponerhora.show();
                     }
                 });
@@ -185,19 +180,16 @@ public class FormularioCurso extends AppCompatActivity {
                         horaFin = Integer.valueOf(hora_actual[0]);
                         minFin = Integer.valueOf(hora_actual[1]);
 
-                        // creamos el DialogTimePicker
                         TimePickerDialog ponerhoraFin= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
                                 String horaFinal = hourOfDay+":"+minute;
-                                System.out.println(etHoraInicio.getText().toString());
                                 CompararTiempo(etHoraInicio.getText().toString(), horaFinal);
 
                             }
                         },horaFin,minFin,true);
 
-                        //mostramos el elemento Timer como una ventana de dialogo
                         ponerhoraFin.show();
                     }
                 });
@@ -230,6 +222,11 @@ public class FormularioCurso extends AppCompatActivity {
         });
     }
 
+    /**
+    El metodo CompararTiempo toma dos parametros, la HoraInicio y la HoraFin del evento para compararlas entre si
+    para validar que la hora final no sea menor a la hora incial del evento y se produzca un error en los registros de
+    los estudiantes.
+     */
     public void CompararTiempo(String HoraInicio, String HoraFin){
         String[] TiempoInicial = HoraInicio.split(":");
         int horaI = Integer.valueOf(TiempoInicial[0]);
@@ -239,8 +236,6 @@ public class FormularioCurso extends AppCompatActivity {
         int horaF = Integer.valueOf(TiempoFinal[0]);
         int minuteF = Integer.valueOf(TiempoFinal[1]);
 
-        System.out.println(horaI+"-"+minuteI);
-        System.out.println(horaF+"-"+minuteF);
         if (horaF >= horaI){
             if (horaF == horaI && minuteF<=minuteI) {
                 Toast.makeText(getApplicationContext(), "La Hora de finalizacion no puede ser menor a la Hora de Inicio.", Toast.LENGTH_SHORT).show();
@@ -255,12 +250,20 @@ public class FormularioCurso extends AppCompatActivity {
 
     }
 
-
+    /**
+     El metodo iniciarBase de datos permite establecer desde el inicio la referencia base
+     que se utilizara para navegar por la base de datos de firebase.
+     */
     public void iniciarBaseDeDatos(){
         db_reference = FirebaseDatabase.getInstance().getReference();
 
     }
 
+    /**
+    Se implementa la funcion del boton guardar que verifica que los campos no esten vacios y que el nombre del evento
+    no sea repetido para poder subir la informacion llamando a los respectivos metodos de subirDispositivo(), subirLista(),
+    y subirFormularioCurso, finalmente se vuelve a la anterior activity de Tutor.
+     */
     public void Guardar(){
         btn_Guardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -306,6 +309,10 @@ public class FormularioCurso extends AppCompatActivity {
 
     }
 
+    /**
+    El metodo subirFormularioCurso recibe los @parametros: nom_evento, tutor, descripcion, Fecha, horaInicio, horaFin,
+    minRetraso, Retraso, Checkout para subir el nuevo evento o curso a la base de datos en Firebase en la sesion Evento.
+     */
     public void subirFormularioCurso(String nom_evento, String tutor,String descripcion, String Fecha, String horaInicio, String horaFin, String minRetraso, Boolean Retraso, Boolean CheckOut){
         DatabaseReference subir_data = db_reference.child("Evento");
 
@@ -323,16 +330,23 @@ public class FormularioCurso extends AppCompatActivity {
         subir_data.push().setValue(dataCurso);
     }
 
+    /**
+    Se suben los datos a la lista de asistencias que se encuentra en la sesion Asistencias en la base de datos de
+    firebase, se suben los campos del nombre del evento, la fecha, y una lista vacia que cotendra los asistentes al evento.
+     */
     public void subirLista(){
         DatabaseReference db_lista = db_reference.child("Asistencias");
         HashMap<String, String> dataLista = new HashMap<String, String>();
         dataLista.put("evento",etNombreCurso.getText().toString());
         dataLista.put("fecha", etFecha.getText().toString());
         dataLista.put("lista", "-");
-        System.out.println(etNombreCurso.getText().toString());
         db_lista.push().setValue(dataLista);
     }
 
+    /**
+    El metodo subirDispositivo permite subir las coordenadas de la zona del evento anteriormente marcada
+    a la base de datos con el respectivo nombre del evento en l sesion Dispositivos.
+     */
     public void subirDispositivo(){
         DatabaseReference subir_data = db_reference.child("Dispositivo");
         Map<String, String> dataDispositivo = new HashMap<String, String>();
@@ -344,20 +358,24 @@ public class FormularioCurso extends AppCompatActivity {
         subir_data.push().setValue(dataDispositivo);
     }
 
+    /**
+     Devuelve un valor tipo Bool indicando si hay o no conectividad del dispositivo con alguna red de internet.
+     */
     public boolean Conectividad (){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
             return true;
-            // Si hay conexión a Internet en este momento
         } else {
             return  false;
-            // No hay conexión a Internet en este momento
         }
     }
 
-
+    /**
+     Verifica si el servicio de google service esta activo para el correcto funcionamiento de las API's
+     de google utilizadas como geolocalizacion, googleAccount.
+     */
     public boolean isServiceOk(){
         Log.d(TAG, "isServiceOk: checking google service version");
 
@@ -377,12 +395,11 @@ public class FormularioCurso extends AppCompatActivity {
         return false;
     }
 
-    /*
+    /**
     Asistir() permite obtener las coordenadas de latitud y longitud del dispositivo en ese
     instante y los sobre-escribe en el txt_Latitud y txt_longitud de la interfaz, si se produce un error
     mandara una ioException o un mensaje de que la localizacion no se encuentra o es nula.
      */
-
     public void getDeviceLocation(){
 
         Log.d(TAG, "getDeviceLocation: getting device current location");
@@ -423,11 +440,10 @@ public class FormularioCurso extends AppCompatActivity {
         }
     }
 
-    /*
+    /**
     EL metodo getLocationPermission() verifica que los permisos y privilegios hayan sido aceptado,
     de no ser asi llama al metodo onResquestPermissionsResults para solicitarlos.
      */
-
     private void getLocationPermission(){
         Log.d(TAG, "getLocationPermission: getting location permission.");
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -445,12 +461,11 @@ public class FormularioCurso extends AppCompatActivity {
         }
     }
 
-    /*
+    /**
     onRequestPermissionResult() permite solicitar al usuario los permisos de poder
     utilizar su ubicacion otorgandole a la app los privilegios para obtener las datos de
     latitud y longitud. De no ser asi, mostrara un mensaje de falla o no concedido.
      */
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mLocationPermissionGaranted = false;
@@ -473,7 +488,5 @@ public class FormularioCurso extends AppCompatActivity {
             }
         }
     }
-
-
 
 }

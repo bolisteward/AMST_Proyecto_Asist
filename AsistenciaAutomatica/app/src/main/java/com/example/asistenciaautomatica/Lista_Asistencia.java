@@ -32,6 +32,11 @@ public class Lista_Asistencia extends AppCompatActivity {
         leerAsistencia();
     }
 
+    /**
+     Serecorre la sesion Asistencias de la base de datos para determinar que lista de asistencia pertenece el nombre
+     del evento, una vez verificada se recorre esta lista y se muestran en la respectiva interfaz grafica a travez del metodo
+     monstrarRegistrosPorPantalla que toma como parametro un objeto tipo DataSnapshot.
+     */
     public void leerAsistencia() {
         db_reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -60,13 +65,18 @@ public class Lista_Asistencia extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println(error.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error!", error.toException());
             }
         });
     }
 
 
+    /**
+    El metodo mostrarRegistrosPorPantalla tomo como parametro un DataSanpshot para obtener la informacion
+    del estudiante y desglozarla para presentarla en los respectivos componenetes tipo View del archivo
+    Lista_Asistencias.xml, se configura el tamanodel texto.
+     */
     public void mostrarRegistrosPorPantalla(DataSnapshot snapshot){
         LinearLayout contNombre = (LinearLayout) findViewById(R.id.ContenedorNombre);
         LinearLayout contEstado= (LinearLayout) findViewById(R.id.ContenedorEstado);
@@ -77,10 +87,7 @@ public class Lista_Asistencia extends AppCompatActivity {
         String estado = String.valueOf(snapshot.child("estado").getValue());
         String horas = String.valueOf(snapshot.child("horaInicio").getValue());
         String cantHoras = String.valueOf(snapshot.child("numHoras").getValue());
-        System.out.println(Name);
-        System.out.println(estado);
-        System.out.println(horas);
-        System.out.println(cantHoras);
+
 
         TextView userName = new TextView(getApplicationContext());
         userName.setText(Name);

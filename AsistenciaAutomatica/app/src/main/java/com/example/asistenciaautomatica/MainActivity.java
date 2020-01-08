@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     static final int GOOGLE_SIGN_IN = 123;
     FirebaseAuth mAuth;
     GoogleSignInClient mGoogleSignInClient;
-    Button btn_login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,17 +59,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
+    /**
+    Se cierra la sesion de inicio de sesion con google en caso de algun error producido o campos ingresados
+    como la constrasena fueron erroneos.
+     */
     private void cerrarSesion() {
         mGoogleSignInClient.signOut().addOnCompleteListener(this,task -> updateUI(null));
     }
 
+    /**
+    Permite mostrar en forma de cuadro de dialogo la interfaz que el API de google account aporta para
+    iniciar sesion con cuenta google.
+     */
     public void iniciarSesion(View view){
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
     }
 
+    /**
+    Muestra el resultado de haber iniciado sesion con google, en caso de que la cuenta no exista o algun
+    parametro o error de inicio de sesion se presente, mostrara un mensaje sobre el fallo de inicio de sesion
+    con la cuenta Google, caso contrario llamara al metodo de autentificacion con cuenta firabase.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -86,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    firebaseAuthWithGoogle() permite auntetificar la cuenta google con que se inicio sesion para ingresar a la cuenta de firebase
+    mediante la credencial unica que Google provee por usuario.
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d("TAG", "firebaseAuthWithGoogle: "+account.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
@@ -105,6 +119,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+    updateUI Permite extrar todos los datos del usuario como el nombre, correo, mail, photo, id y numero telefonico,
+     y son incorporados en un objeto Bundle mediante clave-valor y enviados a la siguiente activity para su respectivo uso.
+     */
     private void updateUI(FirebaseUser user) {
         if (user != null){
 
