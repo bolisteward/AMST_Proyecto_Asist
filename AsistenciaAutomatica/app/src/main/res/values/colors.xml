@@ -6,8 +6,10 @@
     <color name="colorDark">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorButtom">#770000</color>
-    <color name="colorTutor">#96E9A6</color>
+    <color name="colorAmarillo">#FFEB3B</color>
     <color name="colorAsistente">#A2BADF</color>
     <color name="colorBlue">#DC1919E0</color>
+    <color name="fondoPieChart">#DC101029</color>
+
 
 </resources>

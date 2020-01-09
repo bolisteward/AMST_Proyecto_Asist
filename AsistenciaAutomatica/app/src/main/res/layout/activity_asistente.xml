@@ -4,17 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo1"
     tools:context=".Asistente" >
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/fondo1"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -47,13 +44,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/RL_foto"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:gravity="center"
                 android:text="@string/app_nameUser"
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:textSize="24sp" />
+
             <LinearLayout
                 android:id="@+id/layoutCoord"
                 android:layout_width="match_parent"
@@ -65,25 +61,26 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:background="@drawable/bordestv">
 
                     <TextView
                         android:id="@+id/txt_mail"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:background="#00A88585"
-                        android:text="Correo: "
+                        android:layout_height="25dp"
+                        android:background="@drawable/bordestv"
+                        android:text="@string/correoPtxt"
                         android:textColor="@color/colorDark"
+                        android:gravity="center_vertical"
                         android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/txt_cellphone"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginStart="10dp"
-                        android:text="Phone number: "
+                        android:layout_height="25dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bordestv"
+                        android:text="@string/phonePtxt"
                         android:textSize="18sp"
                         android:textColor="@color/colorDark"
 
@@ -91,20 +88,20 @@
                     <TextView
                         android:id="@+id/txt_viewMatricula"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_height="25dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bordestv"
                         android:textSize="18sp"
-                        android:text="Matricula:"
+                        android:text="@string/matriculaPtxt"
                         android:textColor="@color/colorDark"/>
 
                     <TextView
                         android:id="@+id/txt_ViewLat"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginStart="10dp"
-                        android:text="Latitud: "
+                        android:layout_height="25dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bordestv"
+                        android:text="@string/latitudPtxt"
                         android:textSize="18sp"
                         android:textColor="@color/colorDark"
 
@@ -113,10 +110,10 @@
                     <TextView
                         android:id="@+id/txt_ViewLon"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginStart="10dp"
-                        android:text="Longitud: "
+                        android:layout_height="25dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bordestv"
+                        android:text="@string/longitudPtxt"
                         android:textSize="18sp"
                         android:textColor="@color/colorDark"
 
@@ -128,69 +125,58 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:background="@drawable/bordestv">
 
                     <TextView
                         android:id="@+id/txt_correo"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center"
-                        android:hint="correo"
+                        android:layout_height="25dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bordestv"
+                        android:hint="@string/correoRtxt"
                         android:textSize="18sp"
-                        android:textColor="@color/colorDark"
-
-                        />
+                        android:textColor="@color/colorDark"/>
 
                     <TextView
                         android:id="@+id/txt_phone"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginTop="30dp"
-                        android:gravity="center"
-                        android:hint="Phone number"
+                        android:layout_height="25dp"
+                        android:background="@drawable/bordestv"
+                        android:gravity="center_vertical"
+                        android:hint="@string/phoneRtxt"
                         android:textSize="18sp"
-                        android:textColor="@color/colorDark"
-
-                        />
+                        android:textColor="@color/colorDark"/>
 
                     <TextView
                         android:id="@+id/txt_matricula"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginEnd="10dp"
+                        android:layout_height="25dp"
+                        android:background="@drawable/bordestv"
                         android:textSize="18sp"
-                        android:gravity="center"
+                        android:gravity="center_vertical"
                         android:textColor="@color/colorDark"
-                        android:hint="matricula" />
+                        android:hint="@string/matriculaRtxt" />
 
                     <TextView
                         android:id="@+id/txt_Latitud"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center"
-                        android:hint="Latitud "
+                        android:layout_height="25dp"
+                        android:background="@drawable/bordestv"
+                        android:gravity="center_vertical"
+                        android:hint="@string/latitudRtxt"
                         android:textSize="18sp"
-                        android:textColor="@color/colorDark"
-
-                        />
+                        android:textColor="@color/colorDark"/>
 
                     <TextView
                         android:id="@+id/txt_Longitud"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center"
-                        android:hint="Longitud "
+                        android:layout_height="25dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bordestv"
+                        android:hint="@string/longitudRtxt"
                         android:textSize="18sp"
-                        android:textColor="@color/colorDark"
-
-                        />
+                        android:textColor="@color/colorDark"/>
 
 
                 </LinearLayout>
@@ -203,7 +189,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/layoutCoord"
-                android:textColor="@color/colorDark"
+                android:textColor="@color/colorWhite"
                 android:layout_centerHorizontal="true"
                 android:textSize="18sp"
                 android:layout_marginTop="50dp"
@@ -226,11 +212,11 @@
                 android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
-                android:background="@color/colorBlue"
-                android:drawableRight="@android:drawable/checkbox_on_background"
-                android:text="Asistir"
+                android:background="@drawable/borde_redondo"
+                android:drawableEnd="@android:drawable/checkbox_on_background"
+                android:text="@string/asistir"
                 android:textAlignment="center"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorDark"
                 android:textSize="18sp" />
 
             <Button
@@ -241,11 +227,11 @@
                 android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
-                android:background="@color/colorBlue"
-                android:drawableRight="@android:drawable/checkbox_on_background"
-                android:text="Marcar Salida"
+                android:background="@drawable/borde_redondo"
+                android:drawableEnd="@android:drawable/checkbox_on_background"
+                android:text="@string/marcarSalida"
                 android:textAlignment="center"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorDark"
                 android:textSize="18sp" />
             <Button
                 android:id="@+id/btn_historial"
@@ -255,11 +241,11 @@
                 android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
-                android:background="@color/colorBlue"
-                android:drawableRight="@android:drawable/checkbox_on_background"
-                android:text="Historial de asistencias"
+                android:background="@drawable/borde_redondo"
+                android:drawableEnd="@android:drawable/checkbox_on_background"
+                android:text="@string/historial"
                 android:textAlignment="center"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorDark"
                 android:textSize="18sp" />
 
             <Button
@@ -271,11 +257,11 @@
                 android:layout_centerInParent="true"
                 android:layout_marginTop="60dp"
                 android:layout_marginBottom="80dp"
-                android:background="@color/colorBlue"
-                android:drawableRight="@android:drawable/btn_dialog"
+                android:background="@drawable/borde_redondo"
+                android:drawableEnd="@android:drawable/btn_dialog"
                 android:onClick="cerrarSesion"
-                android:text="Cerrar Sesion"
-                android:textColor="@color/colorWhite"
+                android:text="@string/cerrarSesion"
+                android:textColor="@color/colorDark"
                 android:textSize="18sp" />
 
 

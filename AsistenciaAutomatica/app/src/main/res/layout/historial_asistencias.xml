@@ -12,7 +12,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/colorWhite"
+        android:background="@drawable/borde_redondo"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="vertical">
 
@@ -22,28 +22,31 @@
             android:layout_height="wrap_content"
             android:text="Historial de asistencia"
             android:textAlignment="center"
+            android:background="@drawable/borde_redondo"
             android:textColor="@color/colorDark"
             android:textStyle="bold"
             android:textSize="30sp" />
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="320dp">
+            android:layout_height="320dp"
+            android:background="@drawable/borde_redondo">
 
             <LinearLayout
                 android:id="@+id/contEventos"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"/>
 
         </ScrollView>
 
         <Button
             android:id="@+id/btn_aceptar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="ACEPTAR"
+            android:background="@drawable/borde_redondo"
+            android:text="@string/aceptar"
             android:textColor="@color/colorDark"
             android:textSize="15sp" />
 

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo1"
     android:orientation="vertical"
     tools:context=".Lista_Asistencia">
 
@@ -12,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Lista de asistencia"
+        android:textColor="@color/colorWhite"
         android:textAlignment="center"
         android:textSize="30sp" />
 
@@ -22,8 +24,10 @@
 
         <TextView
             android:id="@+id/textView3"
-            android:layout_width="170dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/borde_text"
             android:text="Nombre"
             android:textAlignment="center" />
 
@@ -31,18 +35,24 @@
             android:id="@+id/TituloAsiste"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/borde_text"
             android:text="Estado"
             android:textAlignment="center" />
         <TextView
             android:id="@+id/TituloHoraInicio"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/borde_text"
             android:text="Hora Inicio"
             android:textAlignment="center" />
         <TextView
             android:id="@+id/TituloHoraFin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/borde_text"
             android:text="Num. Horas"
             android:textAlignment="center" />
     </LinearLayout>
@@ -57,28 +67,29 @@
             android:orientation="horizontal" >
             <LinearLayout
                 android:id="@+id/ContenedorNombre"
-                android:layout_width="170dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
-                android:orientation="vertical"/>
+                android:orientation="vertical"
+                android:background="@drawable/borde_text"/>
             <LinearLayout
                 android:id="@+id/ContenedorEstado"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:background="@drawable/borde_text"/>
             <LinearLayout
                 android:id="@+id/ContenedorHora"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:background="@drawable/borde_text"/>
             <LinearLayout
                 android:id="@+id/ContenedorCantHoras"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:background="@drawable/borde_text"/>
         </LinearLayout>
 
     </ScrollView>
-
-
-
 </LinearLayout>

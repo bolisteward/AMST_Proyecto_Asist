@@ -7,5 +7,25 @@
     luego pulse el boton \"Punto 2\" cuando se encuentre en la esquina superior izquierda para establecer la zona de validacion de asistencia. </string>
     <string name="Select_event">Seleccione evento ha asistir.</string>
     <string name="matricula">Ingrese matricula/cedula. </string>
+    <string name="correoPtxt">Correo: </string>
+    <string name="phonePtxt">Phone number: </string>
+    <string name="matriculaPtxt">Matricula: </string>
+    <string name="cedulaPtxt">Cedula: </string>
+    <string name="latitudPtxt">Latitud: </string>
+    <string name="longitudPtxt">Longitud: </string>
+    <string name="correoRtxt">Corre</string>
+    <string name="phoneRtxt">Phone number</string>
+    <string name="matriculaRtxt">Matricula</string>
+    <string name="cedulaRtxt">Matricula / Cedula</string>
+    <string name="latitudRtxt">Latitud</string>
+    <string name="longitudRtxt">Longitud</string>
+    <string name="asistir">ASISTIR</string>
+    <string name="cerrarSesion">CERRAR SESION</string>
+    <string name="marcarSalida">MARCAR SALIDA</string>
+    <string name="historial">HISTORIAL DE ASISTENCIAS</string>
+    <string name="verRegistros">VER REGISTROS</string>
+    <string name="crearEventos">CREAR EVENTO</string>
+    <string name="estadisticas">REVISAR ESTADISTICAS</string>
+    <string name="aceptar">ACEPTAR </string>
 
 </resources>
