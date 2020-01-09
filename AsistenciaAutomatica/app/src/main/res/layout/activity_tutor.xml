@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Tutor"
-    android:background="@drawable/fondo1">
+    android:background="#BCEEF7">
 
 
     <ScrollView
@@ -19,146 +19,123 @@
             android:layout_marginEnd="15dp"
             android:orientation="vertical" >
 
-            <RelativeLayout
-                android:id="@+id/RL_foto"
+
+            <ImageView
+                android:id="@+id/img_foto"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="110dp"
-                android:layout_marginTop="50dp"
-                android:layout_marginEnd="110dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/foto_perfil" />
-
-                <ImageView
-                    android:id="@+id/img_foto"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"/>
+                android:layout_height="167dp"
+                android:layout_marginTop="50dp"/>
 
 
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/text_viewId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_nombre"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="40dp"
+                android:textSize="18sp"
+                android:text="Cedula: "
+                android:textColor="@color/colorDark"/>
+
+            <TextView
+                android:id="@+id/txt_cedula"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_nombre"
+                android:layout_marginTop="40dp"
+                android:layout_toEndOf="@id/text_viewId"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:hint="cedula/matricula"
+                android:textColor="@color/colorDark"
+
+                />
 
             <TextView
                 android:id="@+id/txt_nombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/RL_foto"
+                android:layout_below="@id/img_foto"
                 android:gravity="center"
                 android:text="@string/app_nameUser"
                 android:textSize="30sp"
-                android:textColor="@color/colorWhite"/>
+                android:textColor="@color/colorDark"
 
-            <LinearLayout
-                android:id="@+id/layoutInfo"
+                />
+
+            <TextView
+                android:id="@+id/txt_mail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_cedula"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="Correo: "
+                android:textSize="18sp"
+                android:textColor="@color/colorDark"
+
+                />
+
+            <TextView
+                android:id="@+id/txt_correo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/txt_nombre"
-                android:layout_marginTop="50dp"
-                android:orientation="horizontal">
+                android:layout_toEndOf="@id/txt_mail"
+                android:layout_below="@id/txt_cedula"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:hint="correo"
+                android:textSize="18sp"
+                android:textColor="@color/colorDark"
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bordestv">
-
-                    <TextView
-                        android:id="@+id/text_viewId"
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:background="@drawable/bordestv"
-                        android:gravity="center_vertical"
-                        android:textSize="18sp"
-                        android:text="@string/cedulaPtxt"
-                        android:textColor="@color/colorDark"/>
-                    <TextView
-                        android:id="@+id/txt_mail"
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:background="@drawable/bordestv"
-                        android:gravity="center_vertical"
-                        android:text="@string/correoPtxt"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorDark"/>
-
-                    <TextView
-                        android:id="@+id/txt_cellphone"
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:background="@drawable/bordestv"
-                        android:gravity="center_vertical"
-                        android:text="@string/phonePtxt"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorDark"/>
+                />
 
 
-                </LinearLayout>
+            <TextView
+                android:id="@+id/txt_cellphone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_mail"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="Phone number: "
+                android:textSize="18sp"
+                android:textColor="@color/colorDark"
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bordestv">
+                />
 
-                    <TextView
-                        android:id="@+id/txt_cedula"
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:background="@drawable/bordestv"
-                        android:gravity="center_vertical"
-                        android:textSize="18sp"
-                        android:hint="@string/cedulaRtxt"
-                        android:textColor="@color/colorDark"/>
+            <TextView
+                android:id="@+id/txt_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_mail"
+                android:layout_toEndOf="@id/txt_cellphone"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:hint="Phone number"
+                android:textSize="18sp"
+                android:textColor="@color/colorDark"
 
-                    <TextView
-                        android:id="@+id/txt_correo"
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:background="@drawable/bordestv"
-                        android:gravity="center_vertical"
-                        android:hint="@string/correoPtxt"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorDark"/>
-
-                    <TextView
-                        android:id="@+id/txt_phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:background="@drawable/bordestv"
-                        android:gravity="center_vertical"
-                        android:hint="@string/phoneRtxt"
-                        android:textSize="18sp"
-                        android:textColor="@color/colorDark"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-
+                />
 
             <Button
                 android:id="@+id/btn_CrearEvento"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/layoutInfo"
-                android:layout_marginTop="100dp"
+                android:layout_below="@id/txt_phone"
+                android:layout_marginTop="150dp"
                 android:layout_centerInParent="true"
-                android:layout_centerHorizontal="true"
-                android:textAlignment="center"
-                android:background="@drawable/borde_redondo"
-                android:drawableEnd="@android:drawable/checkbox_on_background"
-                android:text="@string/crearEventos"
-                android:textColor="@color/colorDark"
+                android:background="@color/colorBlue"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:text="Crear Evento"
+                android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="224dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bordestv"
                 android:layout_below="@+id/btn_CrearEvento"
                 android:layout_marginTop="50dp"
                 android:scrollbarSize="18sp"
@@ -168,48 +145,42 @@
                 android:id="@+id/btn_verRegistros"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
-                android:textAlignment="center"
                 android:layout_below="@id/spinner"
                 android:layout_marginStart="90dp"
-                android:background="@drawable/borde_redondo"
-                android:drawableEnd="@android:drawable/checkbox_on_background"
+                android:background="@color/colorBlue"
                 android:layout_marginTop="10dp"
-                android:text="@string/verRegistros"
-                android:textColor="@color/colorDark"
+                android:drawableEnd="@android:drawable/arrow_down_float"
+                android:text="Ver Registros"
+                android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn_marcaSalida"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
-                android:textAlignment="center"
                 android:layout_below="@id/btn_verRegistros"
                 android:layout_marginStart="90dp"
-                android:background="@drawable/borde_redondo"
-                android:drawableEnd="@android:drawable/checkbox_on_background"
+                android:background="@color/colorBlue"
                 android:layout_marginTop="50dp"
-                android:text="@string/marcarSalida"
-                android:textColor="@color/colorDark"
+                android:drawableEnd="@android:drawable/arrow_down_float"
+                android:text="Marcar salida"
+                android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btn_estadisticas"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
-                android:textAlignment="center"
                 android:layout_below="@id/btn_marcaSalida"
                 android:layout_marginStart="90dp"
-                android:background="@drawable/borde_redondo"
+                android:background="@color/colorBlue"
                 android:layout_marginTop="50dp"
-                android:drawableEnd="@android:drawable/checkbox_on_background"
-                android:text="@string/estadisticas"
-                android:textColor="@color/colorDark"
+                android:drawableEnd="@android:drawable/arrow_down_float"
+                android:text="Revisar estadisticas"
+                android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
 
@@ -219,15 +190,13 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/btn_estadisticas"
                 android:layout_centerInParent="true"
-                android:layout_centerHorizontal="true"
-                android:textAlignment="center"
                 android:layout_marginTop="50dp"
                 android:layout_marginBottom="80dp"
-                android:background="@drawable/borde_redondo"
-                android:drawableEnd="@android:drawable/btn_dialog"
+                android:background="@color/colorBlue"
+                android:drawableRight="@android:drawable/btn_dialog"
                 android:onClick="cerrarSesion"
-                android:text="@string/cerrarSesion"
-                android:textColor="@color/colorDark"
+                android:text="Cerrar Sesion"
+                android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
 

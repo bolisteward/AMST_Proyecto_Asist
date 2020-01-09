@@ -1,6 +1,5 @@
 package com.example.asistenciaautomatica;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,7 +35,7 @@ public class Grafica_pastel extends AppCompatActivity {
     private PieDataSet pieDataSet;
     private String[] estado = new String[]{"Presente", "Atrasado", "No asiste"};
     private int[] cantEstudiantes;
-    private int[] colors = new int[]{Color.RED, R.color.colorAmarillo, R.color.colorPrimary};
+    private int[] colors = new int[]{Color.RED, Color.GREEN, Color.BLUE};
     public String evento;
     DatabaseReference db_reference;
 
@@ -165,7 +164,7 @@ public class Grafica_pastel extends AppCompatActivity {
     radio del circuilo interior y se inserta los datos obtendios del metodo getPieData().
      */
     public void createChart(){
-        pieChart = (PieChart) getSameChart(pieChart, "Estado Asistencias", Color.GRAY, R.color.fondoPieChart, 3000);
+        pieChart = (PieChart) getSameChart(pieChart, "Estado Asistencias", Color.GRAY, Color.MAGENTA, 3000);
         pieChart.setHoleRadius(50);
         pieChart.setTransparentCircleRadius(60);
         pieChart.setDrawHoleEnabled(true);

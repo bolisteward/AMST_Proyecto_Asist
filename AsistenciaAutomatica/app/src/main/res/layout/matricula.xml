@@ -55,7 +55,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/borde_redondo"
                 android:layout_marginTop="40dp"
                 android:text="ACEPTAR"
                 android:textColor="@color/colorDark"
