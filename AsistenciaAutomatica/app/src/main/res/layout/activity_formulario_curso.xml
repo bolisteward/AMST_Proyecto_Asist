@@ -179,7 +179,26 @@
                 android:textAlignment="center"
                 android:textSize="15sp"/>
 
+            <CheckBox
+                android:id="@+id/box_Dispositivo"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Utilizar dispositivo externo"
+                android:layout_weight="2"
+                android:textColor="@color/colorWhite"
+                android:layout_marginTop="15dp"
+                android:textSize="20sp"/>
 
+            <EditText
+                android:id="@+id/edtDispositivo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre o codigo del dispositivo"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite"
+                android:textSize="20sp"
+
+                />
 
             <Button
                 android:id="@+id/btn_Ubicacion1"

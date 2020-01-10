@@ -3,6 +3,7 @@ package com.example.asistenciaautomatica;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
@@ -91,19 +92,30 @@ public class Lista_Asistencia extends AppCompatActivity {
 
         TextView userName = new TextView(getApplicationContext());
         userName.setText(Name);
-        userName.setTextSize(20);
+        userName.setTextSize(15);
+        userName.setTextColor(Color.WHITE);
+        userName.setPadding(15,0,0,0);
         contNombre.addView(userName);
+
         TextView Estado = new TextView(getApplicationContext());
         Estado.setText(estado);
-        userName.setTextSize(20);
+        Estado.setTextSize(15);
+        Estado.setTextColor(Color.WHITE);
+        Estado.setPadding(15,0,0,0);
         contEstado.addView(Estado);
+
         TextView horaI = new TextView(getApplicationContext());
         horaI.setText(horas);
-        userName.setTextSize(20);
+        horaI.setTextSize(15);
+        horaI.setTextColor(Color.WHITE);
+        horaI.setPadding(15,0,0,0);
         contHoraInicio.addView(horaI);
+
         TextView numHoras = new TextView(getApplicationContext());
         numHoras.setText(cantHoras);
-        userName.setTextSize(20);
+        numHoras.setTextSize(15);
+        numHoras.setTextColor(Color.WHITE);
+        numHoras.setPadding(15,0,0,0);
         contNumHoras.addView(numHoras);
     }
 

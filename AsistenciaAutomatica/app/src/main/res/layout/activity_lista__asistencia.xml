@@ -27,7 +27,7 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
-            android:background="@drawable/borde_text"
+            android:background="@drawable/borde_blanco"
             android:text="Nombre"
             android:textAlignment="center" />
 
@@ -36,7 +36,7 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
-            android:background="@drawable/borde_text"
+            android:background="@drawable/borde_blanco"
             android:text="Estado"
             android:textAlignment="center" />
         <TextView
@@ -44,7 +44,7 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
-            android:background="@drawable/borde_text"
+            android:background="@drawable/borde_blanco"
             android:text="Hora Inicio"
             android:textAlignment="center" />
         <TextView
@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
-            android:background="@drawable/borde_text"
+            android:background="@drawable/borde_blanco"
             android:text="Num. Horas"
             android:textAlignment="center" />
     </LinearLayout>
@@ -70,25 +70,25 @@
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="@drawable/borde_text"/>
+                android:background="@drawable/borde_blanco"/>
             <LinearLayout
                 android:id="@+id/ContenedorEstado"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="@drawable/borde_text"/>
+                android:background="@drawable/borde_blanco"/>
             <LinearLayout
                 android:id="@+id/ContenedorHora"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="@drawable/borde_text"/>
+                android:background="@drawable/borde_blanco"/>
             <LinearLayout
                 android:id="@+id/ContenedorCantHoras"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="@drawable/borde_text"/>
+                android:background="@drawable/borde_blanco"/>
         </LinearLayout>
 
     </ScrollView>

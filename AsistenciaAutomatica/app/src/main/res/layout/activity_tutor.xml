@@ -158,7 +158,7 @@
                 android:id="@+id/spinner"
                 android:layout_width="224dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bordestv"
+                android:background="@drawable/borde_redondo"
                 android:layout_below="@+id/btn_CrearEvento"
                 android:layout_marginTop="50dp"
                 android:scrollbarSize="18sp"

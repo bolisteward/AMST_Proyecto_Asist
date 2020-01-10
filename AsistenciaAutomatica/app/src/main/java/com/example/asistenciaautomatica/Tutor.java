@@ -64,6 +64,7 @@ public class Tutor extends AppCompatActivity {
     public String userId, name_evento;
     public Boolean nuevoTutor;
     public Users tutor;
+    HashMap<String, String> info_evento = null;
 
 
     @Override
@@ -201,9 +202,29 @@ public class Tutor extends AppCompatActivity {
                         name_evento = spinner.getItemAtPosition(position).toString();
                         if (position!=0) {
                             Toast.makeText(Tutor.this,"Ha seleccionado el evento: " + name_evento, Toast.LENGTH_SHORT).show();
-                            verAsistencias(name_evento);
-                            marcarSalida(name_evento);
-                            verEstadisticas(name_evento);
+                            DatabaseReference db_eventoInfo = db_reference.child("Evento");
+                            db_eventoInfo.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                                        HashMap<String, String> dataEvento = (HashMap<String, String>) snapshot.getValue();
+                                        if (dataEvento!= null && dataEvento.get("Nom_evento").equals(name_evento)) {
+                                            info_evento = dataEvento;
+                                            break;
+                                        }
+                                    }
+
+                                    verAsistencias(name_evento);
+                                    marcarSalida(name_evento);
+                                    verEstadisticas(name_evento);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e(TAG, "Error!", databaseError.toException());
+                                }
+                            });
                         }
 
                     }
@@ -272,36 +293,18 @@ public class Tutor extends AppCompatActivity {
         btn_marcaSalida.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (evento!=null) {
+
+                if (evento!=null && !evento.equals("Seleccione un Evento") && info_evento!=null) {
                     DatabaseReference db_mSalida = db_reference.child("Evento");
 
-                    db_mSalida.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-                                HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
-
-                                if (data != null) {
-                                    if (data.get("Nom_evento").equals(evento)) {
-                                        if (data.get("marcaSalida").equals("true")) {
-                                            horaFinAsistentes(evento);
-                                            break;
-                                        } else {
-                                            Toast.makeText(Tutor.this, "El evento seleccionado se cierra automaticamente a la hora estipulada en la creacion del evento." + name_evento, Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-                                }
-                            }
+                    if (info_evento.get("Nom_evento").equals(evento)) {
+                        if (info_evento.get("Marcar_Salida").equals("true")) {
+                            horaFinAsistentes(evento);
+                        } else {
+                            Toast.makeText(Tutor.this, "El evento seleccionado se cierra automaticamente a la hora estipulada en la creacion del evento." + name_evento, Toast.LENGTH_SHORT).show();
                         }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.e(TAG, "Error!", databaseError.toException());
-                        }
-                    });
+                    }
                 }else{
                     Toast.makeText(Tutor.this,"Seleccione un evento o curso primero.", Toast.LENGTH_SHORT).show();
                 }
@@ -332,6 +335,7 @@ public class Tutor extends AppCompatActivity {
 
                     if (dataLista!= null) {
                         if (dataLista.get("evento").equals(evento)){
+
                             DatabaseReference ref = db_horaFin.child(snapshot.getKey()).child("lista");
                             ref.addValueEventListener(new ValueEventListener() {
                                 @Override
@@ -342,23 +346,27 @@ public class Tutor extends AppCompatActivity {
                                         if (snapshot.getKey()!=null && dataUser!=null) {
                                             ref.child(snapshot.getKey()).child("horaFin").setValue(horaFin);
                                             String[] horaInicio = dataUser.get("horaInicio").split(":");
+
                                             if (Integer.parseInt(horaInicio[0]) == horas) {
-                                                Double numHoras = cantHoras(0, Integer.parseInt(horaInicio[1]));
-                                                ref.child(snapshot.getKey()).child("numHoras").setValue(numHoras);
+                                                int minTotal = minutos-Integer.parseInt(horaInicio[1]);
+                                                String horaFinAsist = 0+"."+minTotal+"h";
+                                                ref.child(snapshot.getKey()).child("numHoras").setValue(horaFinAsist);
                                             }else{
                                                 int horasPresente = horas - Integer.parseInt(horaInicio[0]);
+
                                                 if (minutos > Integer.parseInt(horaInicio[1])) {
-                                                    int min = minutos - Integer.parseInt(horaInicio[1]);
-                                                    Double numHoras = cantHoras(horasPresente, min);
-                                                    ref.child(snapshot.getKey()).child("numHoras").setValue(numHoras);
+                                                    int minTotal = minutos - Integer.parseInt(horaInicio[1]);
+                                                    String horaFinAsist = horasPresente+"."+minTotal+"h";
+                                                    ref.child(snapshot.getKey()).child("numHoras").setValue(horaFinAsist);
                                                 }else {
-                                                    int min = 60 + minutos - Integer.parseInt(horaInicio[1]);
-                                                    Double numHoras = cantHoras(horasPresente-1, min);
-                                                    ref.child(snapshot.getKey()).child("numHoras").setValue(numHoras);
+                                                    int minTotal = 60 + minutos - Integer.parseInt(horaInicio[1]);
+                                                    String horaFinAsist = (horasPresente-1)+"."+minTotal+"h";
+                                                    ref.child(snapshot.getKey()).child("numHoras").setValue(horaFinAsist);
                                                 }
                                             }
                                         }
                                     }
+                                    Toast.makeText(Tutor.this, "Hora de salida: " + horaFin, Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -377,16 +385,6 @@ public class Tutor extends AppCompatActivity {
                 Log.e(TAG, "Error!", databaseError.toException());
             }
         });
-    }
-
-    /**
-    retorna un valor tipo Double con la cantidad de horas totales a partir del numero de horas y minutos que se
-    ongresan como parametro en el metodo.
-     */
-    public double cantHoras(int horas, int minutos){
-        double numHoras;
-        numHoras = horas+(minutos*100/60);
-        return numHoras;
     }
 
     /**

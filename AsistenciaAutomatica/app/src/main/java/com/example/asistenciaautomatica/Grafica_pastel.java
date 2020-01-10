@@ -36,7 +36,8 @@ public class Grafica_pastel extends AppCompatActivity {
     private PieDataSet pieDataSet;
     private String[] estado = new String[]{"Presente", "Atrasado", "No asiste"};
     private int[] cantEstudiantes;
-    private int[] colors = new int[]{Color.RED, R.color.colorAmarillo, R.color.colorPrimary};
+    private int[] colors = new int[]{Color.RED, Color.GREEN, Color.YELLOW};
+    private  int totalAsistentes;
     public String evento;
     DatabaseReference db_reference;
 
@@ -90,7 +91,7 @@ public class Grafica_pastel extends AppCompatActivity {
                                         }
                                     }
                                 }
-
+                                totalAsistentes = presente+atrasado+noAsiste;
                                 cantEstudiantes = new int[]{presente, atrasado, noAsiste};
                                 createChart();
 
@@ -119,7 +120,7 @@ public class Grafica_pastel extends AppCompatActivity {
      */
     private Chart getSameChart (Chart chart, String descripcion, int textColor, int background, int animateY){
         chart.getDescription().setText(descripcion);
-        chart.getDescription().setTextSize(15);
+        chart.getDescription().setTextSize(30);
         chart.getDescription().setTextColor(textColor);
         chart.setBackgroundColor(background);
         chart.animateY(animateY);
@@ -136,6 +137,7 @@ public class Grafica_pastel extends AppCompatActivity {
         Legend legend =  chart.getLegend();
         legend.setForm(Legend.LegendForm.CIRCLE);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setTextSize(15);
 
         ArrayList <LegendEntry> entries = new ArrayList<>();
         for (int i=0; i<estado.length; i++){
@@ -155,7 +157,9 @@ public class Grafica_pastel extends AppCompatActivity {
     private ArrayList<PieEntry> getPieEntries(){
         ArrayList<PieEntry> entries = new ArrayList<>();
         for (int i=0; i<estado.length; i++){
-            entries.add(new PieEntry(i, cantEstudiantes[i]));
+            float promedio = cantEstudiantes[i]*(100/totalAsistentes);
+            entries.add(new PieEntry(promedio, cantEstudiantes[i]));
+
         }
         return  entries;
     }
@@ -165,9 +169,10 @@ public class Grafica_pastel extends AppCompatActivity {
     radio del circuilo interior y se inserta los datos obtendios del metodo getPieData().
      */
     public void createChart(){
-        pieChart = (PieChart) getSameChart(pieChart, "Estado Asistencias", Color.GRAY, R.color.fondoPieChart, 3000);
-        pieChart.setHoleRadius(50);
-        pieChart.setTransparentCircleRadius(60);
+        pieChart = (PieChart) getSameChart(pieChart, "Estado Asistencias", Color.BLACK, Color.TRANSPARENT, 3000);
+        pieChart.setHoleRadius(40);
+        pieChart.setHoleColor(Color.TRANSPARENT);
+        pieChart.setTransparentCircleRadius(50);
         pieChart.setDrawHoleEnabled(true);
         pieChart.setData(getPieData());
         pieChart.invalidate();
@@ -179,8 +184,8 @@ public class Grafica_pastel extends AppCompatActivity {
      */
     private DataSet getData(DataSet dataSet) {
         dataSet.setColors(colors);
-        dataSet.setValueTextColor(Color.WHITE);
-        dataSet.setValueTextSize(15);
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setValueTextSize(30);
         return dataSet;
     }
 

@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:layout_gravity="center_horizontal"
-            android:background="@color/colorTutor"
+            android:background="@color/colorAsistente"
             android:onClick="startTutor"
             android:src="@drawable/boton_tutor" />
 

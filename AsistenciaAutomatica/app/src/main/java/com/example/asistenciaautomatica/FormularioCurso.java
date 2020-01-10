@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -64,16 +65,18 @@ public class FormularioCurso extends AppCompatActivity {
     private boolean mLocationPermissionGaranted = false;
     public FusedLocationProviderClient mFusedLocationProviderClient;
     public String disp_Lat1, disp_Long1, disp_Lat2, disp_Long2;
-    public String tutorID;
+    public String tutorID, estadoBateria;
     DatabaseReference db_reference;
 
     //views
     public Button btn_Ubicacion1, btn_Ubicacion2, btn_Guardar;
-    public EditText etNombreCurso, etDescripcion, etTimeRetraso;
+    public EditText etNombreCurso, etDescripcion, etTimeRetraso, edtDispositivo;
     public TextView  etFecha, etHoraInicio, etHoraFin;
-    public Button btn_Fecha, btn_HoraInicio, btn_HoraFin;
+    public ImageButton btn_Fecha, btn_HoraInicio, btn_HoraFin;
     public CheckBox box_Retraso, box_CheckOut;
     public HashMap<String,String> eventos = new HashMap<>();
+    public HashMap<String, String> info_disp = null;
+    public CheckBox box_Dispositivo;
 
     //variables grobales
     private  int anio,mes,dia,horas,minutos, horaFin, minFin, numDispositivo;
@@ -91,8 +94,10 @@ public class FormularioCurso extends AppCompatActivity {
         etHoraInicio = findViewById(R.id.etHoraInicio);
         etHoraFin = findViewById(R.id.etHoraFin);
         etTimeRetraso = findViewById(R.id.etTimeRetraso);
+        edtDispositivo = findViewById(R.id.edtDispositivo);
         box_Retraso = findViewById(R.id.box_Retraso);
         box_CheckOut = findViewById(R.id.box_CheckOut);
+        box_Dispositivo = findViewById(R.id.box_Dispositivo);
         btn_Fecha = findViewById(R.id.btn_Fecha);
         btn_HoraFin = findViewById(R.id.btn_HoraFin);
         btn_HoraInicio = findViewById(R.id.btn_HoraInicio);
@@ -198,8 +203,13 @@ public class FormularioCurso extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if (isServiceOk()) {
-                            numDispositivo =1;
-                            getLocationPermission();
+                            numDispositivo = 1;
+                            if (box_Dispositivo.isChecked()) {
+                                String name_disp=edtDispositivo.getText().toString();
+                                dispositivoGPS(name_disp);
+                            }else {
+                                getLocationPermission();
+                            }
                         }
                     }
                 });
@@ -207,8 +217,13 @@ public class FormularioCurso extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if (isServiceOk()) {
-                            numDispositivo =2;
-                            getLocationPermission();
+                            numDispositivo = 2;
+                            if (box_Dispositivo.isChecked()) {
+                                String name_disp=edtDispositivo.getText().toString();
+                                dispositivoGPS(name_disp);
+                            }else {
+                                getLocationPermission();
+                            }
                         }
                     }
                 });
@@ -218,6 +233,50 @@ public class FormularioCurso extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, "Error!", error.toException());
+            }
+        });
+    }
+
+    /*
+    El metodo dispositivoGPS requiere del parametro nameDisp para obtener los datos del gps del dispositivo IOT
+    cuyos datos se encuentran en la seccion Registros cuyos id's son el nombre o codigo unico del dispositivo.
+    Solo se implementa este metodo cuando se selecciona el checkBox box_Dispositivo.
+     */
+    public void dispositivoGPS(String nameDisp){
+        DatabaseReference db_dispositivo = db_reference.child("Registro");
+        db_dispositivo.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if (snapshot!=null && snapshot.getKey().equals(edtDispositivo.getText().toString())){
+                        info_disp = (HashMap<String, String>) snapshot.getValue();
+                    }
+                }
+
+                if (info_disp!=null){
+                    if (numDispositivo==1){
+                        disp_Lat1 = info_disp.get("lat");
+                        disp_Long1 = info_disp.get("long");
+                        estadoBateria = info_disp.get("estBattery");
+                        Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: "+estadoBateria, Toast.LENGTH_SHORT).show();
+                    }
+                    if (numDispositivo == 2){
+                        disp_Lat2 = info_disp.get("lat");
+                        disp_Long2 = info_disp.get("long");
+                        estadoBateria = info_disp.get("estBattery");
+                        Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: "+estadoBateria, Toast.LENGTH_SHORT).show();
+                    }
+
+                    Guardar();
+
+                }else{
+                    Toast.makeText(FormularioCurso.this, "El codigo o nombre del dispositivo ingresado no existe.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error!", databaseError.toException());
             }
         });
     }
@@ -414,6 +473,7 @@ public class FormularioCurso extends AppCompatActivity {
                         if(task.isSuccessful()){
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
+                            System.out.println(currentLocation);
                             if (currentLocation !=null) {
                                 if (numDispositivo==1) {
                                     disp_Lat1 = Double.toString(currentLocation.getLatitude());

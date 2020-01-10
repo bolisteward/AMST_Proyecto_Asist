@@ -3,8 +3,8 @@
     <string name="app_nameUser">Nombre de usuario:</string>
     <string name="title">Automatic asistance</string>
     <string name="Perfil_user">Seleccione Tutor si organiza \nun evento, o Asistente si va a participar en uno.</string>
-    <string name="Marcar_Zona">Pulse el boton \"Punto 1\" cuando se encuentre en la esquina inferior derecha del lugar del evento,
-    luego pulse el boton \"Punto 2\" cuando se encuentre en la esquina superior izquierda para establecer la zona de validacion de asistencia. </string>
+    <string name="Marcar_Zona">Pulse el boton \"Punto 1\" cuando el dispositivo o el movil se encuentre en la esquina inferior derecha del lugar del evento,
+    luego pulse el boton \"Punto 2\" cuando el dispositivo o el movil se encuentre en la esquina superior izquierda para establecer la zona de validacion de asistencia. </string>
     <string name="Select_event">Seleccione evento ha asistir.</string>
     <string name="matricula">Ingrese matricula/cedula. </string>
     <string name="correoPtxt">Correo: </string>
