@@ -65,7 +65,7 @@ public class FormularioCurso extends AppCompatActivity {
     private boolean mLocationPermissionGaranted = false;
     public FusedLocationProviderClient mFusedLocationProviderClient;
     public String disp_Lat1, disp_Long1, disp_Lat2, disp_Long2;
-    public String tutorID, estadoBateria;
+    public String tutorID, estadoBateria, idDispositivo;
     DatabaseReference db_reference;
 
     //views
@@ -219,7 +219,7 @@ public class FormularioCurso extends AppCompatActivity {
                         if (isServiceOk()) {
                             numDispositivo = 2;
                             if (box_Dispositivo.isChecked()) {
-                                String name_disp=edtDispositivo.getText().toString();
+                                String name_disp= edtDispositivo.getText().toString();
                                 dispositivoGPS(name_disp);
                             }else {
                                 getLocationPermission();
@@ -244,34 +244,53 @@ public class FormularioCurso extends AppCompatActivity {
      */
     public void dispositivoGPS(String nameDisp){
         DatabaseReference db_dispositivo = db_reference.child("Registro");
+
         db_dispositivo.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Boolean existe = false;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if (snapshot!=null && snapshot.getKey().equals(edtDispositivo.getText().toString())){
-                        info_disp = (HashMap<String, String>) snapshot.getValue();
+                        db_dispositivo.child(nameDisp);
+                        existe = true;
+                        break;
                     }
                 }
+                if (existe) {
+                    db_dispositivo.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                info_disp =(HashMap<String, String>) snapshot.getValue();
+                                idDispositivo = snapshot.getKey();
+                                if (numDispositivo==1){
+                                    disp_Lat1 = info_disp.get("lat");
+                                    disp_Long1 = info_disp.get("long");
+                                    estadoBateria = info_disp.get("estBattery");
+                                    Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: "+estadoBateria, Toast.LENGTH_SHORT).show();
+                                }
+                                if (numDispositivo == 2){
+                                    disp_Lat2 = info_disp.get("lat");
+                                    disp_Long2 = info_disp.get("long");
+                                    estadoBateria = info_disp.get("estBattery");
+                                    Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: "+estadoBateria, Toast.LENGTH_SHORT).show();
+                                }
+                                break;
+                            }
+                            db_dispositivo.setValue("-");
+                            Guardar();
 
-                if (info_disp!=null){
-                    if (numDispositivo==1){
-                        disp_Lat1 = info_disp.get("lat");
-                        disp_Long1 = info_disp.get("long");
-                        estadoBateria = info_disp.get("estBattery");
-                        Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: "+estadoBateria, Toast.LENGTH_SHORT).show();
-                    }
-                    if (numDispositivo == 2){
-                        disp_Lat2 = info_disp.get("lat");
-                        disp_Long2 = info_disp.get("long");
-                        estadoBateria = info_disp.get("estBattery");
-                        Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: "+estadoBateria, Toast.LENGTH_SHORT).show();
-                    }
+                        }
 
-                    Guardar();
-
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e(TAG, "Error!", databaseError.toException());
+                        }
+                    });
                 }else{
                     Toast.makeText(FormularioCurso.this, "El codigo o nombre del dispositivo ingresado no existe.", Toast.LENGTH_SHORT).show();
                 }
+
             }
 
             @Override
