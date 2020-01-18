@@ -16,6 +16,7 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -75,7 +76,6 @@ public class FormularioCurso extends AppCompatActivity {
     public ImageButton btn_Fecha, btn_HoraInicio, btn_HoraFin;
     public CheckBox box_Retraso, box_CheckOut;
     public HashMap<String,String> eventos = new HashMap<>();
-    public HashMap<String, String> info_disp = null;
     public CheckBox box_Dispositivo;
 
     //variables grobales
@@ -243,43 +243,97 @@ public class FormularioCurso extends AppCompatActivity {
     Solo se implementa este metodo cuando se selecciona el checkBox box_Dispositivo.
      */
     public void dispositivoGPS(String nameDisp){
-        DatabaseReference db_dispositivo = db_reference.child("Registro");
+        DatabaseReference db_dispositivo = db_reference.child("Registros");
 
         db_dispositivo.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Boolean existe = false;
+                HashMap<String, String> info_disp = null;
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if (snapshot!=null && snapshot.getKey().equals(edtDispositivo.getText().toString())){
-                        db_dispositivo.child(nameDisp);
+                        System.out.println(nameDisp+"hola");
+                        info_disp =(HashMap<String, String>) snapshot.getValue();
                         existe = true;
                         break;
                     }
                 }
-                if (existe) {
-                    db_dispositivo.addValueEventListener(new ValueEventListener() {
+                if (existe && info_disp!=null) {
+                    System.out.println(existe);
+                    DatabaseReference db_dispo = db_dispositivo.child(nameDisp);
+                    db_dispo.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            HashMap<String, String> info_dps = null;
+                            String key = null;
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                info_disp =(HashMap<String, String>) snapshot.getValue();
-                                idDispositivo = snapshot.getKey();
-                                if (numDispositivo==1){
-                                    disp_Lat1 = info_disp.get("lat");
-                                    disp_Long1 = info_disp.get("long");
-                                    estadoBateria = info_disp.get("estBattery");
-                                    Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: "+estadoBateria, Toast.LENGTH_SHORT).show();
-                                }
-                                if (numDispositivo == 2){
-                                    disp_Lat2 = info_disp.get("lat");
-                                    disp_Long2 = info_disp.get("long");
-                                    estadoBateria = info_disp.get("estBattery");
-                                    Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: "+estadoBateria, Toast.LENGTH_SHORT).show();
-                                }
+                                info_dps =(HashMap<String, String>) dataSnapshot.getValue();
+                                key=snapshot.getKey();
                                 break;
                             }
-                            db_dispositivo.setValue("-");
-                            Guardar();
+                            if (info_dps!=null && key!=null) {
 
+                                DatabaseReference base = db_dispo.child(key);
+                                base.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        HashMap<String, String> info =null;
+                                        HashMap<String, String> punto =null;
+                                        Boolean nulidad = false;
+                                        String keydato = null;
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                            info = (HashMap<String, String>) dataSnapshot.getValue();
+                                            if (info!=null) {
+                                                if (!info.get("lat").equals("0")) {
+                                                    punto = (HashMap<String, String>) dataSnapshot.getValue();
+                                                    nulidad = true;
+                                                    keydato = dataSnapshot.getKey();
+                                                    System.out.println(keydato);
+                                                    break;
+                                                }
+                                                System.out.println("no existe");
+                                            }
+                                        }
+                                        if (punto!=null && nulidad && keydato!=null){
+                                            System.out.println(info);
+                                            System.out.println("aki");
+                                            if (numDispositivo == 1) {
+                                                disp_Lat1 = punto.get("lat");
+                                                disp_Long1 = punto.get("long");
+                                                estadoBateria = punto.get("estBateria");
+                                                System.out.println(numDispositivo);
+                                                System.out.println(numDispositivo);
+                                                System.out.println(disp_Lat1 + "-" + disp_Long1);
+                                                System.out.println(disp_Lat2 + "-" + disp_Long2);
+                                                Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: " + estadoBateria, Toast.LENGTH_SHORT).show();
+                                                DatabaseReference eliminar = db_reference.child("Registros").child(nameDisp);
+                                                eliminar.child(keydato).removeValue();
+                                            }
+                                            if (numDispositivo == 2) {
+                                                disp_Lat2 = punto.get("lat");
+                                                disp_Long2 = punto.get("long");
+                                                estadoBateria = punto.get("estBateria");
+                                                System.out.println(numDispositivo);
+                                                System.out.println(disp_Lat1 + "-" + disp_Long1);
+                                                System.out.println(disp_Lat2 + "-" + disp_Long2);
+                                                Toast.makeText(FormularioCurso.this, "La bateria de su dispositivo es: " + estadoBateria, Toast.LENGTH_SHORT).show();
+                                                DatabaseReference eliminar = db_reference.child("Registros").child(nameDisp);
+                                                eliminar.child(keydato).removeValue();
+                                            }
+                                            Guardar();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Log.e(TAG, "Error!", databaseError.toException());
+                                    }
+                                });
+
+                            }else{
+                                System.out.println("falla disp");
+                            }
                         }
 
                         @Override
@@ -287,6 +341,7 @@ public class FormularioCurso extends AppCompatActivity {
                             Log.e(TAG, "Error!", databaseError.toException());
                         }
                     });
+
                 }else{
                     Toast.makeText(FormularioCurso.this, "El codigo o nombre del dispositivo ingresado no existe.", Toast.LENGTH_SHORT).show();
                 }

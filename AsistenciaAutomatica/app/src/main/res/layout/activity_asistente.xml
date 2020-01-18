@@ -28,13 +28,15 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/foto_perfil" />
+                    android:src="@drawable/foto_perfil"
+                    android:contentDescription="TODO" />
 
                 <ImageView
                     android:id="@+id/img_foto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerInParent="true"/>
+                    android:layout_centerInParent="true"
+                    android:contentDescription="TODO" />
 
 
             </RelativeLayout>
