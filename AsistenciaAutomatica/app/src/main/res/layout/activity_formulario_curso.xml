@@ -209,6 +209,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:background="@drawable/borde_redondo"
                 android:layout_marginTop="30dp"
+                android:textSize="20sp"
                 android:text="Punto 1" />
 
             <Button
@@ -220,6 +221,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:background="@drawable/borde_redondo"
                 android:layout_marginTop="30dp"
+                android:textSize="20sp"
                 android:text="Punto 2" />
 
             <Button
@@ -230,6 +232,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="80dp"
                 android:text="Guardar "
+                android:textSize="20sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:background="@drawable/borde_redondo"
                 android:layout_marginTop="30dp"/>

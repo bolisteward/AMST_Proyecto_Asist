@@ -152,7 +152,7 @@
                 android:drawableEnd="@android:drawable/checkbox_on_background"
                 android:text="@string/crearEventos"
                 android:textColor="@color/colorDark"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
 
             <Spinner
                 android:id="@+id/spinner"
@@ -161,7 +161,7 @@
                 android:background="@drawable/borde_redondo"
                 android:layout_below="@+id/btn_CrearEvento"
                 android:layout_marginTop="50dp"
-                android:scrollbarSize="18sp"
+                android:scrollbarSize="15sp"
                 android:layout_centerInParent="true" />
 
             <Button
@@ -178,7 +178,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/verRegistros"
                 android:textColor="@color/colorDark"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
 
             <Button
                 android:id="@+id/btn_marcaSalida"
@@ -194,7 +194,7 @@
                 android:layout_marginTop="50dp"
                 android:text="@string/marcarSalida"
                 android:textColor="@color/colorDark"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
 
             <Button
                 android:id="@+id/btn_estadisticas"
@@ -210,7 +210,7 @@
                 android:drawableEnd="@android:drawable/checkbox_on_background"
                 android:text="@string/estadisticas"
                 android:textColor="@color/colorDark"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
 
 
             <Button
@@ -228,7 +228,7 @@
                 android:onClick="cerrarSesion"
                 android:text="@string/cerrarSesion"
                 android:textColor="@color/colorDark"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
 
 
         </RelativeLayout>
