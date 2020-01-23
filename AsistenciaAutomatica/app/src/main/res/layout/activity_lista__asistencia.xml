@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,7 +11,7 @@
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lista de asistencia"
+        android:text="@string/tituloAsist"
         android:textColor="@color/colorWhite"
         android:textAlignment="center"
         android:textSize="30sp" />
@@ -28,7 +27,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
             android:background="@drawable/borde_blanco"
-            android:text="Nombre"
+            android:text="@string/nombre"
             android:textAlignment="center" />
 
         <TextView
@@ -37,7 +36,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
             android:background="@drawable/borde_blanco"
-            android:text="Estado"
+            android:text="@string/estado"
             android:textAlignment="center" />
         <TextView
             android:id="@+id/TituloHoraInicio"
@@ -45,7 +44,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
             android:background="@drawable/borde_blanco"
-            android:text="Hora Inicio"
+            android:text="@string/hIni"
             android:textAlignment="center" />
         <TextView
             android:id="@+id/TituloHoraFin"
@@ -53,7 +52,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
             android:background="@drawable/borde_blanco"
-            android:text="Num. Horas"
+            android:text="@string/numHoras"
             android:textAlignment="center" />
     </LinearLayout>
 
@@ -63,7 +62,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal" >
             <LinearLayout
                 android:id="@+id/ContenedorNombre"

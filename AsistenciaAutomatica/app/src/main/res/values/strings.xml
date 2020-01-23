@@ -27,5 +27,29 @@
     <string name="crearEventos">CREAR EVENTO</string>
     <string name="estadisticas">REVISAR ESTADISTICAS</string>
     <string name="aceptar">ACEPTAR </string>
+    //Formulario
+    <string name="tituloFormulario">Crear evento </string>
+    <string name="nombCurso">Nombre de Curso * </string>
+    <string name="descripCurso">Descripcion </string>
+    <string name="fechaCurso">Fecha* </string>
+    <string name="horaIniCurso">Hora de Inicio* </string>
+    <string name="horaFinCurso">Hora de Finalizacion</string>
+    <string name="minRetraso">Min. tiempo de retraso (min)</string>
+    <string name="permitirRetraso">Permitir Retraso*</string>
+    <string name="marcarSalidaCurso">Marcar salida</string>
+    <string name="dispExterno">Utilizar dispositivo externo</string>
+    <string name="codeDisp">Nombre o codigo del dispositivo</string>
+    <string name="punto1Curso">Punto 1</string>
+    <string name="punto2Curso">Punto 2</string>
+    <string name="guardar">Guardar</string>
+    //listaAsistencia
+    <string name="tituloAsist">Lista de asistencia</string>
+    <string name="nombre">Nombre</string>
+    <string name="estado">Estado</string>
+    <string name="hIni">Hora Inicio</string>
+    <string name="numHoras">Num. Horas</string>
+    //historial
+    <string name="tituloHistorial">Historial de asistencia</string>
+
 
 </resources>

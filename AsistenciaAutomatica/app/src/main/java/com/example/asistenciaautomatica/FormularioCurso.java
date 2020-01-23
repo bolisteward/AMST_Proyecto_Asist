@@ -10,17 +10,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -34,7 +29,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,11 +36,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.security.PublicKey;
 import java.text.DateFormat;
-import java.text.Normalizer;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,19 +55,33 @@ public class FormularioCurso extends AppCompatActivity {
 
     //vars
     private boolean mLocationPermissionGaranted = false;
-    public FusedLocationProviderClient mFusedLocationProviderClient;
-    public String disp_Lat1, disp_Long1, disp_Lat2, disp_Long2;
-    public String tutorID, estadoBateria, idDispositivo;
-    DatabaseReference db_reference;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private String disp_Lat1;
+    private String disp_Long1;
+    private String disp_Lat2;
+    private String disp_Long2;
+    private String tutorID;
+    private String estadoBateria;
+    private DatabaseReference db_reference;
 
     //views
-    public Button btn_Ubicacion1, btn_Ubicacion2, btn_Guardar;
-    public EditText etNombreCurso, etDescripcion, etTimeRetraso, edtDispositivo;
-    public TextView  etFecha, etHoraInicio, etHoraFin;
-    public ImageButton btn_Fecha, btn_HoraInicio, btn_HoraFin;
-    public CheckBox box_Retraso, box_CheckOut;
-    public HashMap<String,String> eventos = new HashMap<>();
-    public CheckBox box_Dispositivo;
+    private Button btn_Ubicacion1;
+    private Button btn_Ubicacion2;
+    private Button btn_Guardar;
+    private EditText etNombreCurso;
+    private EditText etDescripcion;
+    private EditText etTimeRetraso;
+    private EditText edtDispositivo;
+    private TextView  etFecha;
+    private TextView etHoraInicio;
+    private TextView etHoraFin;
+    private ImageButton btn_Fecha;
+    private ImageButton btn_HoraInicio;
+    private ImageButton btn_HoraFin;
+    private CheckBox box_Retraso;
+    private CheckBox box_CheckOut;
+    private HashMap<String,String> eventos = new HashMap<>();
+    private CheckBox box_Dispositivo;
 
     //variables grobales
     private  int anio,mes,dia,horas,minutos, horaFin, minFin, numDispositivo;
@@ -118,7 +123,7 @@ public class FormularioCurso extends AppCompatActivity {
     un Date y Time Picker Dialog para la sellecion de la fehca y hora del evento. De igual forma para la accion de los
     botones de ubicacion1 y ubicacion 2 para seleccionar la zona del evento.
      */
-    public void leerEventos(){
+    private void leerEventos(){
         DatabaseReference db_evento = db_reference.child("Evento");
 
         db_evento.addValueEventListener(new ValueEventListener() {
@@ -134,96 +139,68 @@ public class FormularioCurso extends AppCompatActivity {
                     }
                 }
 
-                btn_Fecha.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                btn_Fecha.setOnClickListener(v -> {
 
-                        final Calendar c = Calendar.getInstance();
-                        anio=c.get(Calendar.YEAR);
-                        mes=c.get(Calendar.MONTH);
-                        dia=c.get(Calendar.DAY_OF_MONTH);
-                        DatePickerDialog datePicker = new DatePickerDialog(FormularioCurso.this, new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                etFecha.setText(year+"/"+(month+1)+"/"+dayOfMonth);
-                            }
-                        },anio,mes,dia);
+                    final Calendar c = Calendar.getInstance();
+                    anio=c.get(Calendar.YEAR);
+                    mes=c.get(Calendar.MONTH);
+                    dia=c.get(Calendar.DAY_OF_MONTH);
+                    DatePickerDialog datePicker = new DatePickerDialog(FormularioCurso.this, (view, year, month, dayOfMonth) -> etFecha.setText(year+"/"+(month+1)+"/"+dayOfMonth),anio,mes,dia);
 
-                        datePicker.show();
+                    datePicker.show();
 
-                    }
                 });
 
-                btn_HoraInicio.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                btn_HoraInicio.setOnClickListener(v -> {
 
-                        Date date = new Date();
-                        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                        String[] hora_actual = hourFormat.format(date).split(":");
-                        horas = Integer.valueOf(hora_actual[0]);
-                        minutos = Integer.valueOf(hora_actual[1]);
+                    Date date = new Date();
+                    DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                    String[] hora_actual = hourFormat.format(date).split(":");
+                    horas = Integer.valueOf(hora_actual[0]);
+                    minutos = Integer.valueOf(hora_actual[1]);
 
-                        TimePickerDialog ponerhora= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                etHoraInicio.setText(hourOfDay+":"+minute);
-                            }
-                        },horas,minutos,true);
+                    TimePickerDialog ponerhora= new TimePickerDialog(FormularioCurso.this, (view, hourOfDay, minute) -> etHoraInicio.setText(hourOfDay+":"+minute),horas,minutos,true);
 
 
-                        ponerhora.show();
-                    }
+                    ponerhora.show();
                 });
-                btn_HoraFin.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                btn_HoraFin.setOnClickListener(v -> {
 
-                        Date date = new Date();
-                        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                        String[] hora_actual = hourFormat.format(date).split(":");
-                        horaFin = Integer.valueOf(hora_actual[0]);
-                        minFin = Integer.valueOf(hora_actual[1]);
+                    Date date = new Date();
+                    DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                    String[] hora_actual = hourFormat.format(date).split(":");
+                    horaFin = Integer.valueOf(hora_actual[0]);
+                    minFin = Integer.valueOf(hora_actual[1]);
 
-                        TimePickerDialog ponerhoraFin= new TimePickerDialog(FormularioCurso.this, new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    TimePickerDialog ponerhoraFin= new TimePickerDialog(FormularioCurso.this, (view, hourOfDay, minute) -> {
 
-                                String horaFinal = hourOfDay+":"+minute;
-                                CompararTiempo(etHoraInicio.getText().toString(), horaFinal);
+                        String horaFinal = hourOfDay+":"+minute;
+                        CompararTiempo(etHoraInicio.getText().toString(), horaFinal);
 
-                            }
-                        },horaFin,minFin,true);
+                    },horaFin,minFin,true);
 
-                        ponerhoraFin.show();
-                    }
+                    ponerhoraFin.show();
                 });
 
-                btn_Ubicacion1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (isServiceOk()) {
-                            numDispositivo = 1;
-                            if (box_Dispositivo.isChecked()) {
-                                String name_disp=edtDispositivo.getText().toString();
-                                dispositivoGPS(name_disp);
-                            }else {
-                                getLocationPermission();
-                            }
+                btn_Ubicacion1.setOnClickListener(v -> {
+                    if (isServiceOk()) {
+                        numDispositivo = 1;
+                        if (box_Dispositivo.isChecked()) {
+                            String name_disp=edtDispositivo.getText().toString();
+                            dispositivoGPS(name_disp);
+                        }else {
+                            getLocationPermission();
                         }
                     }
                 });
-                btn_Ubicacion2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (isServiceOk()) {
-                            numDispositivo = 2;
-                            if (box_Dispositivo.isChecked()) {
-                                String name_disp= edtDispositivo.getText().toString();
-                                dispositivoGPS(name_disp);
-                            }else {
-                                getLocationPermission();
-                            }
+                btn_Ubicacion2.setOnClickListener(v -> {
+                    if (isServiceOk()) {
+                        numDispositivo = 2;
+                        if (box_Dispositivo.isChecked()) {
+                            String name_disp= edtDispositivo.getText().toString();
+                            dispositivoGPS(name_disp);
+                        }else {
+                            getLocationPermission();
                         }
                     }
                 });
@@ -242,7 +219,7 @@ public class FormularioCurso extends AppCompatActivity {
     cuyos datos se encuentran en la seccion Registros cuyos id's son el nombre o codigo unico del dispositivo.
     Solo se implementa este metodo cuando se selecciona el checkBox box_Dispositivo.
      */
-    public void dispositivoGPS(String nameDisp){
+    private void dispositivoGPS(String nameDisp){
         DatabaseReference db_dispositivo = db_reference.child("Registros");
 
         db_dispositivo.addValueEventListener(new ValueEventListener() {
@@ -360,7 +337,7 @@ public class FormularioCurso extends AppCompatActivity {
     para validar que la hora final no sea menor a la hora incial del evento y se produzca un error en los registros de
     los estudiantes.
      */
-    public void CompararTiempo(String HoraInicio, String HoraFin){
+    private void CompararTiempo(String HoraInicio, String HoraFin){
         String[] TiempoInicial = HoraInicio.split(":");
         int horaI = Integer.valueOf(TiempoInicial[0]);
         int minuteI = Integer.valueOf(TiempoInicial[1]);
@@ -387,7 +364,7 @@ public class FormularioCurso extends AppCompatActivity {
      El metodo iniciarBase de datos permite establecer desde el inicio la referencia base
      que se utilizara para navegar por la base de datos de firebase.
      */
-    public void iniciarBaseDeDatos(){
+    private void iniciarBaseDeDatos(){
         db_reference = FirebaseDatabase.getInstance().getReference();
 
     }
@@ -397,46 +374,43 @@ public class FormularioCurso extends AppCompatActivity {
     no sea repetido para poder subir la informacion llamando a los respectivos metodos de subirDispositivo(), subirLista(),
     y subirFormularioCurso, finalmente se vuelve a la anterior activity de Tutor.
      */
-    public void Guardar(){
-        btn_Guardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if ( Conectividad()) {
+    private void Guardar(){
+        btn_Guardar.setOnClickListener(v -> {
+            if ( Conectividad()) {
 
-                    if (disp_Lat1 != null && disp_Long1 != null && disp_Lat2 != null && disp_Long2 != null) {
-                        if (etNombreCurso.getText() != null && etFecha.getText() != null && etHoraInicio.getText() != null) {
-                            if (!eventos.containsValue(etNombreCurso.getText().toString())) {
-                                if (box_Retraso.isChecked() && etTimeRetraso.getText() != null) {
-                                    subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
-                                            etHoraInicio.getText().toString(), etHoraFin.getText().toString(), etTimeRetraso.getText().toString(), box_Retraso.isChecked(), box_CheckOut.isChecked());
+                if (disp_Lat1 != null && disp_Long1 != null && disp_Lat2 != null && disp_Long2 != null) {
+                    if (etNombreCurso.getText() != null && etFecha.getText() != null && etHoraInicio.getText() != null) {
+                        if (!eventos.containsValue(etNombreCurso.getText().toString())) {
+                            if (box_Retraso.isChecked() && etTimeRetraso.getText() != null) {
+                                subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
+                                        etHoraInicio.getText().toString(), etHoraFin.getText().toString(), etTimeRetraso.getText().toString(), box_Retraso.isChecked(), box_CheckOut.isChecked());
 
-                                    subirDispositivo();
-                                    subirLista();
-                                    finish();
-                                } else if (box_Retraso.isChecked() && etTimeRetraso == null) {
-                                    Toast.makeText(getApplicationContext(), " Ingrese tiempo de atraso, para continuar.", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
-                                            etHoraInicio.getText().toString(), etHoraFin.getText().toString(), "0", box_Retraso.isChecked(), box_CheckOut.isChecked());
+                                subirDispositivo();
+                                subirLista();
+                                finish();
+                            } else if (box_Retraso.isChecked() && etTimeRetraso == null) {
+                                Toast.makeText(getApplicationContext(), " Ingrese tiempo de atraso, para continuar.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                subirFormularioCurso(etNombreCurso.getText().toString(), tutorID, etDescripcion.getText().toString(), etFecha.getText().toString(),
+                                        etHoraInicio.getText().toString(), etHoraFin.getText().toString(), "0", box_Retraso.isChecked(), box_CheckOut.isChecked());
 
-                                    subirDispositivo();
-                                    subirLista();
-                                    finish();
-                                }
-                            }else{
-                                Toast.makeText(getApplicationContext(), "Nombre de evento ya existe, ingrese otro nombre de evento.", Toast.LENGTH_SHORT).show();
+                                subirDispositivo();
+                                subirLista();
+                                finish();
                             }
-                        } else {
-                            Toast.makeText(getApplicationContext(), " Porfavor ingrese todos los campos obligatorios (*).", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(getApplicationContext(), "Nombre de evento ya existe, ingrese otro nombre de evento.", Toast.LENGTH_SHORT).show();
                         }
-
-
                     } else {
-                        Toast.makeText(FormularioCurso.this, "No se pudo marcar la zona de asistencia. Revise su conexion a internet y marcar de nuevo la zona.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), " Porfavor ingrese todos los campos obligatorios (*).", Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(FormularioCurso.this, "No dispone de conexion a internet.", Toast.LENGTH_SHORT).show();
+
+
+                } else {
+                    Toast.makeText(FormularioCurso.this, "No se pudo marcar la zona de asistencia. Revise su conexion a internet y marcar de nuevo la zona.", Toast.LENGTH_SHORT).show();
                 }
+            }else{
+                Toast.makeText(FormularioCurso.this, "No dispone de conexion a internet.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -446,7 +420,7 @@ public class FormularioCurso extends AppCompatActivity {
     El metodo subirFormularioCurso recibe los @parametros: nom_evento, tutor, descripcion, Fecha, horaInicio, horaFin,
     minRetraso, Retraso, Checkout para subir el nuevo evento o curso a la base de datos en Firebase en la sesion Evento.
      */
-    public void subirFormularioCurso(String nom_evento, String tutor,String descripcion, String Fecha, String horaInicio, String horaFin, String minRetraso, Boolean Retraso, Boolean CheckOut){
+    private void subirFormularioCurso(String nom_evento, String tutor, String descripcion, String Fecha, String horaInicio, String horaFin, String minRetraso, Boolean Retraso, Boolean CheckOut){
         DatabaseReference subir_data = db_reference.child("Evento");
 
         Map<String, String> dataCurso = new HashMap<String, String>();
@@ -467,7 +441,7 @@ public class FormularioCurso extends AppCompatActivity {
     Se suben los datos a la lista de asistencias que se encuentra en la sesion Asistencias en la base de datos de
     firebase, se suben los campos del nombre del evento, la fecha, y una lista vacia que cotendra los asistentes al evento.
      */
-    public void subirLista(){
+    private void subirLista(){
         DatabaseReference db_lista = db_reference.child("Asistencias");
         HashMap<String, String> dataLista = new HashMap<String, String>();
         dataLista.put("evento",etNombreCurso.getText().toString());
@@ -480,7 +454,7 @@ public class FormularioCurso extends AppCompatActivity {
     El metodo subirDispositivo permite subir las coordenadas de la zona del evento anteriormente marcada
     a la base de datos con el respectivo nombre del evento en l sesion Dispositivos.
      */
-    public void subirDispositivo(){
+    private void subirDispositivo(){
         DatabaseReference subir_data = db_reference.child("Dispositivo");
         Map<String, String> dataDispositivo = new HashMap<String, String>();
         dataDispositivo.put("Evento", etNombreCurso.getText().toString());
@@ -494,7 +468,7 @@ public class FormularioCurso extends AppCompatActivity {
     /**
      Devuelve un valor tipo Bool indicando si hay o no conectividad del dispositivo con alguna red de internet.
      */
-    public boolean Conectividad (){
+    private boolean Conectividad(){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -509,7 +483,7 @@ public class FormularioCurso extends AppCompatActivity {
      Verifica si el servicio de google service esta activo para el correcto funcionamiento de las API's
      de google utilizadas como geolocalizacion, googleAccount.
      */
-    public boolean isServiceOk(){
+    private boolean isServiceOk(){
         Log.d(TAG, "isServiceOk: checking google service version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(FormularioCurso.this);
@@ -533,7 +507,7 @@ public class FormularioCurso extends AppCompatActivity {
     instante y los sobre-escribe en el txt_Latitud y txt_longitud de la interfaz, si se produce un error
     mandara una ioException o un mensaje de que la localizacion no se encuentra o es nula.
      */
-    public void getDeviceLocation(){
+    private void getDeviceLocation(){
 
         Log.d(TAG, "getDeviceLocation: getting device current location");
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -541,31 +515,28 @@ public class FormularioCurso extends AppCompatActivity {
             if(mLocationPermissionGaranted){
 
                 final Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()){
-                            Log.d(TAG, "onComplete: found location!");
-                            Location currentLocation = (Location) task.getResult();
-                            System.out.println(currentLocation);
-                            if (currentLocation !=null) {
-                                if (numDispositivo==1) {
-                                    disp_Lat1 = Double.toString(currentLocation.getLatitude());
-                                    disp_Long1 = Double.toString(currentLocation.getLongitude());
-                                }
-                                if (numDispositivo==2) {
-                                    disp_Lat2 = Double.toString(currentLocation.getLatitude());
-                                    disp_Long2 = Double.toString(currentLocation.getLongitude());
-                                }
+                location.addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        Log.d(TAG, "onComplete: found location!");
+                        Location currentLocation = (Location) task.getResult();
+                        System.out.println(currentLocation);
+                        if (currentLocation !=null) {
+                            if (numDispositivo==1) {
+                                disp_Lat1 = Double.toString(currentLocation.getLatitude());
+                                disp_Long1 = Double.toString(currentLocation.getLongitude());
                             }
-                            System.out.println(disp_Lat1+"-"+disp_Long1);
-                            System.out.println(disp_Lat2+"-"+disp_Long2);
-                            Guardar();
-
-                        }else{
-                            Log.d(TAG, "onComplete: current location is null");
-                            Toast.makeText(FormularioCurso.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                            if (numDispositivo==2) {
+                                disp_Lat2 = Double.toString(currentLocation.getLatitude());
+                                disp_Long2 = Double.toString(currentLocation.getLongitude());
+                            }
                         }
+                        System.out.println(disp_Lat1+"-"+disp_Long1);
+                        System.out.println(disp_Lat2+"-"+disp_Long2);
+                        Guardar();
+
+                    }else{
+                        Log.d(TAG, "onComplete: current location is null");
+                        Toast.makeText(FormularioCurso.this, "unable to get current location", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

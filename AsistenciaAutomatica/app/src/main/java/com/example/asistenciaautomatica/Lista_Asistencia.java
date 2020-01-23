@@ -20,8 +20,8 @@ import java.util.HashMap;
 public class Lista_Asistencia extends AppCompatActivity {
 
     private static final String TAG = "Lista_Asistencia";
-    DatabaseReference db_reference;
-    String name_evento;
+    private DatabaseReference db_reference;
+    private String name_evento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +38,10 @@ public class Lista_Asistencia extends AppCompatActivity {
      del evento, una vez verificada se recorre esta lista y se muestran en la respectiva interfaz grafica a travez del metodo
      monstrarRegistrosPorPantalla que toma como parametro un objeto tipo DataSnapshot.
      */
-    public void leerAsistencia() {
+    private void leerAsistencia() {
         db_reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
@@ -78,11 +78,11 @@ public class Lista_Asistencia extends AppCompatActivity {
     del estudiante y desglozarla para presentarla en los respectivos componenetes tipo View del archivo
     Lista_Asistencias.xml, se configura el tamanodel texto.
      */
-    public void mostrarRegistrosPorPantalla(DataSnapshot snapshot){
-        LinearLayout contNombre = (LinearLayout) findViewById(R.id.ContenedorNombre);
-        LinearLayout contEstado= (LinearLayout) findViewById(R.id.ContenedorEstado);
-        LinearLayout contHoraInicio= (LinearLayout) findViewById(R.id.ContenedorHora);
-        LinearLayout contNumHoras= (LinearLayout) findViewById(R.id.ContenedorCantHoras);
+    private void mostrarRegistrosPorPantalla(DataSnapshot snapshot){
+        LinearLayout contNombre = findViewById(R.id.ContenedorNombre);
+        LinearLayout contEstado= findViewById(R.id.ContenedorEstado);
+        LinearLayout contHoraInicio= findViewById(R.id.ContenedorHora);
+        LinearLayout contNumHoras= findViewById(R.id.ContenedorCantHoras);
 
         String Name = String.valueOf(snapshot.child("nombre").getValue());
         String estado = String.valueOf(snapshot.child("estado").getValue());

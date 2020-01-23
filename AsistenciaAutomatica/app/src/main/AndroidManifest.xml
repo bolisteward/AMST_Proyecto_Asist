@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/app_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Grafica_pastel"></activity>
+        <activity android:name=".Grafica_pastel" />
         <activity android:name=".MainActivity" />
         <activity android:name=".Lista_Asistencia" />
         <activity android:name=".Asistente" />

@@ -2,19 +2,11 @@ package com.example.asistenciaautomatica;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +21,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,26 +33,31 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Delayed;
 
 public class Tutor extends AppCompatActivity {
 
     private static final String TAG = "Tutor";
     private static final int ERROR_DIALOG_REQUEST = 9001;
     //Views
-    public TextView txt_correo , txt_cellphone, txt_nombre, txt_cedula;
-    DatabaseReference db_reference;
+    private TextView txt_correo;
+    private TextView txt_cellphone;
+    private TextView txt_nombre;
+    private TextView txt_cedula;
+    private DatabaseReference db_reference;
 
-    Bundle info_user;
-    public Spinner spinner;
-    public List<String> eventos;
-    public Button btn_CrearEvento, btn_verRegistros, btn_marcaSalida, btn_estadisticas;
-    public ImageView img_foto;
-    public String userId, name_evento;
-    public Boolean nuevoTutor;
-    public Users tutor;
-    HashMap<String, String> info_evento = null;
+    private Bundle info_user;
+    private Spinner spinner;
+    private List<String> eventos;
+    private Button btn_CrearEvento;
+    private Button btn_verRegistros;
+    private Button btn_marcaSalida;
+    private Button btn_estadisticas;
+    private ImageView img_foto;
+    private String userId;
+    private String name_evento;
+    private Boolean nuevoTutor;
+    private Users tutor;
+    private HashMap<String, String> info_evento = null;
 
 
     @Override
@@ -99,7 +92,7 @@ public class Tutor extends AppCompatActivity {
     El metodo iniciarBase de datos permite establecer desde el inicio la referencia base
     que se utilizara para navegar por la base de datos de firebase.
      */
-    public void iniciarBaseDeDatos(){
+    private void iniciarBaseDeDatos(){
         db_reference = FirebaseDatabase.getInstance().getReference();
 
     }
@@ -110,7 +103,7 @@ public class Tutor extends AppCompatActivity {
     o si es un usuario nuevo. Este metodo implementa el boton de Crear Eventos enviando como info extra
     en el llamado de la activity el userId.
      */
-    public void leerBaseDatos(){
+    private void leerBaseDatos(){
         DatabaseReference db_tutor = db_reference.child("Tutor");
 
         db_tutor.addValueEventListener(new ValueEventListener() {
@@ -144,13 +137,10 @@ public class Tutor extends AppCompatActivity {
                 if (nuevoTutor){
                     newTutor();
                 }
-                btn_CrearEvento.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(Tutor.this, FormularioCurso.class);
-                        intent.putExtra("tutorID", userId);
-                        startActivity(intent);
-                    }
+                btn_CrearEvento.setOnClickListener(v -> {
+                    Intent intent = new Intent(Tutor.this, FormularioCurso.class);
+                    intent.putExtra("tutorID", userId);
+                    startActivity(intent);
                 });
 
             }
@@ -167,7 +157,7 @@ public class Tutor extends AppCompatActivity {
      en el spinner View, y se implementa su accion al ser accedido por el usuario para implementar los metodos de
      visualizacion de asistencia, de grafico estadistico y poder marcar la salida del evento.
      */
-    public void leerEventos(){
+    private void leerEventos(){
         DatabaseReference db_evento = db_reference.child("Evento");
 
 
@@ -249,17 +239,14 @@ public class Tutor extends AppCompatActivity {
     para llamar la Activity Lista_Asistencia y envia el nombre del evento seleccionado, caso contrario si evento esta vacio mostrara un mensaje
      pidiendo selleccionar un evento.
      */
-    public  void verAsistencias(String evento){
-        btn_verRegistros.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (evento!=null) {
-                    Intent intent = new Intent(Tutor.this, Lista_Asistencia.class);
-                    intent.putExtra("evento", evento);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(Tutor.this,"Seleccione un evento o curso primero." + name_evento, Toast.LENGTH_SHORT).show();
-                }
+    private void verAsistencias(String evento){
+        btn_verRegistros.setOnClickListener(v -> {
+            if (evento!=null) {
+                Intent intent = new Intent(Tutor.this, Lista_Asistencia.class);
+                intent.putExtra("evento", evento);
+                startActivity(intent);
+            }else{
+                Toast.makeText(Tutor.this,"Seleccione un evento o curso primero." + name_evento, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -269,17 +256,14 @@ public class Tutor extends AppCompatActivity {
      para llamar la Activity Grafica_pastel y envia el nombre del evento seleccionado, caso contrario si evento esta vacio mostrara un mensaje
      pidiendo selleccionar un evento.
      */
-    public  void verEstadisticas (String evento){
-        btn_estadisticas.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (evento!=null) {
-                    Intent intent = new Intent(Tutor.this, Grafica_pastel.class);
-                    intent.putExtra("evento", evento);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(Tutor.this,"Seleccione un evento o curso primero." + name_evento, Toast.LENGTH_SHORT).show();
-                }
+    private void verEstadisticas(String evento){
+        btn_estadisticas.setOnClickListener(v -> {
+            if (evento!=null) {
+                Intent intent = new Intent(Tutor.this, Grafica_pastel.class);
+                intent.putExtra("evento", evento);
+                startActivity(intent);
+            }else{
+                Toast.makeText(Tutor.this,"Seleccione un evento o curso primero." + name_evento, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -289,25 +273,22 @@ public class Tutor extends AppCompatActivity {
      se valida el nombre del evento seleccionado del spinner con la base de datos y se verifica que la opcion de marcar salida
      haya sido seleccionado, caso contrario mostrara un mensaje diciendo que la accion es innecesaria.
      */
-    public void marcarSalida(String evento){
-        btn_marcaSalida.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void marcarSalida(String evento){
+        btn_marcaSalida.setOnClickListener(v -> {
 
-                if (evento!=null && !evento.equals("Seleccione un Evento") && info_evento!=null) {
-                    DatabaseReference db_mSalida = db_reference.child("Evento");
+            if (evento!=null && !evento.equals("Seleccione un Evento") && info_evento!=null) {
+                DatabaseReference db_mSalida = db_reference.child("Evento");
 
-                    if (info_evento.get("Nom_evento").equals(evento)) {
-                        if (info_evento.get("Marcar_Salida").equals("true")) {
-                            horaFinAsistentes(evento);
-                        } else {
-                            Toast.makeText(Tutor.this, "El evento seleccionado se cierra automaticamente a la hora estipulada en la creacion del evento." + name_evento, Toast.LENGTH_SHORT).show();
-                        }
-
+                if (info_evento.get("Nom_evento").equals(evento)) {
+                    if (info_evento.get("Marcar_Salida").equals("true")) {
+                        horaFinAsistentes(evento);
+                    } else {
+                        Toast.makeText(Tutor.this, "El evento seleccionado se cierra automaticamente a la hora estipulada en la creacion del evento." + name_evento, Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(Tutor.this,"Seleccione un evento o curso primero.", Toast.LENGTH_SHORT).show();
+
                 }
+            }else{
+                Toast.makeText(Tutor.this,"Seleccione un evento o curso primero.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -317,7 +298,7 @@ public class Tutor extends AppCompatActivity {
     El metodo horaFinAsistentes toma como parametro el nombre del evento obtendio del spinner para colocar la hora de finalizacion
     del evento en todos los asistentes de dicho evento con el numero de horas totales a partir de su respectiva hora de asistencia.
      */
-    public void horaFinAsistentes(String evento){
+    private void horaFinAsistentes(String evento){
         Calendar calendar = Calendar.getInstance();
         int horas=calendar.get(Calendar.HOUR_OF_DAY);
         int minutos=calendar.get(Calendar.MINUTE);
@@ -392,7 +373,7 @@ public class Tutor extends AppCompatActivity {
      inicia sesion, se pide al usuario que ingrese el numero de cedula mediante un cuadro de dialogo, se
      sube toda la info obtenida a la base de datos en Firebase.
      */
-    public void newTutor() {
+    private void newTutor() {
         info_user = getIntent().getBundleExtra("info_user");
         if (info_user != null) {
             txt_nombre.setText(info_user.getString("user_name"));
@@ -417,7 +398,7 @@ public class Tutor extends AppCompatActivity {
      Cuando el ususario ya existe se implementa el metodo presentarDatos, el cual permite tomar los datos del usuario
      de la base de datos y cargarlos en los respectivos TextView's del archivo tutor.xml.
      */
-    public void presentarDatos(){
+    private void presentarDatos(){
         info_user = getIntent().getBundleExtra("info_user");
 
         if (info_user != null) {
@@ -451,7 +432,7 @@ public class Tutor extends AppCompatActivity {
      para pedir el numero de cedula o matricula. Se obtiene el dato ingresado y es subido directamente a la base
      de datos del usuario registrado.
      */
-    public AlertDialog createCustomDialog() {
+    private AlertDialog createCustomDialog() {
         final AlertDialog alertDialog;
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Get the layout inflater
@@ -466,19 +447,16 @@ public class Tutor extends AppCompatActivity {
         alertDialog = builder.create();
         // Add action buttons
         btn_aceptar.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                v1 -> {
 
-                        txt_cedula.setText(edtMatricula.getText().toString());
-                        //System.out.println("el numero de matricula es "+edtMatricula.getText().toString());
-                        //System.out.println(userId);
+                    txt_cedula.setText(edtMatricula.getText().toString());
+                    //System.out.println("el numero de matricula es "+edtMatricula.getText().toString());
+                    //System.out.println(userId);
 
-                        DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Tutor").child(userId);
-                        db_upload.child("matricula").setValue(edtMatricula.getText().toString());
+                    DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Tutor").child(userId);
+                    db_upload.child("matricula").setValue(edtMatricula.getText().toString());
 
-                        alertDialog.dismiss();
-                    }
+                    alertDialog.dismiss();
                 }
 
         );
@@ -500,7 +478,7 @@ public class Tutor extends AppCompatActivity {
      Verifica si el servicio de google service esta activo para el correcto funcionamiento de las API's
      de google utilizadas como geolocalizacion, googleAccount.
      */
-    public boolean isServiceOk(){
+    private boolean isServiceOk(){
         Log.d(TAG, "isServiceOk: checking google service version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(Tutor.this);

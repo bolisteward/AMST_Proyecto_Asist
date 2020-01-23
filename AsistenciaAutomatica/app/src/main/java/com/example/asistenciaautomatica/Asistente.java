@@ -9,26 +9,21 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,12 +33,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,21 +43,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import static java.security.AccessController.getContext;
 
 public class Asistente extends AppCompatActivity{
     private static final String TAG = "Asistente";
@@ -80,23 +58,37 @@ public class Asistente extends AppCompatActivity{
 
     //vars
     private boolean mLocationPermissionGaranted = false;
-    public FusedLocationProviderClient mFusedLocationProviderClient;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     //views
-    Bundle info_user;
-    Button btn_Asistir, btn_salida, btn_historial;
-    public TextView txt_nombre, txt_correo, txt_phone,  txt_Latitud, txt_Longitud, txt_matricula;
-    public ImageView img_foto;
-    public String userId, disp_Lat1, disp_Long1, disp_Lat2, disp_Long2, name_evento;
-    public String idEvento, horaActual, idLista;
-    public String[] horaFinE;
-    public Spinner spinner;
-    public Boolean nuevoAsist;
-    public List<String> eventos;
-    public Users asistente;
+    private Bundle info_user;
+    private Button btn_Asistir;
+    private Button btn_salida;
+    private Button btn_historial;
+    private TextView txt_nombre;
+    private TextView txt_correo;
+    private TextView txt_phone;
+    private TextView txt_Latitud;
+    private TextView txt_Longitud;
+    private TextView txt_matricula;
+    private ImageView img_foto;
+    private String userId;
+    private String disp_Lat1;
+    private String disp_Long1;
+    private String disp_Lat2;
+    private String disp_Long2;
+    private String name_evento;
+    private String idEvento;
+    private String horaActual;
+    private String idLista;
+    private String[] horaFinE;
+    private Spinner spinner;
+    private Boolean nuevoAsist;
+    private List<String> eventos;
+    private Users asistente;
     private  int anio,mes,dia,horas,minutos;
-    HashMap<String, String> info_evento = null;
-    DatabaseReference db_reference;
+    private HashMap<String, String> info_evento = null;
+    private DatabaseReference db_reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,12 +113,7 @@ public class Asistente extends AppCompatActivity{
 
         leerEventos();
         Asistir();
-        btn_historial.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                historialDialog().show();
-            }
-        });
+        btn_historial.setOnClickListener(v -> historialDialog().show());
 
     }
 
@@ -135,7 +122,7 @@ public class Asistente extends AppCompatActivity{
     inicia sesion, implemente el metodo getLocationPermission() para obtener la ubicacion y pide al usuario que
     ingrese el numero de matricula mediante un cuadro de dialogo.
      */
-    public void newAsist() {
+    private void newAsist() {
         info_user = getIntent().getBundleExtra("info_user");
         if (info_user != null) {
             txt_nombre.setText(info_user.getString("user_name"));
@@ -164,7 +151,7 @@ public class Asistente extends AppCompatActivity{
     Se crea un cuadro de dialogo de tipo AlertDialog el cual utuliza el archivo matricula.xml como interfaz grafica.
     Se obtiene el dato ingresado y es subido directamente a la base de datos del usuario registrado.
      */
-    public AlertDialog createCustomDialog() {
+    private AlertDialog createCustomDialog() {
         final AlertDialog alertDialog;
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Get the layout inflater
@@ -179,17 +166,14 @@ public class Asistente extends AppCompatActivity{
         alertDialog = builder.create();
         // Add action buttons
         btn_aceptar.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                v1 -> {
 
-                        txt_matricula.setText(edtMatricula.getText().toString());
+                    txt_matricula.setText(edtMatricula.getText().toString());
 
-                        DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Asistente").child(userId);
-                        db_upload.child("matricula").setValue(edtMatricula.getText().toString());
+                    DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Asistente").child(userId);
+                    db_upload.child("matricula").setValue(edtMatricula.getText().toString());
 
-                        alertDialog.dismiss();
-                    }
+                    alertDialog.dismiss();
                 }
 
         );
@@ -201,7 +185,7 @@ public class Asistente extends AppCompatActivity{
     de la base de datos y cargarlos en los respectivos TextView's del archivo asistente.xml. Unicamente la ubicacion
     se actualiza.
      */
-    public void presentarDatos(){
+    private void presentarDatos(){
         info_user = getIntent().getBundleExtra("info_user");
 
         if (info_user != null) {
@@ -249,7 +233,7 @@ public class Asistente extends AppCompatActivity{
     El metodo iniciarBase de datos permite establecer desde el inicio la referencia base
     que se utilizara para navegar por la base de datos de firebase.
      */
-    public void iniciarBaseDeDatos() {
+    private void iniciarBaseDeDatos() {
         db_reference = FirebaseDatabase.getInstance().getReference();
     }
 
@@ -257,7 +241,7 @@ public class Asistente extends AppCompatActivity{
     Se recorre la base de datos en firebase en la sesion Asistente para determinar si el usuario que ingresa
     es nuevo o ya ha ingresado anteriormente. Segun el caso, se llamara al respectivo metodo.
      */
-    public void leerBaseDatos(){
+    private void leerBaseDatos(){
         DatabaseReference asistente = db_reference.child("Asistente");
 
         asistente.addValueEventListener(new ValueEventListener() {
@@ -273,6 +257,7 @@ public class Asistente extends AppCompatActivity{
                         if (data != null) {
                             String userId = data.get("idUser");
 
+                            assert userId != null;
                             if (userId.equals(info_user.getString("user_id"))) {
                                 nuevoAsist = false;
                                 presentarDatos();
@@ -299,158 +284,155 @@ public class Asistente extends AppCompatActivity{
     el evento que ha seleccionado de la lista en el spinner y luego se compara y verifican la hora del asistente
     con respecto a la hora de inicio y finalizacion del evento para obtener la cant de horas asistidas.
      */
-    public void marcarSalida(){
-        btn_salida.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (name_evento != null  && info_evento!=null && !name_evento.equals("Seleccione un Evento")) {
-                    String[] fecha_evento = info_evento.get("Fecha").split("/");
+    private void marcarSalida(){
+        btn_salida.setOnClickListener(v -> {
+            if (name_evento != null  && info_evento!=null && !name_evento.equals("Seleccione un Evento")) {
+                String[] fecha_evento = info_evento.get("Fecha").split("/");
 
-                    Calendar calendar = Calendar.getInstance();
-                    anio=calendar.get(Calendar.YEAR);
-                    mes=calendar.get(Calendar.MONTH)+1;
-                    dia=calendar.get(Calendar.DAY_OF_MONTH);
-                    int horas = calendar.get(Calendar.HOUR_OF_DAY);
-                    int minutos = calendar.get(Calendar.MINUTE);
+                Calendar calendar = Calendar.getInstance();
+                anio=calendar.get(Calendar.YEAR);
+                mes=calendar.get(Calendar.MONTH)+1;
+                dia=calendar.get(Calendar.DAY_OF_MONTH);
+                int horas = calendar.get(Calendar.HOUR_OF_DAY);
+                int minutos = calendar.get(Calendar.MINUTE);
 
-                    if (Conectividad()) {
-                        if (Integer.parseInt(fecha_evento[0]) == anio && mes ==Integer.parseInt(fecha_evento[1]) && dia ==Integer.parseInt(fecha_evento[2])) {
-                            Boolean presente = verifica_Asistencia();
-                            if (presente) {
-                                DatabaseReference db_mSalida = db_reference.child("Asistencias");
+                if (Conectividad()) {
+                    if (Integer.parseInt(fecha_evento[0]) == anio && mes ==Integer.parseInt(fecha_evento[1]) && dia ==Integer.parseInt(fecha_evento[2])) {
+                        Boolean presente = verifica_Asistencia();
+                        if (presente) {
+                            DatabaseReference db_mSalida = db_reference.child("Asistencias");
 
-                                db_mSalida.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            db_mSalida.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                        String id_lista = null;
+                                    String id_lista = null;
 
-                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                                            HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
+                                        HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
 
-                                            if (data != null) {
-                                                if (data.get("evento").equals(name_evento)) {
+                                        if (data != null) {
+                                            if (data.get("evento").equals(name_evento)) {
 
-                                                    id_lista = snapshot.getKey();
-                                                    break;
-                                                }
+                                                id_lista = snapshot.getKey();
+                                                break;
                                             }
                                         }
+                                    }
 
-                                        if (id_lista!=null){
-                                            DatabaseReference db_lista = db_mSalida.child(id_lista).child("lista").child(userId);
+                                    if (id_lista!=null){
+                                        DatabaseReference db_lista = db_mSalida.child(id_lista).child("lista").child(userId);
 
-                                            String horaFin = horas + ":" + minutos;
+                                        String horaFin = horas + ":" + minutos;
 
-                                            db_lista.addValueEventListener(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        db_lista.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                                    HashMap<String, String> dataUser = (HashMap<String, String>) dataSnapshot.getValue();
-                                                    System.out.println(dataUser);
+                                                HashMap<String, String> dataUser = (HashMap<String, String>) dataSnapshot.getValue();
+                                                System.out.println(dataUser);
 
-                                                    String[] horaInicio = dataUser.get("horaInicio").split(":");
-                                                    horaFinE = info_evento.get("horaFin").split(":");
+                                                String[] horaInicio = dataUser.get("horaInicio").split(":");
+                                                horaFinE = info_evento.get("horaFin").split(":");
 
-                                                    if (Integer.parseInt(horaFinE[0])== horas  && minutos <= Integer.parseInt(horaFinE[1])) {
+                                                if (Integer.parseInt(horaFinE[0])== horas  && minutos <= Integer.parseInt(horaFinE[1])) {
 
-                                                        db_lista.child("horaFin").setValue(horaFin);
+                                                    db_lista.child("horaFin").setValue(horaFin);
 
-                                                        if (Integer.parseInt(horaInicio[0]) == horas) {
-                                                            int minTotal = minutos-Integer.parseInt(horaInicio[1]);
-                                                            String horaFinAsist = 0+"."+minTotal+"h";
-                                                            System.out.println("aki1");
-                                                            db_lista.child("numHoras").setValue(horaFinAsist);
-                                                            Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
-                                                        } else {
-                                                            int horasPresente = horas - Integer.parseInt(horaInicio[0]);
-                                                            if (minutos > Integer.parseInt(horaInicio[1])) {
-                                                                int minTotal = minutos - Integer.parseInt(horaInicio[1]);
-                                                                String horaFinAsist = horasPresente+"."+minTotal+"h";
-                                                                System.out.println("aki2");
-                                                                db_lista.child("numHoras").setValue(horaFinAsist);
-                                                                Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
-                                                            } else {
-                                                                int minTotal = 60 + minutos - Integer.parseInt(horaInicio[1]);
-                                                                String horaFinAsist = horasPresente+"."+minTotal+"h";
-                                                                System.out.println("aki3");
-                                                                db_lista.child("numHoras").setValue(horaFinAsist);
-                                                                Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-                                                    }else if (Integer.parseInt(horaFinE[0]) > horas) {
-                                                        db_lista.child("horaFin").setValue(horaFin);
-
-                                                        if (Integer.parseInt(horaInicio[0]) == horas) {
-                                                            int minTotal = minutos-Integer.parseInt(horaInicio[1]);
-                                                            String horaFinAsist = 0+"."+minTotal+"h";
-                                                            System.out.println("aki4");
-                                                            db_lista.child("numHoras").setValue(horaFinAsist);
-                                                            Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
-                                                        } else {
-                                                            int horasPresente = horas - Integer.parseInt(horaInicio[0]);
-                                                            if (minutos > Integer.parseInt(horaInicio[1])) {
-                                                                int minTotal = minutos - Integer.parseInt(horaInicio[1]);
-                                                                String horaFinAsist = horasPresente+"."+minTotal+"h";
-                                                                System.out.println("aki5");
-                                                                db_lista.child("numHoras").setValue(horaFinAsist);
-                                                                Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
-                                                            } else {
-                                                                int minTotal = 60 + minutos - Integer.parseInt(horaInicio[1]);
-                                                                String horaFinAsist = (horasPresente-1)+"."+minTotal+"h";
-                                                                System.out.println("aki6");
-                                                                db_lista.child("numHoras").setValue(horaFinAsist);
-                                                                Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-                                                    }else{
-                                                        int minTotal = 0;
-                                                        int horaTotal = Integer.parseInt(horaFinE[0]) - Integer.parseInt(horaInicio[0]);
-                                                        if (Integer.parseInt(horaFinE[1]) > Integer.parseInt(horaInicio[1])){
-                                                            minTotal = Integer.parseInt(horaFinE[1]) - Integer.parseInt(horaInicio[1]);
-
-                                                        }else {
-                                                            if ( Integer.parseInt(horaFinE[1]) < Integer.parseInt(horaInicio[1])){
-                                                                minTotal = 60 + Integer.parseInt(horaFinE[1])  - Integer.parseInt(horaInicio[1]);
-                                                                horaTotal = horaTotal-1;
-
-                                                            }
-                                                        }
-                                                        String horaFinAsist = horaTotal+"."+minTotal+"h";
+                                                    if (Integer.parseInt(horaInicio[0]) == horas) {
+                                                        int minTotal = minutos-Integer.parseInt(horaInicio[1]);
+                                                        String horaFinAsist = 0+"."+minTotal+"h";
+                                                        System.out.println("aki1");
                                                         db_lista.child("numHoras").setValue(horaFinAsist);
-                                                        db_lista.child("horaFin").setValue(info_evento.get("horaFin"));
-                                                        Toast.makeText(Asistente.this, "Hora de salida: " + info_evento.get("horaFin")+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        int horasPresente = horas - Integer.parseInt(horaInicio[0]);
+                                                        if (minutos > Integer.parseInt(horaInicio[1])) {
+                                                            int minTotal = minutos - Integer.parseInt(horaInicio[1]);
+                                                            String horaFinAsist = horasPresente+"."+minTotal+"h";
+                                                            System.out.println("aki2");
+                                                            db_lista.child("numHoras").setValue(horaFinAsist);
+                                                            Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            int minTotal = 60 + minutos - Integer.parseInt(horaInicio[1]);
+                                                            String horaFinAsist = horasPresente+"."+minTotal+"h";
+                                                            System.out.println("aki3");
+                                                            db_lista.child("numHoras").setValue(horaFinAsist);
+                                                            Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
+                                                        }
                                                     }
+                                                }else if (Integer.parseInt(horaFinE[0]) > horas) {
+                                                    db_lista.child("horaFin").setValue(horaFin);
+
+                                                    if (Integer.parseInt(horaInicio[0]) == horas) {
+                                                        int minTotal = minutos-Integer.parseInt(horaInicio[1]);
+                                                        String horaFinAsist = 0+"."+minTotal+"h";
+                                                        System.out.println("aki4");
+                                                        db_lista.child("numHoras").setValue(horaFinAsist);
+                                                        Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        int horasPresente = horas - Integer.parseInt(horaInicio[0]);
+                                                        if (minutos > Integer.parseInt(horaInicio[1])) {
+                                                            int minTotal = minutos - Integer.parseInt(horaInicio[1]);
+                                                            String horaFinAsist = horasPresente+"."+minTotal+"h";
+                                                            System.out.println("aki5");
+                                                            db_lista.child("numHoras").setValue(horaFinAsist);
+                                                            Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            int minTotal = 60 + minutos - Integer.parseInt(horaInicio[1]);
+                                                            String horaFinAsist = (horasPresente-1)+"."+minTotal+"h";
+                                                            System.out.println("aki6");
+                                                            db_lista.child("numHoras").setValue(horaFinAsist);
+                                                            Toast.makeText(Asistente.this, "Hora de salida: " + horaFin+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                }else{
+                                                    int minTotal = 0;
+                                                    int horaTotal = Integer.parseInt(horaFinE[0]) - Integer.parseInt(horaInicio[0]);
+                                                    if (Integer.parseInt(horaFinE[1]) > Integer.parseInt(horaInicio[1])){
+                                                        minTotal = Integer.parseInt(horaFinE[1]) - Integer.parseInt(horaInicio[1]);
+
+                                                    }else {
+                                                        if ( Integer.parseInt(horaFinE[1]) < Integer.parseInt(horaInicio[1])){
+                                                            minTotal = 60 + Integer.parseInt(horaFinE[1])  - Integer.parseInt(horaInicio[1]);
+                                                            horaTotal = horaTotal-1;
+
+                                                        }
+                                                    }
+                                                    String horaFinAsist = horaTotal+"."+minTotal+"h";
+                                                    db_lista.child("numHoras").setValue(horaFinAsist);
+                                                    db_lista.child("horaFin").setValue(info_evento.get("horaFin"));
+                                                    Toast.makeText(Asistente.this, "Hora de salida: " + info_evento.get("horaFin")+" cant. horas presente: "+horaFinAsist, Toast.LENGTH_SHORT).show();
                                                 }
+                                            }
 
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                    Log.e(TAG, "Error!", databaseError.toException());
-                                                }
-                                            });
-                                        }
+                                                Log.e(TAG, "Error!", databaseError.toException());
+                                            }
+                                        });
                                     }
+                                }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        Log.e(TAG, "Error!", databaseError.toException());
-                                    }
-                                });
-                            } else {
-                                Toast.makeText(Asistente.this, "Se encuentra fuera de la zona del evento: " + name_evento, Toast.LENGTH_SHORT).show();
-                            }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e(TAG, "Error!", databaseError.toException());
+                                }
+                            });
                         } else {
-                            Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. Contactese con al tutor o administrador del " +
-                                    "evento para mayor informacion.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(Asistente.this, "Se encuentra fuera de la zona del evento: " + name_evento, Toast.LENGTH_SHORT).show();
                         }
-                    }else{
-                        Toast.makeText(Asistente.this, "No dispone de conexion a Internet.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. Contactese con al tutor o administrador del " +
+                                "evento para mayor informacion.", Toast.LENGTH_LONG).show();
                     }
-                } else {
-                    Toast.makeText(Asistente.this, "Seleccione un evento o curso primero." + name_evento, Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(Asistente.this, "No dispone de conexion a Internet.", Toast.LENGTH_LONG).show();
                 }
+            } else {
+                Toast.makeText(Asistente.this, "Seleccione un evento o curso primero." + name_evento, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -460,7 +442,7 @@ public class Asistente extends AppCompatActivity{
     todos los eventos que el usuario ha podido asistir, el boton aceptar es utilizado para salir del
     cuadro de dialogo.
      */
-    public AlertDialog historialDialog() {
+    private AlertDialog historialDialog() {
         final AlertDialog alertDialog;
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Get the layout inflater
@@ -509,12 +491,7 @@ public class Asistente extends AppCompatActivity{
         alertDialog = builder.create();
         // Add action buttons
         btn_aceptar.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                    }
-                }
+                v1 -> alertDialog.dismiss()
 
         );
         return alertDialog;
@@ -525,87 +502,83 @@ public class Asistente extends AppCompatActivity{
     las compara con las del estudiante para validar la asistencia. Ademas, se realiza la respectiva
     validacion de la fecha y hora del evento.
      */
-    public void Asistir(){
-        btn_Asistir.setOnClickListener(new View.OnClickListener() {
+    private void Asistir(){
+        btn_Asistir.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            anio=calendar.get(Calendar.YEAR);
+            mes=calendar.get(Calendar.MONTH)+1;
+            dia=calendar.get(Calendar.DAY_OF_MONTH);
+            horas=calendar.get(Calendar.HOUR_OF_DAY);
+            minutos=calendar.get(Calendar.MINUTE);
+            horaActual= horas+":"+minutos;
 
-            @Override
-            public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
-                anio=calendar.get(Calendar.YEAR);
-                mes=calendar.get(Calendar.MONTH)+1;
-                dia=calendar.get(Calendar.DAY_OF_MONTH);
-                horas=calendar.get(Calendar.HOUR_OF_DAY);
-                minutos=calendar.get(Calendar.MINUTE);
-                horaActual= horas+":"+minutos;
+            if (name_evento!=null && !name_evento.equals("Seleccione un Evento")) {
+                if (info_evento!= null) {
 
-                if (name_evento!=null && !name_evento.equals("Seleccione un Evento")) {
-                    if (info_evento!= null) {
+                    String[] fecha_evento = info_evento.get("Fecha").split("/");
+                    String[] hora_evento = info_evento.get("horaInicio").split(":");
+                    String[] hora_finEvento = info_evento.get("horaFin").split(":");
+                    int minRetrado = Integer.parseInt(info_evento.get("minRetraso"));
+                    Boolean retraso = Boolean.parseBoolean(info_evento.get("Retraso"));
 
-                        String[] fecha_evento = info_evento.get("Fecha").split("/");
-                        String[] hora_evento = info_evento.get("horaInicio").split(":");
-                        String[] hora_finEvento = info_evento.get("horaFin").split(":");
-                        int minRetrado = Integer.parseInt(info_evento.get("minRetraso"));
-                        Boolean retraso = Boolean.parseBoolean(info_evento.get("Retraso"));
+                    if (Conectividad()) {
+                        if (Integer.parseInt(fecha_evento[0]) == anio && Integer.parseInt(fecha_evento[1]) == mes && Integer.parseInt(fecha_evento[2]) == dia) {
 
-                        if (Conectividad()) {
-                            if (Integer.parseInt(fecha_evento[0]) == anio && Integer.parseInt(fecha_evento[1]) == mes && Integer.parseInt(fecha_evento[2]) == dia) {
+                            if (retraso) {
+                                if (horas == Integer.parseInt(hora_evento[0]) && minutos <= (Integer.parseInt(hora_evento[1]) + minRetrado)
+                                        && minutos >= Integer.parseInt(hora_evento[1])) {
+                                    subirAsistencia(false);
 
-                                if (retraso) {
-                                    if (horas == Integer.parseInt(hora_evento[0]) && minutos <= (Integer.parseInt(hora_evento[1]) + minRetrado)
-                                            && minutos >= Integer.parseInt(hora_evento[1])) {
-                                        subirAsistencia(false);
+                                } else if (horas >= Integer.parseInt(hora_evento[0]) && minutos > (Integer.parseInt(hora_evento[1]) + minRetrado)) {
+                                    if (horas == Integer.parseInt(hora_finEvento[0]) && minutos <= Integer.parseInt(hora_finEvento[1])) {
+                                        subirAsistencia(true);
 
-                                    } else if (horas >= Integer.parseInt(hora_evento[0]) && minutos > (Integer.parseInt(hora_evento[1]) + minRetrado)) {
-                                        if (horas == Integer.parseInt(hora_finEvento[0]) && minutos <= Integer.parseInt(hora_finEvento[1])) {
-                                            subirAsistencia(true);
+                                    } else if (horas < Integer.parseInt(hora_finEvento[0])) {
+                                        subirAsistencia(true);
 
-                                        } else if (horas < Integer.parseInt(hora_finEvento[0])) {
-                                            subirAsistencia(true);
-
-                                        } else {
-                                            Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
-                                                    "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
-
-                                        }
                                     } else {
-                                        Toast.makeText(Asistente.this, "Aun no empieza el evento. Contactese con al tutor o administrador del " +
+                                        Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
                                                 "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
 
                                     }
                                 } else {
-                                    if (horas >= Integer.parseInt(hora_evento[0])) {
-                                        if (horas > Integer.parseInt(hora_finEvento[0])) {
-                                            Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
-                                                    "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Asistente.this, "Aun no empieza el evento. Contactese con al tutor o administrador del " +
+                                            "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
 
-                                        } else if (horas == Integer.parseInt(hora_finEvento[0]) && minutos <= Integer.parseInt(hora_finEvento[1])) {
-                                            subirAsistencia(false);
-
-                                        } else if (horas < Integer.parseInt(hora_finEvento[0])) {
-                                            subirAsistencia(false);
-
-                                        } else {
-                                            Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
-                                                    "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
-
-                                        }
-                                    } else {
-                                        Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. \n Contactese con al tutor o administrador del " +
-                                                "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
-                                    }
                                 }
-
                             } else {
-                                Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. Contactese con al tutor o administrador del " +
-                                        "evento para mayor informacion.", Toast.LENGTH_LONG).show();
+                                if (horas >= Integer.parseInt(hora_evento[0])) {
+                                    if (horas > Integer.parseInt(hora_finEvento[0])) {
+                                        Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
+                                                "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
+
+                                    } else if (horas == Integer.parseInt(hora_finEvento[0]) && minutos <= Integer.parseInt(hora_finEvento[1])) {
+                                        subirAsistencia(false);
+
+                                    } else if (horas < Integer.parseInt(hora_finEvento[0])) {
+                                        subirAsistencia(false);
+
+                                    } else {
+                                        Toast.makeText(Asistente.this, "Es posible que el evento ya haya finalizado. \n Contactese con al tutor o administrador del " +
+                                                "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                } else {
+                                    Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. \n Contactese con al tutor o administrador del " +
+                                            "evento para mayor informacion.", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }else{
-                            Toast.makeText(Asistente.this, "No dispone de conexion a Internet.", Toast.LENGTH_LONG).show();
+
+                        } else {
+                            Toast.makeText(Asistente.this, "Aun no empieza el evento o el evento ya finalizo. Contactese con al tutor o administrador del " +
+                                    "evento para mayor informacion.", Toast.LENGTH_LONG).show();
                         }
+                    }else{
+                        Toast.makeText(Asistente.this, "No dispone de conexion a Internet.", Toast.LENGTH_LONG).show();
                     }
-                }else{
-                    Toast.makeText(Asistente.this, "Escoja el evento/curso primero",Toast.LENGTH_SHORT).show();
                 }
+            }else{
+                Toast.makeText(Asistente.this, "Escoja el evento/curso primero",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -615,7 +588,7 @@ public class Asistente extends AppCompatActivity{
     en las respectivas ramas de Asistente y Asistencias, tomando como dato previo el parametro tipo Boolean
     de atrasado.
      */
-    public void subirAsistencia(Boolean atrasado) {
+    private void subirAsistencia(Boolean atrasado) {
         boolean present = verifica_Asistencia();
         boolean atraso = atrasado;
         DatabaseReference db_listaAsistencia = db_reference.child("Asistencias");
@@ -668,7 +641,7 @@ public class Asistente extends AppCompatActivity{
     de asistencia del evento, caso contrario enviara un mensaje de aviso. Regresa como valor un valor
     tipo Boolean con la respuesta de la validacion.
      */
-    public boolean verifica_Asistencia (){
+    private boolean verifica_Asistencia(){
         boolean presente =false;
         Double user_lat = Double.valueOf(txt_Latitud.getText().toString());
         Double user_long = Double.valueOf(txt_Longitud.getText().toString());
@@ -713,7 +686,7 @@ public class Asistente extends AppCompatActivity{
     en el spinner View, y se implementa su accion al ser accedido por el usuario para obtener las corrdenas del evento
     seleccionado a traves del metodo leerDispositivo().
      */
-    public void leerEventos(){
+    private void leerEventos(){
         DatabaseReference db_evento = db_reference.child("Evento");
 
         db_evento.addValueEventListener(new ValueEventListener() {
@@ -789,7 +762,7 @@ public class Asistente extends AppCompatActivity{
      Se recorre la sesion Eventos de la base de datos y se compara con el @parametro ingresado curso para extraer
      las coordenadas de dicho evento.
      */
-    public void leerDispositivo(String curso){
+    private void leerDispositivo(String curso){
         DatabaseReference db_dispositivo = db_reference.child("Dispositivo");
         db_dispositivo.addValueEventListener(new ValueEventListener() {
             @Override
@@ -821,7 +794,7 @@ public class Asistente extends AppCompatActivity{
     /**
     Devuelve un valor tipo Bool indicando si hay o no conectividad del dispositivo con alguna red de internet.
      */
-    public boolean Conectividad (){
+    private boolean Conectividad(){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -836,7 +809,7 @@ public class Asistente extends AppCompatActivity{
     Verifica si el servicio de google service esta activo para el correcto funcionamiento de las API's
     de google utilizadas como geolocalizacion, googleAccount.
      */
-    public boolean isServiceOk(){
+    private boolean isServiceOk(){
         Log.d(TAG, "isServiceOk: checking google service version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(Asistente.this);
@@ -861,7 +834,7 @@ public class Asistente extends AppCompatActivity{
     instante y los sobre-escribe en el txt_Latitud y txt_longitud de la interfaz, si se produce un error
     mandara una ioException o un mensaje de que la localizacion no se encuentra o es nula.
      */
-    public void getDeviceLocation(){
+    private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting device current location");
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try{
@@ -869,24 +842,21 @@ public class Asistente extends AppCompatActivity{
 
                 final Task location = mFusedLocationProviderClient.getLastLocation();
 
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()){
-                            Log.d(TAG, "onComplete: found location!");
-                            Location currentLocation = (Location) task.getResult();
-                            if (currentLocation !=null) {
-                                txt_Latitud.setText(String.valueOf(currentLocation.getLatitude()));
-                                txt_Longitud.setText(String.valueOf(currentLocation.getLongitude()));
-                                DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Asistente").child(userId);
-                                db_upload.child("asistLat").setValue(String.valueOf(currentLocation.getLatitude()));
-                                db_upload.child("asistLong").setValue(String.valueOf(currentLocation.getLongitude()));
-                            }
-
-                        }else{
-                            Log.d(TAG, "onComplete: current location is null");
-                            Toast.makeText(Asistente.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                location.addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        Log.d(TAG, "onComplete: found location!");
+                        Location currentLocation = (Location) task.getResult();
+                        if (currentLocation !=null) {
+                            txt_Latitud.setText(String.valueOf(currentLocation.getLatitude()));
+                            txt_Longitud.setText(String.valueOf(currentLocation.getLongitude()));
+                            DatabaseReference db_upload = FirebaseDatabase.getInstance().getReference().child("Asistente").child(userId);
+                            db_upload.child("asistLat").setValue(String.valueOf(currentLocation.getLatitude()));
+                            db_upload.child("asistLong").setValue(String.valueOf(currentLocation.getLongitude()));
                         }
+
+                    }else{
+                        Log.d(TAG, "onComplete: current location is null");
+                        Toast.makeText(Asistente.this, "unable to get current location", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

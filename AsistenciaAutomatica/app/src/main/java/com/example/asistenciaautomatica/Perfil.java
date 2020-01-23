@@ -1,20 +1,14 @@
 package com.example.asistenciaautomatica;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-
-import com.squareup.picasso.Picasso;
-
-import java.util.HashMap;
 
 public class Perfil extends AppCompatActivity {
     private static final String TAG = "Perfil";
-    Bundle info_user;
+    private Bundle info_user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

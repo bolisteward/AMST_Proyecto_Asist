@@ -1,21 +1,17 @@
 package com.example.asistenciaautomatica;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.data.DataSet;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -33,13 +29,12 @@ public class Grafica_pastel extends AppCompatActivity {
 
     private static final String TAG = "Grafica_pastel";
     private PieChart pieChart;
-    private PieDataSet pieDataSet;
     private String[] estado = new String[]{"Presente", "Atrasado", "No asiste"};
     private int[] cantEstudiantes;
     private int[] colors = new int[]{Color.RED, Color.GREEN, Color.YELLOW};
     private  int totalAsistentes;
-    public String evento;
-    DatabaseReference db_reference;
+    private String evento;
+    private DatabaseReference db_reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +53,10 @@ public class Grafica_pastel extends AppCompatActivity {
      del evento y la recorre para determinar cuantos estudiantes o participantes tienen atraso, presente, o no asistieron
      y son agregados a la lista cantEstudiantes y se llama a createChart() para crear el grafico de pastel con los datos.
      */
-    public void leerAsistencia() {
+    private void leerAsistencia() {
         db_reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     HashMap<String, String> data = (HashMap<String, String>) snapshot.getValue();
@@ -108,8 +103,8 @@ public class Grafica_pastel extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println(error.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+                System.out.println(error.getMessage());
             }
         });
     }
@@ -137,7 +132,8 @@ public class Grafica_pastel extends AppCompatActivity {
         Legend legend =  chart.getLegend();
         legend.setForm(Legend.LegendForm.CIRCLE);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        legend.setTextSize(15);
+        legend.setTextSize(20);
+        legend.setTextColor(Color.WHITE);
 
         ArrayList <LegendEntry> entries = new ArrayList<>();
         for (int i=0; i<estado.length; i++){
@@ -168,8 +164,8 @@ public class Grafica_pastel extends AppCompatActivity {
     createChart() permite crear una grafica de pastel y su respectiva configuracion de su forma, como el
     radio del circuilo interior y se inserta los datos obtendios del metodo getPieData().
      */
-    public void createChart(){
-        pieChart = (PieChart) getSameChart(pieChart, "Estado Asistencias", Color.BLACK, Color.TRANSPARENT, 3000);
+    private void createChart(){
+        pieChart = (PieChart) getSameChart(pieChart, "Estado Asistencias", Color.WHITE, Color.TRANSPARENT, 3000);
         pieChart.setHoleRadius(40);
         pieChart.setHoleColor(Color.TRANSPARENT);
         pieChart.setTransparentCircleRadius(50);
@@ -184,7 +180,7 @@ public class Grafica_pastel extends AppCompatActivity {
      */
     private DataSet getData(DataSet dataSet) {
         dataSet.setColors(colors);
-        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setValueTextColor(Color.WHITE);
         dataSet.setValueTextSize(30);
         return dataSet;
     }

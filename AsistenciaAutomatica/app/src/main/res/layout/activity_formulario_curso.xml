@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,7 +25,7 @@
                 android:textColor="@color/colorWhite"
                 android:layout_height="50dp"
                 android:textAlignment="center"
-                android:text="Crear evento"
+                android:text="@string/tituloFormulario"
                 android:textSize="30sp"/>
 
 
@@ -37,7 +36,7 @@
                 android:layout_marginTop="50dp"
                 android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorWhite"
-                android:hint="Nombre de Curso *"
+                android:hint="@string/nombCurso"
                 android:textSize="20sp"
 
                 />
@@ -48,8 +47,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorWhite"
-                android:hint="Descripcion"
-                android:textSize="20dp"/>
+                android:hint="@string/descripCurso"
+                android:textSize="20sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -67,7 +66,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@mipmap/calendario"
-                        android:text="Select Date"
                         android:textSize="15sp" />
 
                     <TextView
@@ -75,7 +73,7 @@
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
                         android:textColor="@color/colorWhite"
-                        android:text="Fecha*"
+                        android:text="@string/fechaCurso"
                         android:layout_gravity="center_vertical"
                         android:textSize="20sp" />
 
@@ -100,7 +98,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:textColor="@color/colorWhite"
-                        android:text="Hora de Inicio*"
+                        android:text="@string/horaIniCurso"
                         android:textSize="20sp"/>
 
 
@@ -124,7 +122,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:textColor="@color/colorWhite"
-                        android:text="Hora de Fin"
+                        android:text="@string/horaFinCurso"
                         android:textSize="20sp"/>
 
 
@@ -138,7 +136,7 @@
                 android:id="@+id/etTimeRetraso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Min. tiempo de retraso (min)"
+                android:hint="@string/minRetraso"
                 android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorWhite"
                 android:textSize="20sp"
@@ -149,7 +147,7 @@
                 android:id="@+id/box_Retraso"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Permitir Retraso*"
+                android:text="@string/permitirRetraso"
                 android:layout_weight="2"
                 android:textColor="@color/colorWhite"
                 android:layout_marginTop="15dp"
@@ -160,7 +158,7 @@
                 android:id="@+id/box_CheckOut"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Marcar salida"
+                android:text="@string/marcarSalidaCurso"
                 android:layout_weight="2"
                 android:textColor="@color/colorWhite"
                 android:layout_marginTop="15dp"
@@ -183,7 +181,7 @@
                 android:id="@+id/box_Dispositivo"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Utilizar dispositivo externo"
+                android:text="@string/dispExterno"
                 android:layout_weight="2"
                 android:textColor="@color/colorWhite"
                 android:layout_marginTop="15dp"
@@ -193,7 +191,7 @@
                 android:id="@+id/edtDispositivo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre o codigo del dispositivo"
+                android:hint="@string/codeDisp"
                 android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorWhite"
                 android:textSize="20sp"
@@ -210,7 +208,7 @@
                 android:background="@drawable/borde_redondo"
                 android:layout_marginTop="30dp"
                 android:textSize="20sp"
-                android:text="Punto 1" />
+                android:text="@string/punto1Curso" />
 
             <Button
                 android:id="@+id/btn_Ubicacion2"
@@ -222,7 +220,7 @@
                 android:background="@drawable/borde_redondo"
                 android:layout_marginTop="30dp"
                 android:textSize="20sp"
-                android:text="Punto 2" />
+                android:text="@string/punto2Curso" />
 
             <Button
                 android:id="@+id/btn_Guardar"
@@ -231,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="80dp"
-                android:text="Guardar "
+                android:text="@string/guardar"
                 android:textSize="20sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:background="@drawable/borde_redondo"
