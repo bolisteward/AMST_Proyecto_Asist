@@ -1,0 +1,134 @@
+#include <SoftwareSerial.h>
+#include <TinyGPS.h>
+
+// Pines para los LEDs, boton, entrada analogica de estado de pila.
+#define LEDVERDE 2
+#define LEDAMARILLO 3
+#define LEDROJO 4
+#define ANALOGPILA 0
+#define BOTON 2
+
+//Variables para conexion del gps
+TinyGPS gps;
+SoftwareSerial serialgps(50,51);// pin 50 Tx 51 Rx
+unsigned long chars;
+unsigned short sentences, failed_checksum;
+
+struct gpscoord {
+  float a_latitude;  // 4 bytes
+  float a_longitude; // 4 bytes
+};
+
+int analogValor = 0;  // 2 bytes
+float voltaje = 0;  // 4 bytes
+int porcentaje_bateria;  // 2 bytes
+int ledDelay = 800;  // 2 bytes
+
+float maximo = 1.6;
+float medio = 1.4;
+float minimo = 0.3;
+
+
+void setup() {
+  //Inicializamos los led como salida.
+  pinMode(LEDVERDE, OUTPUT);
+  pinMode(LEDAMARILLO, OUTPUT);
+  pinMode(LEDROJO, OUTPUT);
+  pinMode(BOTON, INPUT_PULLUP);
+
+  //Inicializamos los pines Seriales
+  Serial.begin(9600);
+  serialgps.begin(9600);
+  Serial.println("");
+  Serial.println(" --- Buscando Señal --- ");
+  Serial.println("");
+
+}
+
+void loop() {
+
+  //VIendo disponiblidad del puerto Serial del GPS.
+  while(serialgps.available()){
+
+    //Lee el estado del boton
+    int estado = digitalRead(BOTON);
+    //Leyendo la información que viene del GPS.
+    int c=serialgps.read();
+
+      //Va agrupando toda la información del del GPS, hasta que sea una linea.
+      if (gps.encode(c)){
+
+        //Obtenemos la latitud y longitud del dispositivo.
+        float latitude,longitude;
+        gps.f_get_position(&latitude,&longitude);
+
+        // se pasa los datos a la estructura
+        gpscoord coords = {latitude, longitude};
+
+        if (estado ==LOW){        
+          // enviamos por sigfox
+          bool answer = sigfoxSend(&coords, sizeof(gpscoord));
+      
+          Serial.print("latitud: ");
+          Serial.print(latitude,5);
+          Serial.print("\tlongitud: ");
+          Serial.println(longitude,5);
+  
+          gps.stats(&chars,&sentences,&failed_checksum);
+  
+          delay(100);
+  
+          // Leemos valor de la entrada analógica
+          analogValor = analogRead(ANALOGPILA);
+   
+          // Obtenemos el voltaje
+          voltaje = 0.0048 * analogValor;
+          porcentaje_bateria = map (analogValor, 0, 1024, 0, 100);
+          Serial.print("Voltaje: ");
+          Serial.println(voltaje);
+          Serial.print("Porcentaje: ");
+          Serial.print(porcentaje_bateria);
+          Serial.println("%");
+          delay(1000);
+        }
+        
+	//Segun el estado de la bateria se encenderan los leds
+        if (voltaje >= maximo)
+        {
+          digitalWrite(LEDVERDE, HIGH);
+          delay(ledDelay);
+          digitalWrite(LEDVERDE, LOW);
+        }
+        else if (voltaje < maximo && voltaje > medio)
+        {
+          digitalWrite(LEDAMARILLO, HIGH);
+          delay(ledDelay);
+          digitalWrite(LEDAMARILLO, LOW);
+        }
+        else if (voltaje < medio && voltaje > minimo)
+        {
+          digitalWrite(LEDROJO, HIGH);
+          delay(ledDelay);
+          digitalWrite(LEDROJO, LOW);
+        }
+       
+        // Apagamos todos los LEDs
+        digitalWrite(LEDVERDE, LOW);
+        digitalWrite(LEDAMARILLO, LOW);
+        digitalWrite(LEDROJO, LOW);
+        }
+    }
+
+}
+//Metodo que requiere del data que es son la coordenadas y su longitud
+//La data es transformada en mensajes hexadecimales para ser enviada a traves del puerto serial.
+bool sigfoxSend(const void* data, uint8_t len) {
+  uint8_t* bytes = (uint8_t*)data;
+  Serial.println("AT$RC");
+  Serial.print("AT$SF=");
+  for(uint8_t i = len-1; i < len; --i) {
+    if (bytes[i] < 16) {Serial.print("0");}
+    Serial.print(bytes[i], HEX);
+  }
+  Serial.print('\r');
+  }

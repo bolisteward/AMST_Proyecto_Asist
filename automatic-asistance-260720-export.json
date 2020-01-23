@@ -1,0 +1,367 @@
+{
+  "Asistencias" : {
+    "-Lxn1NndG2tGybwBxC6g" : {
+      "evento" : "hola",
+      "fecha" : "2020/1/4",
+      "lista" : {
+        "BpMHR96GkHWAuYMpoHMCioUWflt1" : {
+          "estado" : "Presente",
+          "horaInicio" : "20:23",
+          "idAsistente" : "BpMHR96GkHWAuYMpoHMCioUWflt1",
+          "idEvento" : "-LxmT8CGuGohjB-7Mh5N",
+          "nombre" : "Bolívar Núñez",
+          "numHoras" : 0
+        }
+      }
+    },
+    "-Ly9oTx3PaKmHVbIFT0O" : {
+      "evento" : "PST",
+      "fecha" : "2020/1/9",
+      "lista" : {
+        "Z4qxS5dYqvaWd5PjW7c19fyChQ33" : {
+          "estado" : "Presente",
+          "horaFin" : "10:47",
+          "horaInicio" : "10:13",
+          "idAsistente" : "Z4qxS5dYqvaWd5PjW7c19fyChQ33",
+          "idEvento" : "-Ly9oTwsHZBkDmKwuHz1",
+          "nombre" : "cesar navas",
+          "numHoras" : 21
+        }
+      }
+    },
+    "-LyAwC26SS9ZiX9kFp1t" : {
+      "evento" : "AMST",
+      "fecha" : "2020/1/9",
+      "lista" : {
+        "BpMHR96GkHWAuYMpoHMCioUWflt1" : {
+          "estado" : "Atrasado",
+          "horaFin" : "21:0",
+          "horaInicio" : "17:56",
+          "idAsistente" : "BpMHR96GkHWAuYMpoHMCioUWflt1",
+          "idEvento" : "-LyAwC20v1WVVedBTC2q",
+          "nombre" : "Bolívar Núñez",
+          "numHoras" : "3.4h"
+        }
+      }
+    },
+    "-LyF_Y_KJdlbjj--pEDP" : {
+      "evento" : "Amst2",
+      "fecha" : "2020/1/10",
+      "lista" : "-"
+    },
+    "-LyFj60LOOYmLveI2aRF" : {
+      "evento" : "prueba viernes ",
+      "fecha" : "2020/1/10",
+      "lista" : {
+        "3p0gD7VtHbPOvMNxquphe77dtZJ2" : {
+          "estado" : "Presente",
+          "horaInicio" : "13:39",
+          "idAsistente" : "3p0gD7VtHbPOvMNxquphe77dtZJ2",
+          "idEvento" : "-LyFj60FT3wBhXTp2ESl",
+          "nombre" : "Abel Silva",
+          "numHoras" : 0
+        }
+      }
+    },
+    "-LyenL_eai-bdVMomlGn" : {
+      "evento" : "pruebamiercoles",
+      "fecha" : "2020/1/15",
+      "lista" : {
+        "BpMHR96GkHWAuYMpoHMCioUWflt1" : {
+          "estado" : "Presente",
+          "horaInicio" : "15:4",
+          "idAsistente" : "BpMHR96GkHWAuYMpoHMCioUWflt1",
+          "idEvento" : "-LyenL_aqWs84WgXOoN1",
+          "nombre" : "Bolívar Núñez",
+          "numHoras" : 0
+        }
+      }
+    },
+    "-TM1MCejn9v5TDUKWNKnw" : {
+      "evento" : "Curso de señales tránsito",
+      "fecha" : "2020/1/4",
+      "lista" : {
+        "BpMHR96GkHWAuYMpoHMCioUWflt1" : {
+          "estado" : "Atrasado",
+          "horaInicio" : "20:26",
+          "idAsistente" : "BpMHR96GkHWAuYMpoHMCioUWflt1",
+          "idEvento" : "-Lxn00CspqGBdLCpXism",
+          "nombre" : "Bolívar Núñez",
+          "numHoras" : 0
+        }
+      }
+    }
+  },
+  "Asistente" : {
+    "3p0gD7VtHbPOvMNxquphe77dtZJ2" : {
+      "asistLat" : "-2.1458454",
+      "asistLong" : "-79.9669718",
+      "correo" : "abelsilva708@gmail.com",
+      "idUser" : "3p0gD7VtHbPOvMNxquphe77dtZJ2",
+      "listEventos" : {
+        "-LyFj60FT3wBhXTp2ESl" : "prueba viernes "
+      },
+      "matricula" : "201509296",
+      "nombre" : "Abel Silva",
+      "telefono" : "Sin numero"
+    },
+    "BpMHR96GkHWAuYMpoHMCioUWflt1" : {
+      "asistLat" : "-2.1832786",
+      "asistLong" : "-79.9160706",
+      "correo" : "bolisteward18@gmail.com",
+      "idUser" : "BpMHR96GkHWAuYMpoHMCioUWflt1",
+      "listEventos" : {
+        "-LxmT8CGuGohjB-7Mh5N" : "hola",
+        "-Lxn00CspqGBdLCpXism" : "Curso de señales tránsito",
+        "-Lxn1NnR5ORuT5Qmvn1O" : "prueba",
+        "-LyAwC20v1WVVedBTC2q" : "AMST",
+        "-LyenL_aqWs84WgXOoN1" : "pruebamiercoles"
+      },
+      "matricula" : "201707775",
+      "nombre" : "Bolívar Núñez",
+      "telefono" : "Sin numero"
+    },
+    "Z4qxS5dYqvaWd5PjW7c19fyChQ33" : {
+      "asistLat" : "-2.1457208",
+      "asistLong" : "-79.9669737",
+      "correo" : "coolhero1995@gmail.com",
+      "idUser" : "Z4qxS5dYqvaWd5PjW7c19fyChQ33",
+      "listEventos" : {
+        "-Ly9oTwsHZBkDmKwuHz1" : "PST"
+      },
+      "matricula" : "201409237",
+      "nombre" : "cesar navas",
+      "telefono" : "Sin numero"
+    }
+  },
+  "Dispositivo" : {
+    "-LvRLIL_6uEmRYn2Ltuq" : {
+      "Evento" : "evento",
+      "Latitud1" : -89.15,
+      "Latitud2" : -89.12,
+      "Longitud1" : 1.575646,
+      "Longitud2" : 1.57568
+    },
+    "-LvhpUPfWJUlZmZ7yvDR" : {
+      "Evento" : "IA",
+      "Latitud1" : "-2.1833464",
+      "Latitud2" : "-2.1830466",
+      "Longitud1" : "-79.9162212",
+      "Longitud2" : "-79.9160212"
+    },
+    "-Lxihj8Ys0e8v7FBD87d" : {
+      "Evento" : "Malla FIMCP",
+      "Latitud1" : "-2.1832786",
+      "Latitud2" : "-2.1832786",
+      "Longitud1" : "-79.9160706",
+      "Longitud2" : "-79.9160706"
+    },
+    "-LxmT8CNAnxqv_yAGglu" : {
+      "Evento" : "hola",
+      "Latitud1" : "-2.1832786",
+      "Latitud2" : "-2.1832856",
+      "Longitud1" : "-79.9160706",
+      "Longitud2" : "-79.9160617"
+    },
+    "-Lxn00Czor7W_rPBvAG-" : {
+      "Evento" : "Curso de señales tránsito",
+      "Latitud1" : "-2.1832786",
+      "Latitud2" : "-2.18329",
+      "Longitud1" : "-79.9160706",
+      "Longitud2" : "-79.916042"
+    },
+    "-Lxn1NnbcvWid0N-vRsn" : {
+      "Evento" : "prueba",
+      "Latitud1" : "-2.1832786",
+      "Latitud2" : "-2.1832786",
+      "Longitud1" : "-79.9160706",
+      "Longitud2" : "-79.9160706"
+    },
+    "-Ly9oTx01xoqHIGrken2" : {
+      "Evento" : "PST",
+      "Latitud1" : "-2.1456957",
+      "Latitud2" : "-2.1457210",
+      "Longitud1" : "-79.9669033",
+      "Longitud2" : "-79.9669740"
+    },
+    "-LyAwC24_Udf9RHAXFTW" : {
+      "Evento" : "AMST",
+      "Latitud1" : "-2.1832786",
+      "Latitud2" : "-2.1833604",
+      "Longitud1" : "-79.9160706",
+      "Longitud2" : "-79.916088"
+    },
+    "-LyF_Y_HYTCJtZXGH8Jc" : {
+      "Evento" : "Amst2",
+      "Latitud1" : "-79.96707",
+      "Latitud2" : "-79.96707",
+      "Longitud1" : "-2.145825",
+      "Longitud2" : "-2.145825"
+    },
+    "-LyFj60JNdVPzxC5kS-9" : {
+      "Evento" : "prueba viernes ",
+      "Latitud1" : "-79.96732",
+      "Latitud2" : "-79.966866",
+      "Longitud1" : "-2.145033",
+      "Longitud2" : "-2.145076"
+    },
+    "-LyenL_d8ecrdktps_hb" : {
+      "Evento" : "pruebamiercoles",
+      "Latitud1" : "-79.96704",
+      "Latitud2" : "-79.96697",
+      "Longitud1" : "-2.145775",
+      "Longitud2" : "-2.145765"
+    }
+  },
+  "Evento" : {
+    "-LvhpUPXLWOjNkPrPYnz" : {
+      "Descripcion" : "curso de inteligencia artificial.",
+      "Fecha" : "2019/11/9",
+      "Marcar_Salida" : "false",
+      "Nom_evento" : "IA",
+      "Retraso" : "false",
+      "horaFin" : "23:55",
+      "horaInicio" : "22:23",
+      "minRetraso" : "0",
+      "tutorID" : "BpMHR96GkHWAuYMpoHMCioUWflt1"
+    },
+    "-Lxihj8K4bWxoCq2TX-x" : {
+      "Descripcion" : "reunión sobre los cambios de malla FIMCP.",
+      "Fecha" : "2020/1/3",
+      "Marcar_Salida" : "true",
+      "Nom_evento" : "Malla FIMCP",
+      "Retraso" : "false",
+      "horaFin" : "23:55",
+      "horaInicio" : "22:0",
+      "minRetraso" : "0",
+      "tutorID" : "BpMHR96GkHWAuYMpoHMCioUWflt1"
+    },
+    "-LxmT8CGuGohjB-7Mh5N" : {
+      "Descripcion" : "hola",
+      "Fecha" : "2020/1/4",
+      "Marcar_Salida" : "true",
+      "Nom_evento" : "hola",
+      "Retraso" : "false",
+      "horaFin" : "22:0",
+      "horaInicio" : "16:0",
+      "minRetraso" : "0",
+      "tutorID" : "BpMHR96GkHWAuYMpoHMCioUWflt1"
+    },
+    "-Lxn00CspqGBdLCpXism" : {
+      "Descripcion" : "curso intensivo sobre señales de tránsito",
+      "Fecha" : "2020/1/4",
+      "Marcar_Salida" : "true",
+      "Nom_evento" : "Curso de señales tránsito",
+      "Retraso" : "true",
+      "horaFin" : "23:20",
+      "horaInicio" : "18:2",
+      "minRetraso" : "5",
+      "tutorID" : "BpMHR96GkHWAuYMpoHMCioUWflt1"
+    },
+    "-Lxn1NnR5ORuT5Qmvn1O" : {
+      "Descripcion" : "prueba",
+      "Fecha" : "2020/1/4",
+      "Marcar_Salida" : "true",
+      "Nom_evento" : "prueba",
+      "Retraso" : "true",
+      "horaFin" : "19:50",
+      "horaInicio" : "19:9",
+      "minRetraso" : "10",
+      "tutorID" : "BpMHR96GkHWAuYMpoHMCioUWflt1"
+    },
+    "-Ly9oTwsHZBkDmKwuHz1" : {
+      "Descripcion" : "hola",
+      "Fecha" : "2020/1/9",
+      "Marcar_Salida" : "false",
+      "Nom_evento" : "PST",
+      "Retraso" : "false",
+      "horaFin" : "15:25",
+      "horaInicio" : "9:30",
+      "minRetraso" : "0",
+      "tutorID" : "Z4qxS5dYqvaWd5PjW7c19fyChQ33"
+    },
+    "-LyAwC20v1WVVedBTC2q" : {
+      "Descripcion" : "prueba",
+      "Fecha" : "2020/1/9",
+      "Marcar_Salida" : "true",
+      "Nom_evento" : "AMST",
+      "Retraso" : "true",
+      "horaFin" : "22:5",
+      "horaInicio" : "15:5",
+      "minRetraso" : "10",
+      "tutorID" : "BpMHR96GkHWAuYMpoHMCioUWflt1"
+    },
+    "-LyF_Y_C3-8VO3EWzS3Y" : {
+      "Descripcion" : "hola",
+      "Fecha" : "2020/1/10",
+      "Marcar_Salida" : "false",
+      "Nom_evento" : "Amst2",
+      "Retraso" : "false",
+      "horaFin" : "17:10",
+      "horaInicio" : "12:30",
+      "minRetraso" : "0",
+      "tutorID" : "Z4qxS5dYqvaWd5PjW7c19fyChQ33"
+    },
+    "-LyFj60FT3wBhXTp2ESl" : {
+      "Descripcion" : "prueba ",
+      "Fecha" : "2020/1/10",
+      "Marcar_Salida" : "false",
+      "Nom_evento" : "prueba viernes ",
+      "Retraso" : "false",
+      "horaFin" : "14:30",
+      "horaInicio" : "13:30",
+      "minRetraso" : "0",
+      "tutorID" : "3p0gD7VtHbPOvMNxquphe77dtZJ2"
+    },
+    "-LyenL_aqWs84WgXOoN1" : {
+      "Descripcion" : "prueba ",
+      "Fecha" : "2020/1/15",
+      "Marcar_Salida" : "true",
+      "Nom_evento" : "pruebamiercoles",
+      "Retraso" : "true",
+      "horaFin" : "15:15",
+      "horaInicio" : "15:0",
+      "minRetraso" : "5",
+      "tutorID" : "3p0gD7VtHbPOvMNxquphe77dtZJ2"
+    }
+  },
+  "Registros" : {
+    "dispositivo1" : {
+      "-asdfsfsa" : {
+        "estBattery" : "30",
+        "lat" : "-79.55422",
+        "long" : "-2.144686"
+      }
+    },
+    "dispositivo3" : {
+      "-asdfg" : {
+        "estBateria" : "0",
+        "lat" : "0",
+        "long" : "0"
+      }
+    }
+  },
+  "Tutor" : {
+    "3p0gD7VtHbPOvMNxquphe77dtZJ2" : {
+      "correo" : "abelsilva708@gmail.com",
+      "idUser" : "3p0gD7VtHbPOvMNxquphe77dtZJ2",
+      "matricula" : "0956371249",
+      "nombre" : "Abel Silva",
+      "telefono" : "Sin numero"
+    },
+    "BpMHR96GkHWAuYMpoHMCioUWflt1" : {
+      "correo" : "bolisteward18@gmail.com",
+      "idUser" : "BpMHR96GkHWAuYMpoHMCioUWflt1",
+      "matricula" : "0952000826",
+      "nombre" : "Bolívar Núñez",
+      "telefono" : "Sin numero"
+    },
+    "Z4qxS5dYqvaWd5PjW7c19fyChQ33" : {
+      "correo" : "coolhero1995@gmail.com",
+      "idUser" : "Z4qxS5dYqvaWd5PjW7c19fyChQ33",
+      "matricula" : "0950683888",
+      "nombre" : "cesar navas",
+      "telefono" : "Sin numero"
+    }
+  }
+}
