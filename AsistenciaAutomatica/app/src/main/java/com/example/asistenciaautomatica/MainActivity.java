@@ -85,10 +85,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*
+    /**
     firebaseAuthWithGoogle() permite auntetificar la cuenta google con que se inicio sesion para ingresar a la cuenta de firebase
     mediante la credencial unica que Google provee por usuario.
-     */
+     **/
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d("TAG", "firebaseAuthWithGoogle: "+account.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
